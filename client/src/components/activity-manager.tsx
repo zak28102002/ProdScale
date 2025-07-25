@@ -231,17 +231,15 @@ export default function ActivityManager({ activities }: ActivityManagerProps) {
             className="flex items-center justify-between p-2 border border-gray-600 rounded-lg bg-black"
           >
             <span className="text-white font-medium">{activity.name}</span>
-            {!activity.isDefault && (
-              <Button
-                onClick={() => handleDeleteActivity(activity.id)}
-                disabled={deleteActivityMutation.isPending}
-                variant="ghost"
-                size="sm"
-                className="text-red-400 hover:text-red-300 hover:bg-red-900/20"
-              >
-                <Trash2 className="w-4 h-4" />
-              </Button>
-            )}
+            <Button
+              onClick={() => handleDeleteActivity(activity.id)}
+              disabled={deleteActivityMutation.isPending}
+              variant="ghost"
+              size="sm"
+              className="text-red-400 hover:text-red-300 hover:bg-red-900/20"
+            >
+              <Trash2 className="w-4 h-4" />
+            </Button>
           </div>
         ))}
       </div>
