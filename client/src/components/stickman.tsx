@@ -50,7 +50,7 @@ export default function Stickman({ score, size = "normal", inverted = false }: S
         <motion.img
           src={mascotSrc}
           alt={`Mascot for score ${score.toFixed(1)}`}
-          className="w-full h-full object-contain"
+          className="w-full h-full object-contain ml-[0px] mr-[0px] mt-[-68px] mb-[-68px] pt-[0px] pb-[0px] pl-[0px] pr-[0px] bg-[#ffffff00] text-[#ffffff]"
           initial={{ scale: 0.9 }}
           animate={{ 
             scale: score >= 9 ? [0.9, 1.1, 1] : 1,
