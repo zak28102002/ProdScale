@@ -14,7 +14,7 @@ export default function ProgressCircle({ score }: ProgressCircleProps) {
       <svg className="progress-ring w-32 h-32" viewBox="0 0 100 100">
         {/* Background circle */}
         <circle
-          className="text-gray-200"
+          className="text-gray-800"
           stroke="currentColor"
           strokeWidth="8"
           fill="transparent"
@@ -24,7 +24,7 @@ export default function ProgressCircle({ score }: ProgressCircleProps) {
         />
         {/* Progress circle */}
         <motion.circle
-          className={isLowScore ? "text-destructive" : "text-black"}
+          className={isLowScore ? "text-destructive" : "text-white"}
           stroke="currentColor"
           strokeWidth="8"
           fill="transparent"

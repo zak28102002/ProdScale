@@ -42,7 +42,7 @@ export default function Stickman({ score, size = "normal", inverted = false }: S
   return (
     <div className="text-center">
       <motion.div
-        className={`mx-auto mb-2 ${sizeClass} ${inverted ? 'invert' : ''}`}
+        className={`mx-auto mb-2 ${sizeClass} invert`}
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 0.5, type: "spring" }}
