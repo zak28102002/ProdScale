@@ -40,9 +40,9 @@ export default function Stickman({ score, size = "normal", inverted = false }: S
   const mascotSrc = getMascotImage();
 
   return (
-    <div className="text-center">
+    <div className="text-center -my-8">
       <motion.div
-        className={`mx-auto mb-2 ${sizeClass} filter invert brightness-0 contrast-100`}
+        className={`mx-auto ${sizeClass} filter invert brightness-0 contrast-100 overflow-hidden`}
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 0.5, type: "spring" }}
@@ -50,10 +50,14 @@ export default function Stickman({ score, size = "normal", inverted = false }: S
         <motion.img
           src={mascotSrc}
           alt={`Mascot for score ${score.toFixed(1)}`}
-          className="w-full h-full object-contain ml-[0px] mr-[0px] mt-[-68px] mb-[-68px] pt-[0px] pb-[0px] pl-[0px] pr-[0px] bg-[#ffffff00] text-[#ffffff]"
+          className="w-full h-full object-cover object-center"
+          style={{ 
+            clipPath: 'inset(10% 10% 10% 10%)',
+            transform: 'scale(1.2)'
+          }}
           initial={{ scale: 0.9 }}
           animate={{ 
-            scale: score >= 9 ? [0.9, 1.1, 1] : 1,
+            scale: score >= 9 ? [1.08, 1.32, 1.2] : 1.2,
             rotate: score >= 9 ? [0, 5, -5, 0] : 0
           }}
           transition={{ 
@@ -63,7 +67,7 @@ export default function Stickman({ score, size = "normal", inverted = false }: S
           }}
         />
       </motion.div>
-      <p className="text-xs text-accent mt-[-6px] mb-[-6px] pl-[0px] pr-[0px]">{getMessage()}</p>
+      <p className="text-xs text-accent -mt-4">{getMessage()}</p>
     </div>
   );
 }
