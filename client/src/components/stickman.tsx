@@ -7,7 +7,7 @@ interface StickmanProps {
 }
 
 export default function Stickman({ score, size = "normal", inverted = false }: StickmanProps) {
-  const sizeClass = size === "large" ? "w-96 h-96" : "w-20 h-24";
+  const sizeClass = size === "large" ? "w-[400px] h-[400px]" : "w-20 h-24";
 
   const getMessage = () => {
     if (score >= 9) return "Excellent work! You're crushing it!";
