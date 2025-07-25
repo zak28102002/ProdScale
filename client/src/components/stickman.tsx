@@ -63,7 +63,7 @@ export default function Stickman({ score, size = "normal", inverted = false }: S
           }}
         />
       </motion.div>
-      <p className="text-xs text-accent mt-2">{getMessage()}</p>
+      <p className="text-xs text-accent mt-[-6px] mb-[-6px] pl-[0px] pr-[0px]">{getMessage()}</p>
     </div>
   );
 }
