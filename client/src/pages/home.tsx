@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import Stickman from "@/components/stickman";
 import ProgressCircle from "@/components/progress-circle";
 import ActivityItem from "@/components/activity-item";
+import ActivityManager from "@/components/activity-manager";
 import { calculateProductivityScore } from "@/lib/scoring";
 import { getDailyQuote } from "@/lib/quotes";
 import type { DailyEntry, Activity, ActivityCompletion } from "@shared/schema";
@@ -121,18 +122,23 @@ export default function Home() {
         <Stickman score={score} size="large" />
       </div>
 
-      {/* Activity Check-in Section */}
-      <div className="space-y-4 mt-8">
-        <h2 className="text-lg font-semibold text-white">Today's Activities</h2>
-        <div className="space-y-3">
-          {activities.map((activity: Activity) => (
-            <ActivityItem
-              key={activity.id}
-              activity={activity}
-              dailyEntryId={dailyEntry?.id}
-              completion={completions.find((c: ActivityCompletion) => c.activityId === activity.id)}
-            />
-          ))}
+      {/* Activity Management Section */}
+      <div className="space-y-6 mt-8">
+        <ActivityManager activities={activities} />
+        
+        {/* Today's Activities Check-in */}
+        <div className="space-y-4">
+          <h2 className="text-lg font-semibold text-white">Today's Check-in</h2>
+          <div className="space-y-3">
+            {activities.map((activity: Activity) => (
+              <ActivityItem
+                key={activity.id}
+                activity={activity}
+                dailyEntryId={dailyEntry?.id}
+                completion={completions.find((c: ActivityCompletion) => c.activityId === activity.id)}
+              />
+            ))}
+          </div>
         </div>
       </div>
 

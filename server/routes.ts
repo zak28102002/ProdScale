@@ -3,7 +3,7 @@ import { createServer, type Server } from "http";
 import express from "express";
 import path from "path";
 import { storage } from "./storage";
-import { insertDailyEntrySchema, insertActivityCompletionSchema } from "@shared/schema";
+import { insertDailyEntrySchema, insertActivityCompletionSchema, insertActivitySchema } from "@shared/schema";
 import { calculateProductivityScore } from "../client/src/lib/scoring";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -163,6 +163,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching streak:", error);
       res.status(500).json({ message: "Failed to fetch streak" });
+    }
+  });
+
+  // Create activity
+  app.post("/api/activities", async (req, res) => {
+    try {
+      const userId = "demo-user"; // Replace with actual auth
+      const activityData = insertActivitySchema.parse({ ...req.body, userId });
+      const activity = await storage.createActivity(activityData);
+      res.json(activity);
+    } catch (error) {
+      console.error("Error creating activity:", error);
+      res.status(500).json({ message: "Failed to create activity" });
+    }
+  });
+
+  // Delete activity
+  app.delete("/api/activities/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      await storage.deleteActivity(id);
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error deleting activity:", error);
+      res.status(500).json({ message: "Failed to delete activity" });
     }
   });
 

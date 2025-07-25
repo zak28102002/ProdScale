@@ -27,6 +27,7 @@ export interface IStorage {
   // Activity operations
   getUserActivities(userId: string): Promise<Activity[]>;
   createActivity(activity: InsertActivity): Promise<Activity>;
+  deleteActivity(id: string): Promise<void>;
   getDefaultActivities(): Promise<Activity[]>;
 
   // Daily entry operations
@@ -74,6 +75,10 @@ export class DatabaseStorage implements IStorage {
   async createActivity(activity: InsertActivity): Promise<Activity> {
     const [newActivity] = await db.insert(activities).values(activity).returning();
     return newActivity;
+  }
+
+  async deleteActivity(id: string): Promise<void> {
+    await db.delete(activities).where(eq(activities.id, id));
   }
 
   async getDefaultActivities(): Promise<Activity[]> {
