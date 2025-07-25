@@ -1,0 +1,166 @@
+import { useState, useEffect } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Link } from "wouter";
+import { motion } from "framer-motion";
+import { apiRequest } from "@/lib/queryClient";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import Stickman from "@/components/stickman";
+import ProgressCircle from "@/components/progress-circle";
+import ActivityItem from "@/components/activity-item";
+import { calculateProductivityScore } from "@/lib/scoring";
+import { getDailyQuote } from "@/lib/quotes";
+import type { DailyEntry, Activity, ActivityCompletion } from "@shared/schema";
+
+export default function Home() {
+  const queryClient = useQueryClient();
+  const today = new Date().toISOString().split('T')[0];
+  const [reflection, setReflection] = useState("");
+
+  // Fetch today's daily entry
+  const { data: dailyEntry, isLoading: loadingEntry } = useQuery({
+    queryKey: ["/api/daily-entry", today],
+    enabled: true,
+  });
+
+  // Fetch user activities
+  const { data: activities = [], isLoading: loadingActivities } = useQuery({
+    queryKey: ["/api/activities"],
+    enabled: true,
+  });
+
+  // Fetch activity completions
+  const { data: completions = [], isLoading: loadingCompletions } = useQuery({
+    queryKey: ["/api/daily-entry", dailyEntry?.id, "completions"],
+    enabled: !!dailyEntry?.id,
+  });
+
+  // Fetch user streak
+  const { data: streak } = useQuery({
+    queryKey: ["/api/streak"],
+    enabled: true,
+  });
+
+  // Update reflection mutation
+  const updateReflectionMutation = useMutation({
+    mutationFn: async (newReflection: string) => {
+      if (!dailyEntry?.id) return;
+      return apiRequest("PATCH", `/api/daily-entry/${dailyEntry.id}`, {
+        reflection: newReflection,
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["/api/daily-entry", today]
+      });
+    },
+  });
+
+  // Calculate score whenever completions or reflection changes
+  const score = calculateProductivityScore({
+    completions,
+    activities,
+    hasReflection: reflection.trim().length > 0,
+    currentStreak: streak?.currentStreak || 0,
+  });
+
+  // Update reflection on change
+  useEffect(() => {
+    if (dailyEntry?.reflection && reflection !== dailyEntry.reflection) {
+      setReflection(dailyEntry.reflection);
+    }
+  }, [dailyEntry?.reflection]);
+
+  // Debounced reflection update
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (reflection !== dailyEntry?.reflection) {
+        updateReflectionMutation.mutate(reflection);
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [reflection]);
+
+  const dailyQuote = getDailyQuote();
+
+  if (loadingEntry || loadingActivities) {
+    return (
+      <div className="p-6 space-y-8">
+        <div className="text-center pt-8">
+          <div className="h-8 bg-gray-200 rounded w-32 mx-auto mb-2"></div>
+          <div className="h-4 bg-gray-200 rounded w-64 mx-auto"></div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="p-6 space-y-8"
+    >
+      {/* Header */}
+      <div className="text-center pt-8">
+        <h1 className="text-2xl font-bold text-black mb-2">ProdScale</h1>
+        <p className="text-sm italic text-accent">"{dailyQuote}"</p>
+      </div>
+
+      {/* Circular Progress Meter */}
+      <div className="text-center">
+        <ProgressCircle score={score} />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <span className="text-2xl font-bold">{score.toFixed(1)}</span>
+          <span className="text-sm text-accent ml-1">/10</span>
+        </div>
+      </div>
+
+      {/* Stickman Mascot */}
+      <div className="text-center">
+        <Stickman score={score} />
+      </div>
+
+      {/* Activity Check-in Section */}
+      <div className="space-y-4">
+        <h2 className="text-lg font-semibold">Today's Activities</h2>
+        <div className="space-y-3">
+          {activities.map((activity: Activity) => (
+            <ActivityItem
+              key={activity.id}
+              activity={activity}
+              dailyEntryId={dailyEntry?.id}
+              completion={completions.find((c: ActivityCompletion) => c.activityId === activity.id)}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Reflection Box */}
+      <div className="space-y-3">
+        <h2 className="text-lg font-semibold">Daily Reflection</h2>
+        <Textarea
+          value={reflection}
+          onChange={(e) => setReflection(e.target.value)}
+          className="resize-none focus:border-black transition-colors"
+          rows={3}
+          placeholder="How did today go? What did you learn?"
+        />
+      </div>
+
+      {/* Bottom Buttons */}
+      <div className="space-y-3 pt-4">
+        <Link href="/monthly">
+          <Button variant="outline" className="w-full border-2 border-black hover:bg-black hover:text-white">
+            View Monthly Report
+          </Button>
+        </Link>
+        <Link href="/share">
+          <Button className="w-full bg-black text-white hover:bg-secondary">
+            Share Day
+          </Button>
+        </Link>
+      </div>
+    </motion.div>
+  );
+}

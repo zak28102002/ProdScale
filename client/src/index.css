@@ -1,0 +1,84 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(0, 0%, 100%);
+  --foreground: hsl(0, 0%, 0%);
+  --muted: hsl(0, 0%, 96%);
+  --muted-foreground: hsl(0, 0%, 27%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(0, 0%, 0%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(0, 0%, 0%);
+  --border: hsl(0, 0%, 90%);
+  --input: hsl(0, 0%, 90%);
+  --primary: hsl(0, 0%, 0%);
+  --primary-foreground: hsl(0, 0%, 100%);
+  --secondary: hsl(0, 0%, 13%);
+  --secondary-foreground: hsl(0, 0%, 100%);
+  --accent: hsl(0, 0%, 27%);
+  --accent-foreground: hsl(0, 0%, 100%);
+  --destructive: hsl(0, 84%, 60%);
+  --destructive-foreground: hsl(0, 0%, 98%);
+  --ring: hsl(0, 0%, 0%);
+  --radius: 0.5rem;
+}
+
+.dark {
+  --background: hsl(0, 0%, 0%);
+  --foreground: hsl(0, 0%, 100%);
+  --muted: hsl(0, 0%, 4%);
+  --muted-foreground: hsl(0, 0%, 73%);
+  --popover: hsl(0, 0%, 0%);
+  --popover-foreground: hsl(0, 0%, 100%);
+  --card: hsl(0, 0%, 0%);
+  --card-foreground: hsl(0, 0%, 100%);
+  --border: hsl(0, 0%, 10%);
+  --input: hsl(0, 0%, 10%);
+  --primary: hsl(0, 0%, 100%);
+  --primary-foreground: hsl(0, 0%, 0%);
+  --secondary: hsl(0, 0%, 13%);
+  --secondary-foreground: hsl(0, 0%, 100%);
+  --accent: hsl(0, 0%, 27%);
+  --accent-foreground: hsl(0, 0%, 100%);
+  --destructive: hsl(0, 62%, 31%);
+  --destructive-foreground: hsl(0, 0%, 100%);
+  --ring: hsl(0, 0%, 84%);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+}
+
+@layer utilities {
+  .progress-ring {
+    transform: rotate(-90deg);
+  }
+  
+  .progress-ring-circle {
+    stroke-dasharray: 283;
+    stroke-dashoffset: 283;
+    transition: stroke-dashoffset 0.5s ease-in-out;
+  }
+  
+  .heatmap-day {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+    transition: all 0.2s ease;
+  }
+  
+  .stickman {
+    width: 80px;
+    height: 100px;
+    margin: 0 auto;
+  }
+}
