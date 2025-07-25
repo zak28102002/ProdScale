@@ -7,7 +7,15 @@ interface ProgressCircleProps {
 export default function ProgressCircle({ score }: ProgressCircleProps) {
   const circumference = 283; // 2 * PI * 45
   const strokeDashoffset = circumference - (score / 10) * circumference;
-  const isLowScore = score < 7;
+  
+  // Color based on score level
+  const getProgressColor = () => {
+    if (score < 3) return "text-red-500";
+    if (score < 5) return "text-orange-500";
+    if (score < 7) return "text-yellow-500";
+    if (score < 9) return "text-green-500";
+    return "text-blue-500";
+  };
 
   return (
     <div className="relative inline-block">
@@ -24,7 +32,7 @@ export default function ProgressCircle({ score }: ProgressCircleProps) {
         />
         {/* Progress circle */}
         <motion.circle
-          className={isLowScore ? "text-destructive" : "text-white"}
+          className={getProgressColor()}
           stroke="currentColor"
           strokeWidth="8"
           fill="transparent"

@@ -103,22 +103,22 @@ export default function Home() {
     >
       {/* Header */}
       <div className="text-center pt-8">
-        <h1 className="text-2xl font-bold text-black mb-2">ProdScale</h1>
+        <h1 className="text-2xl font-bold text-white mb-2">ProdScale</h1>
         <p className="text-sm italic text-accent">"{dailyQuote}"</p>
       </div>
 
-      {/* Circular Progress Meter */}
-      <div className="text-center">
+      {/* Circular Progress Meter with Score */}
+      <div className="text-center relative">
         <ProgressCircle score={score} />
         <div className="absolute inset-0 flex items-center justify-center">
-          <span className="text-2xl font-bold">{score.toFixed(1)}</span>
+          <span className="text-2xl font-bold text-white">{score.toFixed(1)}</span>
           <span className="text-sm text-accent ml-1">/10</span>
         </div>
       </div>
 
       {/* Stickman Mascot */}
-      <div className="text-center">
-        <Stickman score={score} />
+      <div className="text-center -mt-4">
+        <Stickman score={score} size="large" />
       </div>
 
       {/* Activity Check-in Section */}

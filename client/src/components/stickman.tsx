@@ -7,7 +7,7 @@ interface StickmanProps {
 }
 
 export default function Stickman({ score, size = "normal", inverted = false }: StickmanProps) {
-  const sizeClass = size === "large" ? "w-24 h-28" : "w-20 h-24";
+  const sizeClass = size === "large" ? "w-32 h-36" : "w-20 h-24";
 
   const getMessage = () => {
     if (score >= 9) return "Excellent work! You're crushing it!";
@@ -42,7 +42,7 @@ export default function Stickman({ score, size = "normal", inverted = false }: S
   return (
     <div className="text-center">
       <motion.div
-        className={`mx-auto mb-2 ${sizeClass} invert`}
+        className={`mx-auto mb-2 ${sizeClass} filter invert brightness-0 contrast-100`}
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 0.5, type: "spring" }}
@@ -63,9 +63,7 @@ export default function Stickman({ score, size = "normal", inverted = false }: S
           }}
         />
       </motion.div>
-      {!inverted && (
-        <p className="text-xs text-accent">{getMessage()}</p>
-      )}
+      <p className="text-xs text-accent mt-2">{getMessage()}</p>
     </div>
   );
 }
