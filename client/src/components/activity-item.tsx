@@ -1,8 +1,6 @@
-import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { Dumbbell, BookOpen, Brain, Code, Plus } from "lucide-react";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { apiRequest } from "@/lib/queryClient";
 import type { Activity, ActivityCompletion } from "@shared/schema";
@@ -23,7 +21,6 @@ const iconMap = {
 
 export default function ActivityItem({ activity, dailyEntryId, completion }: ActivityItemProps) {
   const queryClient = useQueryClient();
-  const [duration, setDuration] = useState(completion?.duration?.toString() || "");
   
   const IconComponent = iconMap[activity.icon as keyof typeof iconMap] || Plus;
   const isCompleted = completion?.completed || false;
@@ -36,7 +33,6 @@ export default function ActivityItem({ activity, dailyEntryId, completion }: Act
         // Update existing completion
         return apiRequest("PATCH", `/api/activity-completion/${completion.id}`, {
           completed,
-          duration: duration ? parseInt(duration) : null,
           completedAt: completed ? new Date().toISOString() : null,
         });
       } else {
@@ -45,7 +41,6 @@ export default function ActivityItem({ activity, dailyEntryId, completion }: Act
           dailyEntryId,
           activityId: activity.id,
           completed,
-          duration: duration ? parseInt(duration) : null,
           completedAt: completed ? new Date().toISOString() : null,
         });
       }
@@ -65,34 +60,23 @@ export default function ActivityItem({ activity, dailyEntryId, completion }: Act
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="flex items-center justify-between p-3 border border-gray-200 rounded-lg"
+      className="flex items-center justify-between p-3 border border-gray-600 rounded-lg bg-black"
     >
       <div className="flex items-center space-x-3">
-        <IconComponent className="w-5 h-5 text-accent" />
-        <span className="font-medium">{activity.name}</span>
+        <IconComponent className="w-5 h-5 text-white" />
+        <span className="font-medium text-white">{activity.name}</span>
       </div>
-      <div className="flex items-center space-x-2">
-        <Input
-          type="number"
-          placeholder="30"
-          value={duration}
-          onChange={(e) => setDuration(e.target.value)}
-          className="w-12 text-xs p-1 text-center"
-          disabled={isCompleted}
-        />
-        <span className="text-xs text-accent">min</span>
-        <Button
-          onClick={handleToggle}
-          disabled={toggleCompletionMutation.isPending}
-          className={`w-6 h-6 rounded-full text-xs p-0 ${
-            isCompleted
-              ? "bg-black text-white hover:bg-secondary"
-              : "border-2 border-gray-300 bg-transparent text-black hover:bg-gray-50"
-          }`}
-        >
-          {isCompleted && "✓"}
-        </Button>
-      </div>
+      <Button
+        onClick={handleToggle}
+        disabled={toggleCompletionMutation.isPending}
+        className={`w-8 h-8 rounded-full text-sm p-0 ${
+          isCompleted
+            ? "bg-white text-black hover:bg-gray-200"
+            : "border-2 border-gray-600 bg-transparent text-white hover:bg-gray-800"
+        }`}
+      >
+        {isCompleted && "✓"}
+      </Button>
     </motion.div>
   );
 }
