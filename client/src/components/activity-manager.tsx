@@ -136,7 +136,7 @@ export default function ActivityManager({ activities }: ActivityManagerProps) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-white">Activities</h3>
+        <h3 className="text-lg font-semibold text-white ml-[5px] mr-[5px]">Activities</h3>
         <Button
           onClick={() => setShowAddForm(!showAddForm)}
           className="bg-white text-black hover:bg-gray-200"
@@ -146,7 +146,6 @@ export default function ActivityManager({ activities }: ActivityManagerProps) {
           Add
         </Button>
       </div>
-
       {showAddForm && (
         <motion.div
           initial={{ opacity: 0, height: 0 }}
@@ -225,7 +224,6 @@ export default function ActivityManager({ activities }: ActivityManagerProps) {
           </div>
         </motion.div>
       )}
-
       <div className="space-y-2">
         {activities.map((activity) => (
           <div
