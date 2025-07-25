@@ -50,7 +50,7 @@ export default function Stickman({ score, size = "normal", inverted = false }: S
         <motion.img
           src={mascotSrc}
           alt={`Mascot for score ${score.toFixed(1)}`}
-          className="w-full h-full object-cover object-center pl-[0px] pr-[0px] pt-[0px] pb-[0px] ml-[-30px] mr-[-30px] mt-[-126px] mb-[-126px]"
+          className="w-full h-full object-cover object-center pl-[0px] pr-[0px] pt-[0px] pb-[0px] ml-[-30px] mr-[-30px] mt-[-13px] mb-[-13px]"
           style={{ 
             clipPath: 'inset(10% 10% 10% 10%)',
             transform: 'scale(1.2)'
