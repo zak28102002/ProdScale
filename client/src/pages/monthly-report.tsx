@@ -5,13 +5,18 @@ import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import CalendarHeatmap from "@/components/calendar-heatmap";
 import Stickman from "@/components/stickman";
+import type { DailyEntry } from "@shared/schema";
 
 export default function MonthlyReport() {
   const currentDate = new Date();
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth() + 1;
 
-  const { data: monthlyData, isLoading } = useQuery({
+  const { data: monthlyData, isLoading } = useQuery<{
+    entries: DailyEntry[];
+    average: number;
+    isUnproductive: boolean;
+  }>({
     queryKey: ["/api/monthly", year, month],
     enabled: true,
   });

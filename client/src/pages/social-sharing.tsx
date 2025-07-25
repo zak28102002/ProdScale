@@ -7,28 +7,29 @@ import Stickman from "@/components/stickman";
 import { getDailyQuote } from "@/lib/quotes";
 import { calculateProductivityScore } from "@/lib/scoring";
 import { useToast } from "@/hooks/use-toast";
+import type { DailyEntry, Activity, ActivityCompletion } from "@shared/schema";
 
 export default function SocialSharing() {
   const { toast } = useToast();
   const today = new Date().toISOString().split('T')[0];
 
   // Fetch today's data
-  const { data: dailyEntry } = useQuery({
+  const { data: dailyEntry } = useQuery<DailyEntry>({
     queryKey: ["/api/daily-entry", today],
     enabled: true,
   });
 
-  const { data: activities = [] } = useQuery({
+  const { data: activities = [] } = useQuery<Activity[]>({
     queryKey: ["/api/activities"],
     enabled: true,
   });
 
-  const { data: completions = [] } = useQuery({
+  const { data: completions = [] } = useQuery<ActivityCompletion[]>({
     queryKey: ["/api/daily-entry", dailyEntry?.id, "completions"],
     enabled: !!dailyEntry?.id,
   });
 
-  const { data: streak } = useQuery({
+  const { data: streak } = useQuery<{ currentStreak: number; longestStreak: number }>({
     queryKey: ["/api/streak"],
     enabled: true,
   });

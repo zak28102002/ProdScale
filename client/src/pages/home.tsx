@@ -18,25 +18,25 @@ export default function Home() {
   const [reflection, setReflection] = useState("");
 
   // Fetch today's daily entry
-  const { data: dailyEntry, isLoading: loadingEntry } = useQuery({
+  const { data: dailyEntry, isLoading: loadingEntry } = useQuery<DailyEntry>({
     queryKey: ["/api/daily-entry", today],
     enabled: true,
   });
 
   // Fetch user activities
-  const { data: activities = [], isLoading: loadingActivities } = useQuery({
+  const { data: activities = [], isLoading: loadingActivities } = useQuery<Activity[]>({
     queryKey: ["/api/activities"],
     enabled: true,
   });
 
   // Fetch activity completions
-  const { data: completions = [], isLoading: loadingCompletions } = useQuery({
+  const { data: completions = [], isLoading: loadingCompletions } = useQuery<ActivityCompletion[]>({
     queryKey: ["/api/daily-entry", dailyEntry?.id, "completions"],
     enabled: !!dailyEntry?.id,
   });
 
   // Fetch user streak
-  const { data: streak } = useQuery({
+  const { data: streak } = useQuery<{ currentStreak: number; longestStreak: number }>({
     queryKey: ["/api/streak"],
     enabled: true,
   });

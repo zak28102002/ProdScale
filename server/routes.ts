@@ -1,10 +1,14 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
+import express from "express";
+import path from "path";
 import { storage } from "./storage";
 import { insertDailyEntrySchema, insertActivityCompletionSchema } from "@shared/schema";
 import { calculateProductivityScore } from "../client/src/lib/scoring";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Serve attached assets
+  app.use('/attached_assets', express.static(path.join(process.cwd(), 'attached_assets')));
   // Get today's daily entry
   app.get("/api/daily-entry/:date", async (req, res) => {
     try {
