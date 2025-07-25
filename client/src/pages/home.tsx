@@ -117,13 +117,13 @@ export default function Home() {
       </div>
 
       {/* Stickman Mascot */}
-      <div className="text-center -mt-8">
+      <div className="text-center -mt-8 mb-8">
         <Stickman score={score} size="large" />
       </div>
 
       {/* Activity Check-in Section */}
-      <div className="space-y-4">
-        <h2 className="text-lg font-semibold">Today's Activities</h2>
+      <div className="space-y-4 mt-8">
+        <h2 className="text-lg font-semibold text-white">Today's Activities</h2>
         <div className="space-y-3">
           {activities.map((activity: Activity) => (
             <ActivityItem
