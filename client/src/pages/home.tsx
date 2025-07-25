@@ -99,7 +99,7 @@ export default function Home() {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="p-6 space-y-8"
+      className="p-6 space-y-4"
     >
       {/* Header */}
       <div className="text-center pt-8">
@@ -108,7 +108,7 @@ export default function Home() {
       </div>
 
       {/* Circular Progress Meter with Score */}
-      <div className="text-center relative">
+      <div className="text-center relative mb-4">
         <ProgressCircle score={score} />
         <div className="absolute inset-0 flex items-center justify-center">
           <span className="text-2xl font-bold text-white">{score.toFixed(1)}</span>
@@ -117,7 +117,7 @@ export default function Home() {
       </div>
 
       {/* Stickman Mascot */}
-      <div className="text-center -mt-4">
+      <div className="text-center -mt-8">
         <Stickman score={score} size="large" />
       </div>
 
