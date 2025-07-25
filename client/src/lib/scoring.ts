@@ -13,33 +13,25 @@ export function calculateProductivityScore({
   hasReflection,
   currentStreak,
 }: ScoringParams): number {
-  let score = 0;
-  
   const completedActivities = completions.filter(c => c.completed);
   const totalActivities = activities.length;
   
-  // +3 points if all selected activities were done
-  if (completedActivities.length === totalActivities && totalActivities > 0) {
-    score += 3;
-  }
-  // +2 points if more than 3 activities completed
-  else if (completedActivities.length >= 3) {
-    score += 2;
-  }
+  if (totalActivities === 0) return 0;
   
-  // +2 points if reflection was added
+  // Base score: purely proportional to completion percentage (0-8 points)
+  const completionRatio = completedActivities.length / totalActivities;
+  let score = completionRatio * 8;
+  
+  // Bonus points for extras:
+  // +1 point for reflection
   if (hasReflection) {
-    score += 2;
+    score += 1;
   }
   
-  // +2 points if user hit a 3+ day streak
+  // +1 point for streak (3+ days)
   if (currentStreak >= 3) {
-    score += 2;
+    score += 1;
   }
-  
-  // Base score for partial completion (1-3 points based on completion ratio)
-  const completionRatio = totalActivities > 0 ? completedActivities.length / totalActivities : 0;
-  score += Math.floor(completionRatio * 3);
   
   // Ensure score is between 0 and 10
   return Math.min(Math.max(score, 0), 10);
