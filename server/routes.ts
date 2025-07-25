@@ -92,7 +92,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Update activity completion
   app.post("/api/activity-completion", async (req, res) => {
     try {
-      const completionData = insertActivityCompletionSchema.parse(req.body);
+      // Convert completedAt string to Date if it exists
+      const requestData = { ...req.body };
+      if (requestData.completedAt && typeof requestData.completedAt === 'string') {
+        requestData.completedAt = new Date(requestData.completedAt);
+      }
+      
+      const completionData = insertActivityCompletionSchema.parse(requestData);
       const completion = await storage.createActivityCompletion(completionData);
       res.json(completion);
     } catch (error) {
@@ -105,7 +111,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.patch("/api/activity-completion/:id", async (req, res) => {
     try {
       const { id } = req.params;
-      const updateData = insertActivityCompletionSchema.partial().parse(req.body);
+      
+      // Convert completedAt string to Date if it exists
+      const requestData = { ...req.body };
+      if (requestData.completedAt && typeof requestData.completedAt === 'string') {
+        requestData.completedAt = new Date(requestData.completedAt);
+      }
+      
+      const updateData = insertActivityCompletionSchema.partial().parse(requestData);
       
       const completion = await storage.updateActivityCompletion(id, updateData);
       res.json(completion);
