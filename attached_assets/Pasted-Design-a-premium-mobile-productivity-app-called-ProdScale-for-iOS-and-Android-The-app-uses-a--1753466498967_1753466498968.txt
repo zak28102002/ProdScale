@@ -1,0 +1,59 @@
+Design a premium mobile productivity app called “ProdScale” for iOS and Android.
+
+The app uses a **black-and-white ultra-minimal interface** with modern typography, stroke-based icons, and smart AI scoring logic. The entire user experience should feel like a premium wellness app.
+
+### 🖥️ Home (Today Screen)
+
+- Header: App name “ProdScale” in bold, modern font
+- Under it: Today’s **motivational quote** (changes daily) in italic, e.g.:
+  “Discipline is remembering what you want.”
+
+- Center: Large **circular progress meter** showing today’s **Productivity Score** (e.g., 7.8 / 10), with animated color change (white if good, red if low)
+
+- Below: A **mascot stickman illustration** that changes expression or pose based on the score:
+  - Score 9–10: Flexing or jumping
+  - Score 7–8: Smiling
+  - Score 4–6: Sitting tired
+  - Score 1–3: Lying down or sleeping
+
+- Activity Check-in Section:
+  - List or grid of custom user-selected activities (Gym, Reading, Meditation, etc.)
+  - Each shows a toggle/checkmark ✅ or ❌ for completion
+  - Optional input: duration/intensity
+
+- Reflection Box:
+  - Text area for adding “Daily Notes” or thoughts
+  - Adds to the AI score if filled
+
+- Bottom Buttons:
+  - “View Monthly Report” (outlined)
+  - “Share Day” (filled, white button)
+
+### 📆 Monthly Report Screen
+
+- Calendar heatmap of scores (white for high, dark gray for low)
+- Monthly average (e.g., 6.3)
+- If under 6 → label: “Unproductive Month 😞”
+- Monthly stickman badge (with matching mood)
+
+### 📷 Social Sharing Screen
+
+- Clean black card
+- Shows: Daily Score, Activities Done, Quote of the Day, Stickman pose
+- Add small “Made with ProdScale” logo
+- Export button for Instagram, Threads, TikTok, etc.
+
+### 🎨 Design Guidelines
+
+- **Color Palette**: #000000 (Black), #FFFFFF (White), shades of Gray (#222, #444)
+- **Fonts**: Inter, SF Pro, or Neue Montreal
+- **Icons**: Lucide or stroke-based
+- **Layout**: Very breathable with generous padding and minimalist cards
+
+### 🧠 AI Logic MVP
+
+- +3 points if all selected activities were done
+- +2 points if more than 3 activities completed
+- +2 points if reflection was added
+- +2 points if user hit a 3+ day streak
+→ Total possible: 10
