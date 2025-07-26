@@ -143,11 +143,11 @@ export default function Home() {
       </div>
       {/* Reflection Box */}
       <div className="space-y-3">
-        <h2 className="text-lg font-semibold ml-[3px] mr-[3px]">Daily Reflection</h2>
+        <h2 className="text-lg font-semibold ml-[3px] mr-[3px] text-black dark:text-white">Daily Reflection</h2>
         <Textarea
           value={reflection}
           onChange={(e) => setReflection(e.target.value)}
-          className="resize-none focus:border-black transition-colors"
+          className="resize-none focus:border-black dark:focus:border-white transition-colors bg-white dark:bg-black text-black dark:text-white border-gray-300 dark:border-gray-600"
           rows={3}
           placeholder="How did today go? What did you learn?"
         />
@@ -155,12 +155,12 @@ export default function Home() {
       {/* Bottom Buttons */}
       <div className="space-y-3 pt-4">
         <Link href="/monthly">
-          <Button variant="outline" className="w-full border-2 border-black hover:bg-black hover:text-white mt-[5px] mb-[5px]">
+          <Button variant="outline" className="w-full border-2 border-black dark:border-white hover:bg-black dark:hover:bg-white hover:text-white dark:hover:text-black mt-[5px] mb-[5px]">
             View Monthly Report
           </Button>
         </Link>
         <Link href="/share">
-          <Button className="w-full bg-black text-white hover:bg-secondary mt-[5px] mb-[5px]">
+          <Button className="w-full bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200">
             Share Day
           </Button>
         </Link>

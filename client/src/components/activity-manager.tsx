@@ -139,7 +139,7 @@ export default function ActivityManager({ activities }: ActivityManagerProps) {
         <h3 className="text-lg font-semibold text-black dark:text-white ml-[3px] mr-[3px]">Activities</h3>
         <Button
           onClick={() => setShowAddForm(!showAddForm)}
-          className="bg-white text-black hover:bg-gray-200"
+          className="bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200"
           size="sm"
         >
           <Plus className="w-4 h-4 mr-1" />
@@ -188,13 +188,13 @@ export default function ActivityManager({ activities }: ActivityManagerProps) {
                 return acc;
               }, {} as Record<string, typeof iconOptions>)).map(([category, options]) => (
                 <div key={category}>
-                  <div className="px-2 py-1 text-xs font-semibold text-gray-400 bg-gray-800">
+                  <div className="px-2 py-1 text-xs font-semibold text-gray-600 dark:text-gray-400 bg-gray-200 dark:bg-gray-800">
                     {category}
                   </div>
                   {options.map((option) => {
                     const IconComponent = option.icon;
                     return (
-                      <SelectItem key={option.value} value={option.value} className="text-white hover:bg-gray-800">
+                      <SelectItem key={option.value} value={option.value} className="text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-800">
                         <div className="flex items-center space-x-2">
                           <IconComponent className="w-4 h-4" />
                           <span>{option.label}</span>
@@ -210,14 +210,14 @@ export default function ActivityManager({ activities }: ActivityManagerProps) {
             <Button
               onClick={handleAddActivity}
               disabled={!newActivityName.trim() || createActivityMutation.isPending}
-              className="bg-white text-black hover:bg-gray-200 flex-1"
+              className="bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200 flex-1"
             >
               Add Activity
             </Button>
             <Button
               onClick={() => setShowAddForm(false)}
               variant="outline"
-              className="border-gray-600 text-white hover:bg-gray-800"
+              className="border-gray-300 dark:border-gray-600 text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-800"
             >
               Cancel
             </Button>
@@ -228,9 +228,9 @@ export default function ActivityManager({ activities }: ActivityManagerProps) {
         {activities.map((activity) => (
           <div
             key={activity.id}
-            className="flex items-center justify-between p-2 border border-gray-600 rounded-lg bg-black"
+            className="flex items-center justify-between p-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-black"
           >
-            <span className="text-white font-medium">{activity.name}</span>
+            <span className="text-black dark:text-white font-medium">{activity.name}</span>
             <Button
               onClick={() => handleDeleteActivity(activity.id)}
               disabled={deleteActivityMutation.isPending}

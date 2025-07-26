@@ -133,19 +133,19 @@ export default function ActivityItem({ activity, dailyEntryId, completion }: Act
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="flex items-center justify-between p-3 border border-gray-600 rounded-lg bg-black"
+      className="flex items-center justify-between p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-black"
     >
       <div className="flex items-center space-x-3">
-        <IconComponent className="w-5 h-5 text-white" />
-        <span className="font-medium text-white">{activity.name}</span>
+        <IconComponent className="w-5 h-5 text-black dark:text-white" />
+        <span className="font-medium text-black dark:text-white">{activity.name}</span>
       </div>
       <Button
         onClick={handleToggle}
         disabled={toggleCompletionMutation.isPending}
         className={`w-8 h-8 rounded-full text-sm p-0 ${
           isCompleted
-            ? "bg-white text-black hover:bg-gray-200"
-            : "border-2 border-gray-600 bg-transparent text-white hover:bg-gray-800"
+            ? "bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200"
+            : "border-2 border-gray-300 dark:border-gray-600 bg-transparent text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-800"
         }`}
       >
         {isCompleted && "✓"}
