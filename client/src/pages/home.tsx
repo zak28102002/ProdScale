@@ -152,7 +152,7 @@ export default function Home() {
       {/* Bottom Buttons */}
       <div className="space-y-3 pt-4">
         <Link href="/monthly">
-          <Button variant="outline" className="w-full border-2 border-black hover:bg-black hover:text-white">
+          <Button variant="outline" className="w-full border-2 border-black hover:bg-black hover:text-white mt-[5px] mb-[5px]">
             View Monthly Report
           </Button>
         </Link>
