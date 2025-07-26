@@ -3,7 +3,6 @@ import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { ArrowLeft, Instagram, Twitter, Facebook, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import Stickman from "@/components/stickman";
 import { getDailyQuote } from "@/lib/quotes";
 import { calculateProductivityScore } from "@/lib/scoring";
 import { useToast } from "@/hooks/use-toast";
@@ -118,9 +117,43 @@ export default function SocialSharing() {
           </div>
         </div>
         
-        <div className="text-center">
-          <div className="stickman mx-auto mb-3 invert">
-            <Stickman score={score} inverted />
+        <div className="text-center py-4">
+          <div className="relative mx-auto w-24 h-24 mb-2">
+            {/* Circular progress indicator */}
+            <svg className="w-24 h-24 transform -rotate-90" viewBox="0 0 100 100">
+              <circle
+                cx="50"
+                cy="50"
+                r="40"
+                stroke="rgba(255,255,255,0.2)"
+                strokeWidth="8"
+                fill="none"
+              />
+              <circle
+                cx="50"
+                cy="50"
+                r="40"
+                stroke="white"
+                strokeWidth="8"
+                fill="none"
+                strokeDasharray={`${(score / 10) * 251.2} 251.2`}
+                strokeLinecap="round"
+                className="transition-all duration-500"
+              />
+            </svg>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <span className="text-2xl font-bold text-white">{score.toFixed(1)}</span>
+            </div>
+          </div>
+          <div className="flex items-center justify-center space-x-1">
+            {[...Array(5)].map((_, i) => (
+              <div
+                key={i}
+                className={`w-2 h-2 rounded-full ${
+                  i < Math.ceil(score / 2) ? 'bg-white' : 'bg-white bg-opacity-30'
+                }`}
+              />
+            ))}
           </div>
         </div>
 
