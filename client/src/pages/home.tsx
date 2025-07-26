@@ -107,7 +107,6 @@ export default function Home() {
         <h1 className="text-2xl font-bold text-white mb-2">ProdScale</h1>
         <p className="text-sm italic text-accent">"{dailyQuote}"</p>
       </div>
-
       {/* Circular Progress Meter with Score */}
       <div className="text-center relative mb-4">
         <ProgressCircle score={score} />
@@ -116,19 +115,17 @@ export default function Home() {
           <span className="text-sm text-accent ml-1">/10</span>
         </div>
       </div>
-
       {/* Stickman Mascot */}
       <div className="text-center -mt-8 mb-8">
         <Stickman score={score} size="large" />
       </div>
-
       {/* Activity Management Section */}
       <div className="space-y-6 mt-8">
         <ActivityManager activities={activities} />
         
         {/* Today's Activities Check-in */}
         <div className="space-y-4">
-          <h2 className="text-lg font-semibold text-white">Today's Check-in</h2>
+          <h2 className="text-lg font-semibold text-white ml-[3px] mr-[3px]">Today's Check-in</h2>
           <div className="space-y-3">
             {activities.map((activity: Activity) => (
               <ActivityItem
@@ -141,10 +138,9 @@ export default function Home() {
           </div>
         </div>
       </div>
-
       {/* Reflection Box */}
       <div className="space-y-3">
-        <h2 className="text-lg font-semibold">Daily Reflection</h2>
+        <h2 className="text-lg font-semibold ml-[3px] mr-[3px]">Daily Reflection</h2>
         <Textarea
           value={reflection}
           onChange={(e) => setReflection(e.target.value)}
@@ -153,7 +149,6 @@ export default function Home() {
           placeholder="How did today go? What did you learn?"
         />
       </div>
-
       {/* Bottom Buttons */}
       <div className="space-y-3 pt-4">
         <Link href="/monthly">

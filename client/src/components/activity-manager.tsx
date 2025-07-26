@@ -136,7 +136,7 @@ export default function ActivityManager({ activities }: ActivityManagerProps) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-white ml-[5px] mr-[5px]">Activities</h3>
+        <h3 className="text-lg font-semibold text-white ml-[3px] mr-[3px]">Activities</h3>
         <Button
           onClick={() => setShowAddForm(!showAddForm)}
           className="bg-white text-black hover:bg-gray-200"
