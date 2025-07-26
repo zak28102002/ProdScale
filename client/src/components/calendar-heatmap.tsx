@@ -5,9 +5,10 @@ interface CalendarHeatmapProps {
   entries: DailyEntry[];
   year: number;
   month: number;
+  onDayClick?: (date: string) => void;
 }
 
-export default function CalendarHeatmap({ entries, year, month }: CalendarHeatmapProps) {
+export default function CalendarHeatmap({ entries, year, month, onDayClick }: CalendarHeatmapProps) {
   // Create a map of date to score for quick lookup
   const scoreMap = new Map();
   entries.forEach(entry => {
@@ -71,10 +72,15 @@ export default function CalendarHeatmap({ entries, year, month }: CalendarHeatma
               dayData 
                 ? `${getHeatmapColor(dayData.score)} ${
                     isToday(dayData.dateStr) ? 'border-2 border-black' : ''
-                  }`
+                  } ${onDayClick ? 'cursor-pointer hover:opacity-80' : ''}`
                 : 'bg-transparent'
             }`}
             title={dayData ? `Day ${dayData.day}: Score ${dayData.score}/10` : ''}
+            onClick={() => {
+              if (dayData && onDayClick && dayData.score > 0) {
+                onDayClick(dayData.dateStr);
+              }
+            }}
           />
         ))}
       </div>

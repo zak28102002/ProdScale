@@ -58,6 +58,22 @@ export default function Home() {
     },
   });
 
+  // Finalize day mutation
+  const finalizeDayMutation = useMutation({
+    mutationFn: async () => {
+      return apiRequest("POST", `/api/finalize-day/${today}`, {});
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["/api/daily-entry", today]
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["/api/streak"]
+      });
+      // Show success message or redirect to next day
+    },
+  });
+
   // Calculate score whenever completions or reflection changes
   const score = calculateProductivityScore({
     completions,
@@ -154,6 +170,22 @@ export default function Home() {
       </div>
       {/* Bottom Buttons */}
       <div className="space-y-3 pt-4">
+        {!dailyEntry?.isFinalized && (
+          <Button 
+            onClick={() => finalizeDayMutation.mutate()}
+            disabled={finalizeDayMutation.isPending}
+            className="w-full bg-green-600 dark:bg-green-500 text-white hover:bg-green-700 dark:hover:bg-green-600"
+          >
+            {finalizeDayMutation.isPending ? "Finalizing..." : "Finalize Day"}
+          </Button>
+        )}
+        {dailyEntry?.isFinalized && (
+          <div className="w-full p-3 bg-green-100 dark:bg-green-900 border border-green-300 dark:border-green-700 rounded-lg text-center">
+            <span className="text-green-800 dark:text-green-200 font-medium">
+              ✅ Day finalized! Score: {dailyEntry.score}/10
+            </span>
+          </div>
+        )}
         <Link href="/monthly">
           <Button variant="outline" className="w-full border-2 border-black dark:border-white hover:bg-black dark:hover:bg-white hover:text-white dark:hover:text-black mt-[5px] mb-[5px]">
             View Monthly Report

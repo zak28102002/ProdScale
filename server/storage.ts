@@ -112,19 +112,20 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getUserDailyEntries(userId: string, startDate?: string, endDate?: string): Promise<DailyEntry[]> {
-    let query = db.select().from(dailyEntries).where(eq(dailyEntries.userId, userId));
+    let whereConditions = [eq(dailyEntries.userId, userId)];
     
     if (startDate && endDate) {
-      query = query.where(
-        and(
-          eq(dailyEntries.userId, userId),
-          sql`${dailyEntries.date} >= ${startDate}`,
-          sql`${dailyEntries.date} <= ${endDate}`
-        )
+      whereConditions.push(
+        sql`${dailyEntries.date} >= ${startDate}`,
+        sql`${dailyEntries.date} <= ${endDate}`
       );
     }
     
-    return await query.orderBy(desc(dailyEntries.date));
+    return await db
+      .select()
+      .from(dailyEntries)
+      .where(and(...whereConditions))
+      .orderBy(desc(dailyEntries.date));
   }
 
   // Activity completion operations
