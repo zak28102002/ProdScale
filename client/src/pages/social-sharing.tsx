@@ -36,7 +36,6 @@ export default function SocialSharing() {
   const score = calculateProductivityScore({
     completions,
     activities,
-    hasReflection: !!dailyEntry?.reflection?.trim(),
     currentStreak: streak?.currentStreak || 0,
   });
 

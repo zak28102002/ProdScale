@@ -74,11 +74,10 @@ export default function Home() {
     },
   });
 
-  // Calculate score whenever completions or reflection changes
+  // Calculate score whenever completions change
   const score = calculateProductivityScore({
     completions,
     activities,
-    hasReflection: reflection.trim().length > 0,
     currentStreak: streak?.currentStreak || 0,
   });
 

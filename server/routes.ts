@@ -215,7 +215,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const finalScore = calculateProductivityScore({
         completions,
         activities,
-        hasReflection: !!dailyEntry.reflection?.trim(),
         currentStreak: 0, // Will be updated separately
       });
 
