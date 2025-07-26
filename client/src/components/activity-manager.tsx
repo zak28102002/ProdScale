@@ -136,7 +136,7 @@ export default function ActivityManager({ activities }: ActivityManagerProps) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-white ml-[3px] mr-[3px]">Activities</h3>
+        <h3 className="text-lg font-semibold text-black dark:text-white ml-[3px] mr-[3px]">Activities</h3>
         <Button
           onClick={() => setShowAddForm(!showAddForm)}
           className="bg-white text-black hover:bg-gray-200"
@@ -151,16 +151,16 @@ export default function ActivityManager({ activities }: ActivityManagerProps) {
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: "auto" }}
           exit={{ opacity: 0, height: 0 }}
-          className="border border-gray-600 rounded-lg p-4 bg-black space-y-3"
+          className="border border-gray-600 dark:border-gray-600 border-gray-300 rounded-lg p-4 bg-white dark:bg-black space-y-3"
         >
           <Input
             placeholder="Activity name (e.g., Exercise, Reading)"
             value={newActivityName}
             onChange={(e) => setNewActivityName(e.target.value)}
-            className="bg-black border-gray-600 text-white"
+            className="bg-white dark:bg-black border-gray-300 dark:border-gray-600 text-black dark:text-white"
           />
           <Select value={newActivityIcon} onValueChange={setNewActivityIcon}>
-            <SelectTrigger className="bg-black border-gray-600 text-white">
+            <SelectTrigger className="bg-white dark:bg-black border-gray-300 dark:border-gray-600 text-black dark:text-white">
               <SelectValue>
                 {newActivityIcon && (
                   <div className="flex items-center space-x-2">
@@ -181,7 +181,7 @@ export default function ActivityManager({ activities }: ActivityManagerProps) {
                 )}
               </SelectValue>
             </SelectTrigger>
-            <SelectContent className="bg-black border-gray-600 max-h-96 overflow-y-auto">
+            <SelectContent className="bg-white dark:bg-black border-gray-300 dark:border-gray-600 max-h-96 overflow-y-auto">
               {Object.entries(iconOptions.reduce((acc, option) => {
                 if (!acc[option.category]) acc[option.category] = [];
                 acc[option.category].push(option);

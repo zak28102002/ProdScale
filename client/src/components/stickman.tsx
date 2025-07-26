@@ -42,7 +42,7 @@ export default function Stickman({ score, size = "normal", inverted = false }: S
   return (
     <div className="text-center">
       <motion.div
-        className={`mx-auto ${sizeClass} filter invert brightness-0 contrast-100 overflow-hidden`}
+        className={`mx-auto ${sizeClass} filter invert dark:invert-0 brightness-0 dark:brightness-100 contrast-100 overflow-hidden`}
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 0.5, type: "spring" }}
@@ -67,7 +67,7 @@ export default function Stickman({ score, size = "normal", inverted = false }: S
           }}
         />
       </motion.div>
-      <p className="text-xs text-accent mt-4 mb-6">{getMessage()}</p>
+      <p className="text-xs text-gray-600 dark:text-gray-400 mt-4 mb-6">{getMessage()}</p>
     </div>
   );
 }

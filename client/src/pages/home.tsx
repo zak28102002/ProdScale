@@ -9,6 +9,7 @@ import Stickman from "@/components/stickman";
 import ProgressCircle from "@/components/progress-circle";
 import ActivityItem from "@/components/activity-item";
 import ActivityManager from "@/components/activity-manager";
+import ThemeToggle from "@/components/theme-toggle";
 import { calculateProductivityScore } from "@/lib/scoring";
 import { getDailyQuote } from "@/lib/quotes";
 import type { DailyEntry, Activity, ActivityCompletion } from "@shared/schema";
@@ -97,22 +98,24 @@ export default function Home() {
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="p-6 space-y-4"
-    >
+    <>
+      <ThemeToggle />
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="p-6 space-y-4 bg-white dark:bg-black text-black dark:text-white min-h-screen"
+      >
       {/* Header */}
       <div className="text-center pt-8">
-        <h1 className="text-2xl font-bold text-white mb-2">ProdScale</h1>
-        <p className="text-sm italic text-accent">"{dailyQuote}"</p>
+        <h1 className="text-2xl font-bold text-black dark:text-white mb-2">ProdScale</h1>
+        <p className="text-sm italic text-gray-600 dark:text-gray-400">"{dailyQuote}"</p>
       </div>
       {/* Circular Progress Meter with Score */}
       <div className="text-center relative mb-4">
         <ProgressCircle score={score} />
         <div className="absolute inset-0 flex items-center justify-center">
-          <span className="text-2xl font-bold text-white">{score.toFixed(1)}</span>
-          <span className="text-sm text-accent ml-1">/10</span>
+          <span className="text-2xl font-bold text-black dark:text-white">{score.toFixed(1)}</span>
+          <span className="text-sm text-gray-600 dark:text-gray-400 ml-1">/10</span>
         </div>
       </div>
       {/* Stickman Mascot */}
@@ -163,5 +166,6 @@ export default function Home() {
         </Link>
       </div>
     </motion.div>
+    </>
   );
 }
