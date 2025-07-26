@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
 
 interface StickmanProps {
   score: number;
@@ -7,6 +8,26 @@ interface StickmanProps {
 }
 
 export default function Stickman({ score, size = "normal", inverted = false }: StickmanProps) {
+  const [isDark, setIsDark] = useState(true);
+
+  useEffect(() => {
+    // Check if dark mode is active
+    const checkDarkMode = () => {
+      setIsDark(document.documentElement.classList.contains('dark'));
+    };
+    
+    // Initial check
+    checkDarkMode();
+    
+    // Set up observer to watch for class changes
+    const observer = new MutationObserver(checkDarkMode);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class']
+    });
+    
+    return () => observer.disconnect();
+  }, []);
   const sizeClass = size === "large" ? "w-[400px] h-[400px]" : "w-20 h-24";
 
   const getMessage = () => {
@@ -42,7 +63,12 @@ export default function Stickman({ score, size = "normal", inverted = false }: S
   return (
     <div className="text-center">
       <motion.div
-        className={`mx-auto ${sizeClass} filter dark:invert invert-0 dark:brightness-0 brightness-100 contrast-100 overflow-hidden`}
+        className={`mx-auto ${sizeClass} overflow-hidden`}
+        style={{
+          filter: isDark 
+            ? 'invert(1) brightness(0) contrast(100)' 
+            : 'invert(0) brightness(0) contrast(100)'
+        }}
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 0.5, type: "spring" }}
