@@ -157,7 +157,7 @@ export default function Home() {
           </Button>
         </Link>
         <Link href="/share">
-          <Button className="w-full bg-black text-white hover:bg-secondary">
+          <Button className="w-full bg-black text-white hover:bg-secondary mt-[5px] mb-[5px]">
             Share Day
           </Button>
         </Link>
