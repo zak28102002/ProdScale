@@ -66,7 +66,7 @@ export default function Stickman({ score, size = "normal", inverted = false }: S
         className={`mx-auto ${sizeClass} overflow-hidden`}
         style={{
           filter: isDark 
-            ? 'invert(1) brightness(0) contrast(100)' 
+            ? 'invert(1) brightness(1) contrast(100)' 
             : 'invert(0) brightness(0) contrast(100)'
         }}
         initial={{ scale: 0.8, opacity: 0 }}
