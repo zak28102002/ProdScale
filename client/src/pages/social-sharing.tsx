@@ -43,7 +43,34 @@ export default function SocialSharing() {
   const completedActivities = completions.filter(c => c.completed);
   const dailyQuote = getDailyQuote();
 
-  const shareText = `I scored ${score.toFixed(1)}/10 on ProdScale today! 🎯\n\n✅ Completed ${completedActivities.length} activities\n💭 "${dailyQuote}"\n\n#ProdScale #Productivity`;
+  // Create engaging share text based on achievement level
+  const getShareText = () => {
+    let achievementText = "";
+    let emoji = "";
+    
+    if (score >= 9) {
+      achievementText = "🏆 LEGENDARY productivity day!";
+      emoji = "🔥";
+    } else if (score >= 7) {
+      achievementText = "🌟 Champion level performance!";
+      emoji = "💪";
+    } else if (score >= 5) {
+      achievementText = "⚡ Warrior mode activated!";
+      emoji = "🎯";
+    } else if (score >= 3) {
+      achievementText = "🌱 Rising to the challenge!";
+      emoji = "📈";
+    } else {
+      achievementText = "🎯 Starting my journey!";
+      emoji = "🚀";
+    }
+    
+    const streakText = (streak?.currentStreak || 0) > 0 ? `\n🔥 ${streak?.currentStreak} day streak!` : "";
+    
+    return `${achievementText}\n\n${emoji} Scored ${score.toFixed(1)}/10 on ProdScale${streakText}\n✅ Completed ${completedActivities.length} activities\n\n💭 "${dailyQuote}"\n\n#ProdScale #ProductivityGoals #DailyWins`;
+  };
+  
+  const shareText = getShareText();
 
   const handleShare = (platform: string) => {
     let url = '';
@@ -118,7 +145,7 @@ export default function SocialSharing() {
         </div>
         
         <div className="text-center py-4">
-          <div className="relative mx-auto w-24 h-24 mb-2">
+          <div className="relative mx-auto w-24 h-24 mb-3">
             {/* Circular progress indicator */}
             <svg className="w-24 h-24 transform -rotate-90" viewBox="0 0 100 100">
               <circle
@@ -145,6 +172,43 @@ export default function SocialSharing() {
               <span className="text-2xl font-bold text-white">{score.toFixed(1)}</span>
             </div>
           </div>
+          
+          {/* Achievement Badge */}
+          <div className="mb-3">
+            {score >= 9 && (
+              <div className="inline-flex items-center px-3 py-1 bg-yellow-400 text-black rounded-full text-sm font-bold">
+                🏆 Legendary
+              </div>
+            )}
+            {score >= 7 && score < 9 && (
+              <div className="inline-flex items-center px-3 py-1 bg-green-400 text-black rounded-full text-sm font-bold">
+                🌟 Champion
+              </div>
+            )}
+            {score >= 5 && score < 7 && (
+              <div className="inline-flex items-center px-3 py-1 bg-blue-400 text-black rounded-full text-sm font-bold">
+                💪 Warrior
+              </div>
+            )}
+            {score >= 3 && score < 5 && (
+              <div className="inline-flex items-center px-3 py-1 bg-purple-400 text-black rounded-full text-sm font-bold">
+                🌱 Rising
+              </div>
+            )}
+            {score < 3 && (
+              <div className="inline-flex items-center px-3 py-1 bg-gray-400 text-black rounded-full text-sm font-bold">
+                🎯 Starter
+              </div>
+            )}
+          </div>
+          
+          {/* Streak Display */}
+          {(streak?.currentStreak || 0) > 0 && (
+            <div className="text-sm text-white opacity-90 mb-2">
+              🔥 {streak?.currentStreak} day streak!
+            </div>
+          )}
+          
           <div className="flex items-center justify-center space-x-1">
             {[...Array(5)].map((_, i) => (
               <div
@@ -178,6 +242,13 @@ export default function SocialSharing() {
 
         <div className="border-t border-white border-opacity-20 pt-3">
           <p className="text-sm italic opacity-80">"{dailyQuote}"</p>
+        </div>
+
+        {/* Challenge Friends */}
+        <div className="border-t border-white border-opacity-20 pt-3">
+          <p className="text-xs opacity-80">
+            {score >= 7 ? "🎯 Can your friends beat this?" : "🚀 Join me on the productivity journey!"}
+          </p>
         </div>
 
         <div className="text-center">
@@ -224,10 +295,40 @@ export default function SocialSharing() {
         </div>
       </div>
 
+      {/* Motivational Quick Share Buttons */}
+      <div className="space-y-3">
+        <h3 className="font-semibold">Quick Share Templates:</h3>
+        <div className="grid grid-cols-1 gap-2">
+          <Button
+            variant="outline"
+            onClick={() => {
+              const quickText = score >= 7 
+                ? "🏆 Crushing my productivity goals today! Who else is leveling up? #ProductivityChallenge #ProdScale"
+                : "🌱 Building better habits one day at a time! Join me on this journey! #ProductivityJourney #ProdScale";
+              navigator.clipboard.writeText(quickText);
+              toast({
+                title: "Challenge text copied!",
+                description: "Ready to inspire your friends!",
+              });
+            }}
+            className="text-left justify-start p-3 h-auto"
+          >
+            <div>
+              <div className="font-medium">
+                {score >= 7 ? "🏆 Challenge Friends" : "🌱 Inspire Others"}
+              </div>
+              <div className="text-xs opacity-60">
+                {score >= 7 ? "Show off your achievement" : "Share your journey"}
+              </div>
+            </div>
+          </Button>
+        </div>
+      </div>
+
       {/* Save to Camera Roll */}
       <Button
         onClick={handleSaveImage}
-        className="w-full bg-black text-white hover:bg-secondary"
+        className="w-full bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200"
       >
         Save to Camera Roll
       </Button>
