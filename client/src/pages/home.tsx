@@ -241,19 +241,27 @@ export default function Home() {
           </Button>
         )}
         {dailyEntry?.isFinalized && (
-          <div className="w-full p-3 bg-green-100 dark:bg-green-900 border border-green-300 dark:border-green-700 rounded-lg">
-            <div className="text-center mb-2">
-              <span className="text-green-800 dark:text-green-200 font-medium">
-                ✅ Day finalized! Score: {dailyEntry.score}/10
-                {dailyEntry.autoFinalized && " (Auto-finalized)"}
-              </span>
+          <div className="w-full p-4 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950 dark:to-emerald-950 border border-green-200 dark:border-green-800 rounded-xl shadow-sm">
+            <div className="text-center mb-3">
+              <div className="inline-flex items-center justify-center w-8 h-8 bg-green-500 dark:bg-green-600 rounded-full mb-2">
+                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <div className="text-green-800 dark:text-green-200">
+                <div className="font-semibold text-lg">Day Finalized</div>
+                <div className="text-sm opacity-90">
+                  Final Score: {dailyEntry.score}/10
+                  {dailyEntry.autoFinalized && " • Auto-finalized"}
+                </div>
+              </div>
             </div>
             <Button 
               onClick={() => undoFinalizeMutation.mutate()}
               disabled={undoFinalizeMutation.isPending}
               variant="outline"
               size="sm"
-              className="w-full border-green-600 text-green-700 hover:bg-green-50 dark:border-green-400 dark:text-green-300 dark:hover:bg-green-950"
+              className="w-full border-green-600 text-green-700 hover:bg-green-100 dark:border-green-400 dark:text-green-300 dark:hover:bg-green-900 transition-colors"
             >
               {undoFinalizeMutation.isPending ? "Undoing..." : "Undo Finalization"}
             </Button>
