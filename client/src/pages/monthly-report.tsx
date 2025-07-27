@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
-import { ArrowLeft, X } from "lucide-react";
+import { ArrowLeft, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import CalendarHeatmap from "@/components/calendar-heatmap";
@@ -11,8 +11,8 @@ import type { DailyEntry } from "@shared/schema";
 
 export default function MonthlyReport() {
   const currentDate = new Date();
-  const year = currentDate.getFullYear();
-  const month = currentDate.getMonth() + 1;
+  const [year, setYear] = useState(currentDate.getFullYear());
+  const [month, setMonth] = useState(currentDate.getMonth() + 1);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
   const { data: monthlyData, isLoading } = useQuery<{
@@ -45,7 +45,45 @@ export default function MonthlyReport() {
     enabled: !!selectedDate,
   });
 
-  const monthName = currentDate.toLocaleString('default', { month: 'long', year: 'numeric' });
+  const monthName = new Date(year, month - 1).toLocaleString('default', { month: 'long', year: 'numeric' });
+
+  const goToPreviousMonth = () => {
+    if (month === 1) {
+      setMonth(12);
+      setYear(year - 1);
+    } else {
+      setMonth(month - 1);
+    }
+  };
+
+  const goToNextMonth = () => {
+    const currentMonth = new Date().getMonth() + 1;
+    const currentYear = new Date().getFullYear();
+    
+    // Don't allow navigation to future months
+    if (year === currentYear && month >= currentMonth) {
+      return;
+    }
+    
+    if (month === 12) {
+      setMonth(1);
+      setYear(year + 1);
+    } else {
+      setMonth(month + 1);
+    }
+  };
+
+  const isCurrentMonth = () => {
+    const currentMonth = new Date().getMonth() + 1;
+    const currentYear = new Date().getFullYear();
+    return year === currentYear && month === currentMonth;
+  };
+
+  const canGoToNextMonth = () => {
+    const currentMonth = new Date().getMonth() + 1;
+    const currentYear = new Date().getFullYear();
+    return !(year === currentYear && month >= currentMonth);
+  };
 
   if (isLoading) {
     return (
@@ -70,17 +108,39 @@ export default function MonthlyReport() {
       {/* Header */}
       <div className="flex items-center justify-between pt-8">
         <Link href="/">
-          <Button variant="ghost" size="icon" className="p-2 rounded-lg hover:bg-gray-100">
+          <Button variant="ghost" size="icon" className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
             <ArrowLeft className="w-5 h-5" />
           </Button>
         </Link>
-        <h1 className="text-xl font-bold">Monthly Report</h1>
+        
+        {/* Month Navigation */}
+        <div className="flex items-center space-x-4">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={goToPreviousMonth}
+            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </Button>
+          <h1 className="text-xl font-bold text-black dark:text-white min-w-[200px] text-center">{monthName}</h1>
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={goToNextMonth}
+            disabled={!canGoToNextMonth()}
+            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-30"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </Button>
+        </div>
+        
         <div className="w-9"></div>
       </div>
 
       {/* Month Header */}
       <div className="text-center">
-        <h2 className="text-lg font-semibold mb-2">{monthName}</h2>
+        <h2 className="text-lg font-semibold mb-2 text-black dark:text-white">Monthly Report</h2>
         <div className="text-3xl font-bold mb-1">{average}</div>
         <p className="text-sm text-accent">Monthly Average</p>
         {isUnproductive && (
@@ -90,13 +150,28 @@ export default function MonthlyReport() {
 
       {/* Calendar Heatmap */}
       <div className="space-y-4">
-        <h3 className="font-semibold">Daily Scores</h3>
+        <h3 className="font-semibold text-black dark:text-white">Daily Scores</h3>
         <CalendarHeatmap 
           entries={entries} 
           year={year} 
           month={month} 
           onDayClick={(date) => setSelectedDate(date)}
         />
+        {/* Legend */}
+        <div className="flex items-center justify-center space-x-6 text-sm">
+          <div className="flex items-center space-x-2">
+            <div className="w-4 h-4 bg-black dark:bg-gray-700 rounded"></div>
+            <span className="text-gray-600 dark:text-gray-400">Empty (0)</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <div className="w-4 h-4 bg-red-500 rounded"></div>
+            <span className="text-gray-600 dark:text-gray-400">Poor (1-5)</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <div className="w-4 h-4 bg-green-500 rounded"></div>
+            <span className="text-gray-600 dark:text-gray-400">Good (6+)</span>
+          </div>
+        </div>
       </div>
 
       {/* Monthly Stickman Badge */}

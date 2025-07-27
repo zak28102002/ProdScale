@@ -40,10 +40,9 @@ export default function CalendarHeatmap({ entries, year, month, onDayClick }: Ca
   }
 
   const getHeatmapColor = (score: number) => {
-    if (score >= 8) return "bg-black";
-    if (score >= 6) return "bg-gray-400";
-    if (score >= 3) return "bg-gray-300";
-    return "bg-gray-200";
+    if (score >= 6) return "bg-green-500 dark:bg-green-600"; // Good days (6+) - green
+    if (score > 0) return "bg-red-500 dark:bg-red-600"; // Poor days (1-5) - red  
+    return "bg-black dark:bg-gray-700"; // Empty days (0) - black
   };
 
   const isToday = (dateStr: string) => {
@@ -56,7 +55,7 @@ export default function CalendarHeatmap({ entries, year, month, onDayClick }: Ca
       <div className="grid grid-cols-7 gap-1">
         {/* Week headers */}
         {weekHeaders.map((header, index) => (
-          <div key={index} className="text-xs text-center text-accent p-1">
+          <div key={index} className="text-xs text-center text-gray-600 dark:text-gray-400 p-1">
             {header}
           </div>
         ))}
@@ -71,34 +70,20 @@ export default function CalendarHeatmap({ entries, year, month, onDayClick }: Ca
             className={`heatmap-day ${
               dayData 
                 ? `${getHeatmapColor(dayData.score)} ${
-                    isToday(dayData.dateStr) ? 'border-2 border-black' : ''
-                  } ${onDayClick ? 'cursor-pointer hover:opacity-80' : ''}`
+                    isToday(dayData.dateStr) ? 'border-2 border-blue-500 dark:border-blue-400' : ''
+                  } ${onDayClick ? 'cursor-pointer hover:opacity-80' : ''} text-white`
                 : 'bg-transparent'
-            }`}
+            } w-8 h-8 rounded flex items-center justify-center text-xs font-medium transition-all`}
             title={dayData ? `Day ${dayData.day}: Score ${dayData.score}/10` : ''}
             onClick={() => {
               if (dayData && onDayClick && dayData.score > 0) {
                 onDayClick(dayData.dateStr);
               }
             }}
-          />
+          >
+            {dayData?.day}
+          </motion.div>
         ))}
-      </div>
-      
-      {/* Legend */}
-      <div className="flex items-center justify-center space-x-4 text-xs text-accent mt-4">
-        <div className="flex items-center space-x-1">
-          <div className="w-3 h-3 bg-gray-200 rounded-sm"></div>
-          <span>Low</span>
-        </div>
-        <div className="flex items-center space-x-1">
-          <div className="w-3 h-3 bg-gray-400 rounded-sm"></div>
-          <span>Medium</span>
-        </div>
-        <div className="flex items-center space-x-1">
-          <div className="w-3 h-3 bg-black rounded-sm"></div>
-          <span>High</span>
-        </div>
       </div>
     </div>
   );
