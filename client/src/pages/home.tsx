@@ -185,6 +185,14 @@ export default function Home() {
       {/* Header */}
       <div className="text-center pt-8">
         <h1 className="text-2xl font-bold text-black dark:text-white mb-2">ProdScale</h1>
+        <div className="text-lg font-medium text-black dark:text-white mb-1">
+          {new Date(today).toLocaleDateString('en-US', { 
+            weekday: 'long', 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+          })}
+        </div>
         <p className="text-sm italic text-gray-600 dark:text-gray-400">"{dailyQuote}"</p>
       </div>
       {/* Circular Progress Meter with Score */}
