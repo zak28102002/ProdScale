@@ -36,6 +36,7 @@ export const dailyEntries = pgTable("daily_entries", {
   score: integer("score").default(0),
   isFinalized: boolean("is_finalized").default(false),
   finalizedAt: timestamp("finalized_at"),
+  autoFinalized: boolean("auto_finalized").default(false),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });

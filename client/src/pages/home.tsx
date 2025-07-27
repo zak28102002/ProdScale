@@ -74,6 +74,68 @@ export default function Home() {
     },
   });
 
+  // Undo finalize mutation
+  const undoFinalizeMutation = useMutation({
+    mutationFn: async () => {
+      return apiRequest("POST", `/api/undo-finalize/${today}`, {});
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["/api/daily-entry", today]
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["/api/streak"]
+      });
+    },
+  });
+
+  // Auto-finalize at midnight if not already finalized
+  useEffect(() => {
+    const checkAutoFinalize = async () => {
+      if (!dailyEntry || dailyEntry.isFinalized) return;
+      
+      const now = new Date();
+      const midnight = new Date();
+      midnight.setHours(24, 0, 0, 0); // Next midnight
+      
+      const timeUntilMidnight = midnight.getTime() - now.getTime();
+      
+      // If it's already past midnight for today's entry, auto-finalize
+      if (timeUntilMidnight <= 0) {
+        try {
+          await apiRequest("POST", `/api/auto-finalize/${today}`, {});
+          queryClient.invalidateQueries({
+            queryKey: ["/api/daily-entry", today]
+          });
+          queryClient.invalidateQueries({
+            queryKey: ["/api/streak"]
+          });
+        } catch (error) {
+          console.error("Auto-finalize error:", error);
+        }
+      } else {
+        // Set timer for auto-finalization at midnight
+        const timer = setTimeout(async () => {
+          try {
+            await apiRequest("POST", `/api/auto-finalize/${today}`, {});
+            queryClient.invalidateQueries({
+              queryKey: ["/api/daily-entry", today]
+            });
+            queryClient.invalidateQueries({
+              queryKey: ["/api/streak"]
+            });
+          } catch (error) {
+            console.error("Auto-finalize error:", error);
+          }
+        }, timeUntilMidnight);
+        
+        return () => clearTimeout(timer);
+      }
+    };
+    
+    checkAutoFinalize();
+  }, [dailyEntry, today]);
+
   // Calculate score whenever completions change
   const score = calculateProductivityScore({
     completions,
@@ -143,7 +205,7 @@ export default function Home() {
         
         {/* Today's Activities Check-in */}
         <div className="space-y-4">
-          <h2 className="text-lg font-semibold text-white ml-[3px] mr-[3px]">Today's Check-in</h2>
+          <h2 className="text-lg font-semibold text-black dark:text-white ml-[3px] mr-[3px]">Today's Check-in</h2>
           <div className="space-y-3">
             {activities.map((activity: Activity) => (
               <ActivityItem
@@ -179,10 +241,22 @@ export default function Home() {
           </Button>
         )}
         {dailyEntry?.isFinalized && (
-          <div className="w-full p-3 bg-green-100 dark:bg-green-900 border border-green-300 dark:border-green-700 rounded-lg text-center">
-            <span className="text-green-800 dark:text-green-200 font-medium">
-              ✅ Day finalized! Score: {dailyEntry.score}/10
-            </span>
+          <div className="w-full p-3 bg-green-100 dark:bg-green-900 border border-green-300 dark:border-green-700 rounded-lg">
+            <div className="text-center mb-2">
+              <span className="text-green-800 dark:text-green-200 font-medium">
+                ✅ Day finalized! Score: {dailyEntry.score}/10
+                {dailyEntry.autoFinalized && " (Auto-finalized)"}
+              </span>
+            </div>
+            <Button 
+              onClick={() => undoFinalizeMutation.mutate()}
+              disabled={undoFinalizeMutation.isPending}
+              variant="outline"
+              size="sm"
+              className="w-full border-green-600 text-green-700 hover:bg-green-50 dark:border-green-400 dark:text-green-300 dark:hover:bg-green-950"
+            >
+              {undoFinalizeMutation.isPending ? "Undoing..." : "Undo Finalization"}
+            </Button>
           </div>
         )}
         <Link href="/monthly">

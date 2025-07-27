@@ -284,6 +284,139 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Auto-finalize day endpoint
+  app.post("/api/auto-finalize/:date", async (req, res) => {
+    try {
+      const { date } = req.params;
+      const userId = "demo-user"; // Replace with actual auth
+      
+      // Get daily entry and completions
+      const dailyEntry = await storage.getDailyEntry(userId, date);
+      if (!dailyEntry) {
+        return res.status(404).json({ message: "Daily entry not found" });
+      }
+
+      // Check if already finalized
+      if (dailyEntry.isFinalized) {
+        return res.status(400).json({ message: "Day already finalized" });
+      }
+
+      const completions = await storage.getActivityCompletions(dailyEntry.id);
+      const activities = await storage.getUserActivities(userId);
+      
+      // Calculate final score
+      const finalScore = calculateProductivityScore({
+        completions,
+        activities,
+        currentStreak: 0, // Will be updated separately
+      });
+
+      // Update daily entry with final score and auto-finalization
+      await storage.updateDailyEntry(dailyEntry.id, {
+        score: Math.round(finalScore * 10) / 10,
+        isFinalized: true,
+        autoFinalized: true,
+        finalizedAt: new Date(),
+      });
+
+      // Update streak
+      const isProductiveDay = finalScore >= 5;
+      const existingStreak = await storage.getUserStreak(userId);
+      
+      if (isProductiveDay) {
+        const newCurrentStreak = (existingStreak?.currentStreak || 0) + 1;
+        const newLongestStreak = Math.max(newCurrentStreak, existingStreak?.longestStreak || 0);
+        await storage.updateStreak(userId, {
+          currentStreak: newCurrentStreak,
+          longestStreak: newLongestStreak,
+          lastActivityDate: date,
+        });
+      } else {
+        await storage.updateStreak(userId, {
+          currentStreak: 0,
+          longestStreak: existingStreak?.longestStreak || 0,
+          lastActivityDate: date,
+        });
+      }
+
+      // Create next day's entry
+      const nextDayDate = new Date(date);
+      nextDayDate.setDate(nextDayDate.getDate() + 1);
+      const nextDay = nextDayDate.toISOString().split('T')[0];
+      
+      const existingNextDay = await storage.getDailyEntry(userId, nextDay);
+      if (!existingNextDay) {
+        const newEntry = await storage.createDailyEntry({
+          userId,
+          date: nextDay,
+          reflection: "",
+          score: 0,
+        });
+
+        for (const activity of activities) {
+          await storage.createActivityCompletion({
+            dailyEntryId: newEntry.id,
+            activityId: activity.id,
+            completed: false,
+            duration: 0,
+          });
+        }
+      }
+
+      res.json({ 
+        success: true, 
+        finalScore: Math.round(finalScore * 10) / 10,
+        message: "Day auto-finalized successfully" 
+      });
+    } catch (error) {
+      console.error("Error auto-finalizing day:", error);
+      res.status(500).json({ message: "Failed to auto-finalize day" });
+    }
+  });
+
+  // Undo finalization endpoint
+  app.post("/api/undo-finalize/:date", async (req, res) => {
+    try {
+      const { date } = req.params;
+      const userId = "demo-user"; // Replace with actual auth
+      
+      const dailyEntry = await storage.getDailyEntry(userId, date);
+      if (!dailyEntry) {
+        return res.status(404).json({ message: "Daily entry not found" });
+      }
+
+      if (!dailyEntry.isFinalized) {
+        return res.status(400).json({ message: "Day is not finalized" });
+      }
+
+      // Reset finalization
+      await storage.updateDailyEntry(dailyEntry.id, {
+        isFinalized: false,
+        autoFinalized: false,
+        finalizedAt: null,
+        score: 0,
+      });
+
+      // Recalculate streak (this might need more complex logic for accurate streaks)
+      const existingStreak = await storage.getUserStreak(userId);
+      if (existingStreak && (existingStreak.currentStreak || 0) > 0) {
+        await storage.updateStreak(userId, {
+          currentStreak: Math.max(0, (existingStreak.currentStreak || 0) - 1),
+          longestStreak: existingStreak.longestStreak || 0, // Keep longest streak
+          lastActivityDate: date,
+        });
+      }
+
+      res.json({ 
+        success: true,
+        message: "Day finalization undone successfully" 
+      });
+    } catch (error) {
+      console.error("Error undoing finalization:", error);
+      res.status(500).json({ message: "Failed to undo finalization" });
+    }
+  });
+
   // Get specific daily entry with details (for monthly report clicks)
   app.get("/api/daily-entry-details/:date", async (req, res) => {
     try {
