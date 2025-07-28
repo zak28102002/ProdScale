@@ -10,7 +10,7 @@ import {
   Waves, Flower, Settings, MessageCircle, Phone, Play,
   Radio, ShoppingCart, TrendingUp, Calculator, Bookmark
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+// Removed unused import
 import { apiRequest } from "@/lib/queryClient";
 import type { Activity, ActivityCompletion } from "@shared/schema";
 
@@ -118,7 +118,53 @@ export default function ActivityItem({ activity, dailyEntryId, completion }: Act
         });
       }
     },
-    onSuccess: () => {
+    // Optimistic update for instant UI feedback
+    onMutate: async (completed: boolean) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({
+        queryKey: ["/api/daily-entry", dailyEntryId, "completions"]
+      });
+      
+      // Snapshot the previous value
+      const previousCompletions = queryClient.getQueryData(["/api/daily-entry", dailyEntryId, "completions"]);
+      
+      // Optimistically update to the new value
+      queryClient.setQueryData(["/api/daily-entry", dailyEntryId, "completions"], (old: any) => {
+        if (!old) return old;
+        
+        if (completion) {
+          // Update existing completion
+          return old.map((c: ActivityCompletion) => 
+            c.id === completion.id 
+              ? { ...c, completed, completedAt: completed ? new Date() : null }
+              : c
+          );
+        } else {
+          // Add new completion
+          const newCompletion: ActivityCompletion = {
+            id: `temp-${activity.id}`,
+            dailyEntryId: dailyEntryId!,
+            activityId: activity.id,
+            completed,
+            completedAt: completed ? new Date() : null,
+            duration: null
+          };
+          return [...old, newCompletion];
+        }
+      });
+      
+      // Return a context object with the snapshotted value
+      return { previousCompletions };
+    },
+    // If the mutation fails, use the context returned from onMutate to roll back
+    onError: (_err, _newCompleted, context) => {
+      queryClient.setQueryData(
+        ["/api/daily-entry", dailyEntryId, "completions"], 
+        context?.previousCompletions
+      );
+    },
+    // Always refetch after error or success
+    onSettled: () => {
       queryClient.invalidateQueries({
         queryKey: ["/api/daily-entry", dailyEntryId, "completions"]
       });
@@ -139,17 +185,22 @@ export default function ActivityItem({ activity, dailyEntryId, completion }: Act
         <IconComponent className="w-5 h-5 text-black dark:text-white" />
         <span className="font-medium text-black dark:text-white">{activity.name}</span>
       </div>
-      <Button
+      <motion.button
         onClick={handleToggle}
         disabled={toggleCompletionMutation.isPending}
-        className={`w-8 h-8 rounded-full text-sm p-0 ${
+        className={`w-8 h-8 rounded-full text-sm p-0 transition-all duration-200 ${
           isCompleted
             ? "bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200"
             : "border-2 border-gray-300 dark:border-gray-600 bg-transparent text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-800"
         }`}
+        whileTap={{ scale: 0.9 }}
+        animate={{
+          scale: toggleCompletionMutation.isPending ? 0.95 : 1,
+          opacity: toggleCompletionMutation.isPending ? 0.7 : 1
+        }}
       >
         {isCompleted && "✓"}
-      </Button>
+      </motion.button>
     </motion.div>
   );
 }
