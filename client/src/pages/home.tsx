@@ -197,15 +197,17 @@ export default function Home() {
       </div>
       {/* Circular Progress Meter with Score */}
       <div className="text-center relative mb-4">
-        <ProgressCircle score={score} />
+        <ProgressCircle score={dailyEntry?.isFinalized ? (dailyEntry.score || 0) : score} />
         <div className="absolute inset-0 flex items-center justify-center">
-          <span className="text-2xl font-bold text-black dark:text-white">{score.toFixed(1)}</span>
+          <span className="text-2xl font-bold text-black dark:text-white">
+            {dailyEntry?.isFinalized ? (dailyEntry.score || 0).toFixed(1) : score.toFixed(1)}
+          </span>
           <span className="text-sm text-gray-600 dark:text-gray-400 ml-1">/10</span>
         </div>
       </div>
       {/* Stickman Mascot */}
       <div className="text-center -mt-8 mb-8">
-        <Stickman score={score} size="large" />
+        <Stickman score={dailyEntry?.isFinalized ? (dailyEntry.score || 0) : score} size="large" />
       </div>
       {/* Activity Management Section */}
       <div className="space-y-6 mt-8">
