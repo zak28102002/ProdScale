@@ -52,10 +52,10 @@ export default function CalendarHeatmap({ entries, year, month, onDayClick }: Ca
 
   return (
     <div>
-      <div className="grid grid-cols-7 gap-1">
+      <div className="grid grid-cols-7 gap-2">
         {/* Week headers */}
         {weekHeaders.map((header, index) => (
-          <div key={index} className="text-xs text-center text-gray-600 dark:text-gray-400 p-1">
+          <div key={index} className="text-sm text-center text-gray-600 dark:text-gray-400 p-2 font-medium">
             {header}
           </div>
         ))}
@@ -73,7 +73,7 @@ export default function CalendarHeatmap({ entries, year, month, onDayClick }: Ca
                     isToday(dayData.dateStr) ? 'border-2 border-blue-500 dark:border-blue-400' : ''
                   } ${onDayClick ? 'cursor-pointer hover:opacity-80' : ''} ${dayData.score > 0 ? 'text-white' : 'text-black dark:text-gray-800'}`
                 : 'bg-transparent'
-            } w-10 h-10 rounded flex items-center justify-center text-xs font-medium transition-all`}
+            } w-14 h-14 rounded-lg flex items-center justify-center text-sm font-medium transition-all`}
             title={dayData ? `Day ${dayData.day}: Score ${dayData.score}/10` : ''}
             onClick={() => {
               if (dayData && onDayClick && dayData.score > 0) {
