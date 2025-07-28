@@ -236,10 +236,10 @@ export default function MonthlyReport() {
       {/* Month Header */}
       <div className="text-center">
         <h2 className="text-lg font-semibold mb-2 text-black dark:text-white">Monthly Report</h2>
-        <div className="text-3xl font-bold mb-1">{average}</div>
-        <p className="text-sm text-accent">Monthly Average</p>
+        <div className="text-3xl font-bold mb-1 text-black dark:text-white">{average}</div>
+        <p className="text-sm text-gray-600 dark:text-gray-400">Monthly Average</p>
         {isUnproductive && (
-          <p className="text-sm text-destructive mt-2">Unproductive Month 😞</p>
+          <p className="text-sm text-red-600 dark:text-red-400 mt-2">Unproductive Month 😞</p>
         )}
       </div>
 
@@ -270,10 +270,10 @@ export default function MonthlyReport() {
       </div>
 
       {/* Monthly Stickman Badge */}
-      <div className="text-center bg-muted rounded-lg p-6">
+      <div className="text-center bg-gray-50 dark:bg-gray-800 rounded-lg p-6">
         <Stickman score={average} size="large" />
-        <h3 className="font-semibold mb-1 mt-4">{monthName.split(' ')[0]} Badge</h3>
-        <p className="text-sm text-accent">
+        <h3 className="font-semibold mb-1 mt-4 text-black dark:text-white">{monthName.split(' ')[0]} Badge</h3>
+        <p className="text-sm text-gray-600 dark:text-gray-400">
           {average >= 8 ? "Outstanding performance!" : 
            average >= 6 ? "Good progress made" : 
            "Room for improvement"}
