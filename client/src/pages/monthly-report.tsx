@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
-import { ArrowLeft, X, ChevronLeft, ChevronRight, Calendar } from "lucide-react";
+import { ArrowLeft, X, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -48,33 +48,9 @@ export default function MonthlyReport() {
     enabled: !!selectedDate,
   });
 
-  const monthName = new Date(year, month - 1).toLocaleString('default', { month: 'long', year: 'numeric' });
+  const monthName = new Date(year, month - 1).toLocaleString('it-IT', { month: 'long', year: 'numeric' });
 
-  const goToPreviousMonth = () => {
-    if (month === 1) {
-      setMonth(12);
-      setYear(year - 1);
-    } else {
-      setMonth(month - 1);
-    }
-  };
-
-  const goToNextMonth = () => {
-    const currentMonth = new Date().getMonth() + 1;
-    const currentYear = new Date().getFullYear();
-    
-    // Don't allow navigation to future months
-    if (year === currentYear && month >= currentMonth) {
-      return;
-    }
-    
-    if (month === 12) {
-      setMonth(1);
-      setYear(year + 1);
-    } else {
-      setMonth(month + 1);
-    }
-  };
+  // Removed navigation functions since arrows are removed
 
   const isCurrentMonth = () => {
     const currentMonth = new Date().getMonth() + 1;
@@ -82,11 +58,7 @@ export default function MonthlyReport() {
     return year === currentYear && month === currentMonth;
   };
 
-  const canGoToNextMonth = () => {
-    const currentMonth = new Date().getMonth() + 1;
-    const currentYear = new Date().getFullYear();
-    return !(year === currentYear && month >= currentMonth);
-  };
+
 
   const months = [
     { value: 1, label: "January" },
@@ -148,36 +120,17 @@ export default function MonthlyReport() {
         </Link>
         
         {/* Centered Month Display */}
-        <div className="flex items-center space-x-4">
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={goToPreviousMonth}
-            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
-          >
-            <ChevronLeft className="w-5 h-5" />
-          </Button>
-          <h1 className="text-xl font-bold text-black dark:text-white min-w-[200px] text-center">{monthName}</h1>
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={goToNextMonth}
-            disabled={!canGoToNextMonth()}
-            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-30"
-          >
-            <ChevronRight className="w-5 h-5" />
-          </Button>
-        </div>
+        <h1 className="text-xl font-bold text-black dark:text-white flex-1 text-center">{monthName}</h1>
         
         {/* Month Picker */}
         <Popover open={isMonthPickerOpen} onOpenChange={setIsMonthPickerOpen}>
           <PopoverTrigger asChild>
             <Button 
-              variant="outline" 
+              variant="ghost" 
               size="icon" 
-              className="p-2 rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800"
+              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
             >
-              <Calendar className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+              <Calendar className="w-4 h-4 text-black dark:text-white" />
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-64 p-4" align="end">
