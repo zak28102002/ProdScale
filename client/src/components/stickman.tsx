@@ -44,9 +44,9 @@ export default function Stickman({ score, size = "normal", inverted = false }: S
   const mascotSrc = getMascotImage();
 
   return (
-    <div className="text-center">
+    <div className="flex flex-col items-center">
       <motion.div
-        className={`mx-auto ${sizeClass} overflow-hidden rounded-lg`}
+        className={`${sizeClass} overflow-hidden rounded-lg`}
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 0.5, type: "spring" }}

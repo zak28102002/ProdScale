@@ -206,7 +206,7 @@ export default function Home() {
         </div>
       </div>
       {/* Stickman Mascot */}
-      <div className="text-center -mt-8 mb-8">
+      <div className="flex justify-center -mt-8 mb-8">
         <Stickman score={dailyEntry?.isFinalized ? (dailyEntry.score || 0) : score} size="large" />
       </div>
       {/* Activity Management Section */}
