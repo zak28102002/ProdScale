@@ -135,7 +135,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = "demo-user"; // Replace with actual auth
       
       const startDate = `${year}-${month.padStart(2, '0')}-01`;
-      const endDate = `${year}-${month.padStart(2, '0')}-31`;
+      const lastDay = new Date(parseInt(year), parseInt(month), 0).getDate(); // Get actual last day of the month
+      const endDate = `${year}-${month.padStart(2, '0')}-${lastDay.toString().padStart(2, '0')}`;
       
       const entries = await storage.getUserDailyEntries(userId, startDate, endDate);
       

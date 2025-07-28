@@ -42,7 +42,7 @@ export default function CalendarHeatmap({ entries, year, month, onDayClick }: Ca
   const getHeatmapColor = (score: number) => {
     if (score >= 6) return "bg-green-500 dark:bg-green-600"; // Good days (6+) - green
     if (score > 0) return "bg-red-500 dark:bg-red-600"; // Poor days (1-5) - red  
-    return "bg-black dark:bg-gray-700"; // Empty days (0) - black
+    return "bg-white dark:bg-gray-200 border border-gray-300 dark:border-gray-600"; // Empty days (0) - white/transparent
   };
 
   const isToday = (dateStr: string) => {
@@ -71,9 +71,9 @@ export default function CalendarHeatmap({ entries, year, month, onDayClick }: Ca
               dayData 
                 ? `${getHeatmapColor(dayData.score)} ${
                     isToday(dayData.dateStr) ? 'border-2 border-blue-500 dark:border-blue-400' : ''
-                  } ${onDayClick ? 'cursor-pointer hover:opacity-80' : ''} text-white`
+                  } ${onDayClick ? 'cursor-pointer hover:opacity-80' : ''} ${dayData.score > 0 ? 'text-white' : 'text-black dark:text-gray-800'}`
                 : 'bg-transparent'
-            } w-8 h-8 rounded flex items-center justify-center text-xs font-medium transition-all`}
+            } w-10 h-10 rounded flex items-center justify-center text-xs font-medium transition-all`}
             title={dayData ? `Day ${dayData.day}: Score ${dayData.score}/10` : ''}
             onClick={() => {
               if (dayData && onDayClick && dayData.score > 0) {

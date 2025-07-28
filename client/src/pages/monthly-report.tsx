@@ -160,7 +160,7 @@ export default function MonthlyReport() {
         {/* Legend */}
         <div className="flex items-center justify-center space-x-6 text-sm">
           <div className="flex items-center space-x-2">
-            <div className="w-4 h-4 bg-black dark:bg-gray-700 rounded"></div>
+            <div className="w-4 h-4 bg-white border border-gray-300 rounded"></div>
             <span className="text-gray-600 dark:text-gray-400">Empty (0)</span>
           </div>
           <div className="flex items-center space-x-2">
