@@ -2,9 +2,11 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
-import { ArrowLeft, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowLeft, X, ChevronLeft, ChevronRight, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import CalendarHeatmap from "@/components/calendar-heatmap";
 import Stickman from "@/components/stickman";
 import type { DailyEntry } from "@shared/schema";
@@ -14,6 +16,7 @@ export default function MonthlyReport() {
   const [year, setYear] = useState(currentDate.getFullYear());
   const [month, setMonth] = useState(currentDate.getMonth() + 1);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [isMonthPickerOpen, setIsMonthPickerOpen] = useState(false);
 
   const { data: monthlyData, isLoading } = useQuery<{
     entries: DailyEntry[];
@@ -85,6 +88,37 @@ export default function MonthlyReport() {
     return !(year === currentYear && month >= currentMonth);
   };
 
+  const months = [
+    { value: 1, label: "January" },
+    { value: 2, label: "February" },
+    { value: 3, label: "March" },
+    { value: 4, label: "April" },
+    { value: 5, label: "May" },
+    { value: 6, label: "June" },
+    { value: 7, label: "July" },
+    { value: 8, label: "August" },
+    { value: 9, label: "September" },
+    { value: 10, label: "October" },
+    { value: 11, label: "November" },
+    { value: 12, label: "December" }
+  ];
+
+  const years = Array.from({ length: 5 }, (_, i) => currentDate.getFullYear() - 2 + i);
+
+  const handleMonthYearSelect = (newMonth: number, newYear: number) => {
+    const currentMonth = new Date().getMonth() + 1;
+    const currentYear = new Date().getFullYear();
+    
+    // Don't allow future months
+    if (newYear > currentYear || (newYear === currentYear && newMonth > currentMonth)) {
+      return;
+    }
+    
+    setMonth(newMonth);
+    setYear(newYear);
+    setIsMonthPickerOpen(false);
+  };
+
   if (isLoading) {
     return (
       <div className="p-6 space-y-6">
@@ -113,7 +147,7 @@ export default function MonthlyReport() {
           </Button>
         </Link>
         
-        {/* Month Navigation */}
+        {/* Centered Month Display */}
         <div className="flex items-center space-x-4">
           <Button 
             variant="ghost" 
@@ -135,7 +169,64 @@ export default function MonthlyReport() {
           </Button>
         </div>
         
-        <div className="w-9"></div>
+        {/* Month Picker */}
+        <Popover open={isMonthPickerOpen} onOpenChange={setIsMonthPickerOpen}>
+          <PopoverTrigger asChild>
+            <Button variant="ghost" size="icon" className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
+              <Calendar className="w-5 h-5" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-64 p-4" align="end">
+            <div className="space-y-4">
+              <h4 className="font-semibold text-sm">Select Month & Year</h4>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="text-xs text-gray-600 dark:text-gray-400 mb-1 block">Year</label>
+                  <Select value={year.toString()} onValueChange={(value) => {
+                    const newYear = parseInt(value);
+                    handleMonthYearSelect(month, newYear);
+                  }}>
+                    <SelectTrigger className="h-8">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {years.map(y => (
+                        <SelectItem key={y} value={y.toString()}>{y}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <label className="text-xs text-gray-600 dark:text-gray-400 mb-1 block">Month</label>
+                  <Select value={month.toString()} onValueChange={(value) => {
+                    const newMonth = parseInt(value);
+                    handleMonthYearSelect(newMonth, year);
+                  }}>
+                    <SelectTrigger className="h-8">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {months.map(m => {
+                        const currentMonth = new Date().getMonth() + 1;
+                        const currentYear = new Date().getFullYear();
+                        const isDisabled = year > currentYear || (year === currentYear && m.value > currentMonth);
+                        return (
+                          <SelectItem 
+                            key={m.value} 
+                            value={m.value.toString()}
+                            disabled={isDisabled}
+                          >
+                            {m.label}
+                          </SelectItem>
+                        );
+                      })}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </div>
+          </PopoverContent>
+        </Popover>
       </div>
 
       {/* Month Header */}
