@@ -172,8 +172,12 @@ export default function MonthlyReport() {
         {/* Month Picker */}
         <Popover open={isMonthPickerOpen} onOpenChange={setIsMonthPickerOpen}>
           <PopoverTrigger asChild>
-            <Button variant="ghost" size="icon" className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
-              <Calendar className="w-5 h-5" />
+            <Button 
+              variant="outline" 
+              size="icon" 
+              className="p-2 rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800"
+            >
+              <Calendar className="w-5 h-5 text-gray-700 dark:text-gray-300" />
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-64 p-4" align="end">
