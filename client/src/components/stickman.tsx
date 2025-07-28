@@ -20,24 +20,29 @@ export default function Stickman({ score, size = "normal", inverted = false }: S
   };
 
   const getMascotImage = () => {
-    // Map score ranges to new knight mascot images
-    const clampedScore = Math.max(0, Math.min(10, score));
-    
-    // Knight mascot images based on your specifications
-    if (clampedScore <= 2) {
-      return "/attached_assets/mood 0, 1 and 2_1753707066528.png"; // Defeated knight lying down
-    } else if (clampedScore <= 4) {
-      return "/attached_assets/mood 3 and 4_1753707066528.png"; // Sad knight sitting
-    } else if (clampedScore === 5) {
-      return "/attached_assets/mood 5_1753707066529.png"; // Neutral knight standing
-    } else if (clampedScore === 6) {
-      return "/attached_assets/mood 6_1753707066529.png"; // Knight standing normally
-    } else if (clampedScore === 7) {
-      return "/attached_assets/mood 7_1753707066529.png"; // Knight with slight smile
-    } else if (clampedScore <= 9) {
-      return "/attached_assets/mood 8 and 9_1753707066529.png"; // Happy knight with big smile
-    } else {
-      return "/attached_assets/mood 10_1753707066529.png"; // Victorious knight with arms raised
+    try {
+      // Map score ranges to new knight mascot images
+      const clampedScore = Math.max(0, Math.min(10, score));
+      
+      // Knight mascot images based on your specifications
+      if (clampedScore <= 2) {
+        return "/attached_assets/mood%200,%201%20and%202_1753707066528.png"; // Defeated knight lying down
+      } else if (clampedScore <= 4) {
+        return "/attached_assets/mood%203%20and%204_1753707066528.png"; // Sad knight sitting
+      } else if (clampedScore === 5) {
+        return "/attached_assets/mood%205_1753707066529.png"; // Neutral knight standing
+      } else if (clampedScore === 6) {
+        return "/attached_assets/mood%206_1753707066529.png"; // Knight standing normally
+      } else if (clampedScore === 7) {
+        return "/attached_assets/mood%207_1753707066529.png"; // Knight with slight smile
+      } else if (clampedScore <= 9) {
+        return "/attached_assets/mood%208%20and%209_1753707066529.png"; // Happy knight with big smile
+      } else {
+        return "/attached_assets/mood%2010_1753707066529.png"; // Victorious knight with arms raised
+      }
+    } catch (error) {
+      console.error("Error loading mascot image:", error);
+      return "/attached_assets/mood%205_1753707066529.png"; // Default fallback
     }
   };
 
