@@ -10,31 +10,35 @@ export default function Stickman({ score, size = "normal", inverted = false }: S
   const sizeClass = size === "large" ? "w-[400px] h-[400px]" : "w-20 h-24";
 
   const getMessage = () => {
-    if (score >= 9) return "Excellent work! You're crushing it!";
-    if (score >= 7) return "Keep it up! You're doing great today.";
-    if (score >= 4) return "You can do better. Push yourself!";
-    return "Time to get moving. Start small!";
+    if (score >= 10) return "Victory achieved! You're a productivity champion!";
+    if (score >= 8) return "Outstanding work! You're on fire today!";
+    if (score >= 7) return "Great progress! Keep up the momentum!";
+    if (score >= 6) return "Solid effort! You're doing well!";
+    if (score >= 5) return "Steady progress. You're on the right track!";
+    if (score >= 3) return "Don't give up! Every step counts!";
+    return "Rest and recharge. Tomorrow is a new battle!";
   };
 
   const getMascotImage = () => {
-    // Map score ranges to mascot images (1-10 scale)
-    const scoreLevel = Math.max(1, Math.min(10, Math.ceil(score)));
+    // Map score ranges to new knight mascot images
+    const clampedScore = Math.max(0, Math.min(10, score));
     
-    // Use direct image paths from attached_assets
-    const mascotImages = {
-      1: "/attached_assets/1_1753466924889.png",
-      2: "/attached_assets/2_1753466924889.png",
-      3: "/attached_assets/3_1753466924889.png",
-      4: "/attached_assets/4_1753466924890.png",
-      5: "/attached_assets/5_1753466924890.png",
-      6: "/attached_assets/6_1753466924890.png",
-      7: "/attached_assets/7_1753466924890.png",
-      8: "/attached_assets/8_1753466924891.png",
-      9: "/attached_assets/9_1753466924891.png",
-      10: "/attached_assets/10_1753466924891.png",
-    };
-    
-    return mascotImages[scoreLevel as keyof typeof mascotImages];
+    // Knight mascot images based on your specifications
+    if (clampedScore <= 2) {
+      return "/attached_assets/mood 0, 1 and 2_1753707066528.png"; // Defeated knight lying down
+    } else if (clampedScore <= 4) {
+      return "/attached_assets/mood 3 and 4_1753707066528.png"; // Sad knight sitting
+    } else if (clampedScore === 5) {
+      return "/attached_assets/mood 5_1753707066529.png"; // Neutral knight standing
+    } else if (clampedScore === 6) {
+      return "/attached_assets/mood 6_1753707066529.png"; // Knight standing normally
+    } else if (clampedScore === 7) {
+      return "/attached_assets/mood 7_1753707066529.png"; // Knight with slight smile
+    } else if (clampedScore <= 9) {
+      return "/attached_assets/mood 8 and 9_1753707066529.png"; // Happy knight with big smile
+    } else {
+      return "/attached_assets/mood 10_1753707066529.png"; // Victorious knight with arms raised
+    }
   };
 
   const mascotSrc = getMascotImage();
