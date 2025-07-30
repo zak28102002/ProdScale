@@ -181,9 +181,10 @@ export default function Home() {
       <Link href="/pro">
         <Button 
           variant="ghost" 
-          className="fixed top-4 left-4 z-50 bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200 rounded-lg w-12 h-12 p-0 border border-gray-600 dark:border-gray-300"
+          size="sm"
+          className="fixed top-4 left-4 z-50 bg-gray-800 dark:bg-gray-200 text-white dark:text-black hover:bg-gray-700 dark:hover:bg-gray-300 rounded-full w-12 h-12 p-0 border border-gray-600 dark:border-gray-300"
         >
-          <span className="text-xs font-bold">Pro</span>
+          <Crown className="w-5 h-5" />
         </Button>
       </Link>
       <motion.div
