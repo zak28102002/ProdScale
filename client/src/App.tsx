@@ -1,9 +1,13 @@
-import { Switch, Route } from "wouter";
+import { Switch, Route, useLocation } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/components/theme-provider";
+import ThemeToggle from "@/components/theme-toggle";
+import { Button } from "@/components/ui/button";
+import { Crown } from "lucide-react";
+import { Link } from "wouter";
 import Home from "@/pages/home";
 import MonthlyReport from "@/pages/monthly-report";
 import SocialSharing from "@/pages/social-sharing";
@@ -11,14 +15,33 @@ import ProUpgrade from "@/pages/pro-upgrade";
 import NotFound from "@/pages/not-found";
 
 function Router() {
+  const [location] = useLocation();
+  const hideFloatingButtons = location === "/share";
+
   return (
-    <Switch>
-      <Route path="/" component={Home} />
-      <Route path="/monthly" component={MonthlyReport} />
-      <Route path="/share" component={SocialSharing} />
-      <Route path="/pro" component={ProUpgrade} />
-      <Route component={NotFound} />
-    </Switch>
+    <>
+      {!hideFloatingButtons && (
+        <>
+          <ThemeToggle />
+          <Link href="/pro">
+            <Button 
+              variant="ghost" 
+              size="sm"
+              className="fixed top-4 left-4 z-50 bg-gray-800 dark:bg-gray-200 text-white dark:text-black hover:bg-gray-700 dark:hover:bg-gray-300 rounded-full w-12 h-12 p-0 border border-gray-600 dark:border-gray-300"
+            >
+              <Crown className="w-5 h-5" />
+            </Button>
+          </Link>
+        </>
+      )}
+      <Switch>
+        <Route path="/" component={Home} />
+        <Route path="/monthly" component={MonthlyReport} />
+        <Route path="/share" component={SocialSharing} />
+        <Route path="/pro" component={ProUpgrade} />
+        <Route component={NotFound} />
+      </Switch>
+    </>
   );
 }
 

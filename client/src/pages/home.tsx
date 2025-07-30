@@ -9,8 +9,7 @@ import Stickman from "@/components/stickman";
 import ProgressCircle from "@/components/progress-circle";
 import ActivityItem from "@/components/activity-item";
 import ActivityManager from "@/components/activity-manager";
-import ThemeToggle from "@/components/theme-toggle";
-import { Crown } from "lucide-react";
+
 import { calculateProductivityScore } from "@/lib/scoring";
 import { getDailyQuote } from "@/lib/quotes";
 import type { DailyEntry, Activity, ActivityCompletion } from "@shared/schema";
@@ -176,23 +175,12 @@ export default function Home() {
   }
 
   return (
-    <>
-      <ThemeToggle />
-      <Link href="/pro">
-        <Button 
-          variant="ghost" 
-          size="sm"
-          className="fixed top-4 left-4 z-50 bg-gray-800 dark:bg-gray-200 text-white dark:text-black hover:bg-gray-700 dark:hover:bg-gray-300 rounded-full w-12 h-12 p-0 border border-gray-600 dark:border-gray-300"
-        >
-          <Crown className="w-5 h-5" />
-        </Button>
-      </Link>
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
-        className="p-6 space-y-4 bg-white dark:bg-black text-black dark:text-white min-h-screen"
-      >
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className="p-6 space-y-4 bg-white dark:bg-black text-black dark:text-white min-h-screen"
+    >
       {/* Header */}
       <div className="text-center pt-8">
         <h1 className="text-2xl font-bold text-black dark:text-white mb-2">ProdScale</h1>
@@ -300,6 +288,5 @@ export default function Home() {
         </Link>
       </div>
     </motion.div>
-    </>
   );
 }
