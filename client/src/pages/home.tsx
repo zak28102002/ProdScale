@@ -181,10 +181,9 @@ export default function Home() {
       <Link href="/pro">
         <Button 
           variant="ghost" 
-          size="icon" 
-          className="fixed top-4 left-4 z-50 bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:from-purple-700 hover:to-pink-700 rounded-full w-10 h-10"
+          className="fixed top-4 left-4 z-50 bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200 rounded-lg w-12 h-12 p-0 border border-gray-600 dark:border-gray-300"
         >
-          <Crown className="w-5 h-5" />
+          <span className="text-xs font-bold">Pro</span>
         </Button>
       </Link>
       <motion.div

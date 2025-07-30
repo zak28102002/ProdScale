@@ -124,69 +124,22 @@ export default function ModernCalendar({
     }
   }
 
-  // Generate yearly overview data
-  const yearlyOverview = [];
-  for (let m = 0; m < 12; m++) {
-    const monthDays = [];
-    const daysInM = new Date(year, m + 1, 0).getDate();
-    for (let d = 1; d <= daysInM; d++) {
-      const dateStr = `${year}-${(m + 1).toString().padStart(2, '0')}-${d.toString().padStart(2, '0')}`;
-      const score = entries.find(e => e.date === dateStr)?.score || 0;
-      monthDays.push(score);
-    }
-    yearlyOverview.push({
-      month: new Date(year, m).toLocaleString('default', { month: 'short' }),
-      days: monthDays
-    });
-  }
+
 
   return (
     <div className="space-y-6 bg-black text-white p-4 rounded-lg">
-      {/* Yearly Overview */}
-      <div className="space-y-2">
-        <div className="grid grid-cols-7 gap-1 text-xs text-gray-500 mb-2">
-          {['Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'].map(m => (
-            <div key={m} className="text-center">{m}</div>
-          ))}
-        </div>
-        <div className="grid grid-cols-7 gap-1">
-          {yearlyOverview.slice(1, 7).map((monthData, mIdx) => (
-            <div key={mIdx} className="space-y-1">
-              {[0, 1, 2, 3].map(weekIdx => (
-                <div key={weekIdx} className="grid grid-cols-7 gap-0.5">
-                  {[0, 1, 2, 3, 4, 5, 6].map(dayIdx => {
-                    const dayScore = monthData.days[weekIdx * 7 + dayIdx] || 0;
-                    return (
-                      <div 
-                        key={dayIdx}
-                        className={`w-1.5 h-1.5 rounded-full ${
-                          dayScore > 0 ? getDotColor(dayScore) : 'bg-gray-800'
-                        }`}
-                      />
-                    );
-                  })}
-                </div>
-              ))}
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Streak Goal */}
-      <div className="flex items-center justify-between py-3 border-t border-gray-800">
+      {/* Streak Display */}
+      <div className="flex items-center justify-between py-3">
         <div className="flex items-center space-x-2">
           <div className="w-6 h-6 bg-orange-500 rounded flex items-center justify-center">
             <span className="text-xs">🔥</span>
           </div>
-          <span className="text-sm text-gray-400">
-            {currentStreak > 0 ? `${currentStreak} Day Streak` : "No Streak Goal"}
-          </span>
         </div>
         <div className="flex items-center space-x-4">
           <Button variant="ghost" size="icon" className="text-white hover:bg-gray-800 h-8 w-8">
             <Edit2 className="w-4 h-4" />
           </Button>
-          <span className="text-2xl">0</span>
+          <span className="text-2xl">{currentStreak}</span>
           <Button variant="ghost" size="icon" className="text-white hover:bg-gray-800 h-8 w-8">
             <Settings className="w-4 h-4" />
           </Button>
