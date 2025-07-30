@@ -141,8 +141,8 @@ export default function ProUpgrade() {
               <Hash className="w-5 h-5 text-green-400" />
             </div>
             <div>
-              <h3 className="font-semibold text-green-400">Unlimited number of activities</h3>
-              <p className="text-sm text-gray-400">Unlimited possibilities by creating as many activities as you like</p>
+              <h3 className="font-semibold text-green-400">Unlimited Activities</h3>
+              <p className="text-sm text-gray-400">Create as many custom activities as you need to track your perfect day</p>
             </div>
           </div>
 
@@ -151,8 +151,8 @@ export default function ProUpgrade() {
               <BarChart3 className="w-5 h-5 text-yellow-400" />
             </div>
             <div>
-              <h3 className="font-semibold text-yellow-400">Charts & Statistics</h3>
-              <p className="text-sm text-gray-400">See charts and statistics about your consistency</p>
+              <h3 className="font-semibold text-yellow-400">Advanced Analytics</h3>
+              <p className="text-sm text-gray-400">Detailed monthly trends, patterns, and productivity insights</p>
             </div>
           </div>
 
@@ -161,18 +161,18 @@ export default function ProUpgrade() {
               <Home className="w-5 h-5 text-blue-400" />
             </div>
             <div>
-              <h3 className="font-semibold text-blue-400">Home Screen Widgets</h3>
-              <p className="text-sm text-gray-400">Show your favorite activities on your home screen</p>
+              <h3 className="font-semibold text-blue-400">Custom Knight Themes</h3>
+              <p className="text-sm text-gray-400">Unlock special knight characters and animations</p>
             </div>
           </div>
 
           <div className="flex items-start space-x-3">
-            <div className="w-10 h-10 bg-gray-700 rounded-lg flex items-center justify-center flex-shrink-0">
-              <LayoutDashboard className="w-5 h-5 text-gray-300" />
+            <div className="w-10 h-10 bg-purple-900/50 rounded-lg flex items-center justify-center flex-shrink-0">
+              <LayoutDashboard className="w-5 h-5 text-purple-400" />
             </div>
             <div>
-              <h3 className="font-semibold text-gray-300">Dashboard Customization</h3>
-              <p className="text-sm text-gray-400">Show streaks and goals, show labels and categories</p>
+              <h3 className="font-semibold text-purple-400">Export & Backup</h3>
+              <p className="text-sm text-gray-400">Export your data as CSV and automatic cloud backups</p>
             </div>
           </div>
         </div>
