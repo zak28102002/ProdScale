@@ -7,6 +7,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import Home from "@/pages/home";
 import MonthlyReport from "@/pages/monthly-report";
 import SocialSharing from "@/pages/social-sharing";
+import ProUpgrade from "@/pages/pro-upgrade";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -15,6 +16,7 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/monthly" component={MonthlyReport} />
       <Route path="/share" component={SocialSharing} />
+      <Route path="/pro" component={ProUpgrade} />
       <Route component={NotFound} />
     </Switch>
   );

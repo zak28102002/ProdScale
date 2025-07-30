@@ -10,6 +10,7 @@ import ProgressCircle from "@/components/progress-circle";
 import ActivityItem from "@/components/activity-item";
 import ActivityManager from "@/components/activity-manager";
 import ThemeToggle from "@/components/theme-toggle";
+import { Crown } from "lucide-react";
 import { calculateProductivityScore } from "@/lib/scoring";
 import { getDailyQuote } from "@/lib/quotes";
 import type { DailyEntry, Activity, ActivityCompletion } from "@shared/schema";
@@ -177,6 +178,15 @@ export default function Home() {
   return (
     <>
       <ThemeToggle />
+      <Link href="/pro">
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className="fixed top-4 left-4 z-50 bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:from-purple-700 hover:to-pink-700 rounded-full w-10 h-10"
+        >
+          <Crown className="w-5 h-5" />
+        </Button>
+      </Link>
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}

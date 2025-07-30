@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import CalendarHeatmap from "@/components/calendar-heatmap";
+import ModernCalendar from "@/components/modern-calendar";
 import Stickman from "@/components/stickman";
 import type { DailyEntry } from "@shared/schema";
 
@@ -197,31 +198,17 @@ export default function MonthlyReport() {
         )}
       </div>
 
-      {/* Calendar Heatmap */}
-      <div className="space-y-4">
-        <h3 className="font-semibold text-black dark:text-white">Daily Scores</h3>
-        <CalendarHeatmap 
-          entries={entries} 
-          year={year} 
-          month={month} 
-          onDayClick={(date) => setSelectedDate(date)}
-        />
-        {/* Legend */}
-        <div className="flex items-center justify-center space-x-6 text-sm">
-          <div className="flex items-center space-x-2">
-            <div className="w-4 h-4 bg-white border border-gray-300 rounded"></div>
-            <span className="text-gray-600 dark:text-gray-400">Empty (0)</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-4 h-4 bg-red-500 rounded"></div>
-            <span className="text-gray-600 dark:text-gray-400">Poor (1-5)</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-4 h-4 bg-green-500 rounded"></div>
-            <span className="text-gray-600 dark:text-gray-400">Good (6+)</span>
-          </div>
-        </div>
-      </div>
+      {/* Modern Calendar */}
+      <ModernCalendar 
+        entries={entries} 
+        year={year} 
+        month={month}
+        onMonthChange={(newMonth, newYear) => {
+          setMonth(newMonth);
+          setYear(newYear);
+        }}
+        onDayClick={(date) => setSelectedDate(date)}
+      />
 
       {/* Monthly Stickman Badge */}
       <div className="text-center bg-gray-50 dark:bg-gray-800 rounded-lg p-6">
