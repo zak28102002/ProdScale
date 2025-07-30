@@ -9,7 +9,13 @@ import { calculateProductivityScore } from "@/lib/scoring";
 import { useToast } from "@/hooks/use-toast";
 import type { DailyEntry, Activity, ActivityCompletion } from "@shared/schema";
 
-const backgrounds = [
+interface Background {
+  id: string;
+  class: string;
+  style?: React.CSSProperties;
+}
+
+const backgrounds: Background[] = [
   { id: 'black', class: 'bg-black' },
   { id: 'gradient1', class: 'bg-gradient-to-br from-purple-900 to-pink-700' },
   { id: 'gradient2', class: 'bg-gradient-to-br from-blue-900 to-cyan-700' },
@@ -25,6 +31,16 @@ const backgrounds = [
   { id: 'gradient12', class: 'bg-gradient-to-bl from-green-900 to-lime-700' },
   { id: 'pattern1', class: 'bg-gradient-to-br from-black via-gray-900 to-black' },
   { id: 'pattern2', class: 'bg-gradient-to-r from-black via-purple-900 to-black' },
+  { id: 'mesh1', class: 'bg-black', style: { backgroundImage: 'radial-gradient(at 20% 80%, rgb(120, 20, 120) 0, transparent 50%), radial-gradient(at 80% 20%, rgb(20, 120, 120) 0, transparent 50%), radial-gradient(at 40% 40%, rgb(20, 20, 120) 0, transparent 50%)' } },
+  { id: 'mesh2', class: 'bg-black', style: { backgroundImage: 'radial-gradient(at 0% 0%, rgb(20, 50, 120) 0, transparent 50%), radial-gradient(at 100% 100%, rgb(120, 20, 50) 0, transparent 50%)' } },
+  { id: 'pattern3', class: 'bg-gradient-conic from-purple-900 via-pink-900 to-purple-900' },
+  { id: 'pattern4', class: 'bg-gradient-to-br from-black to-gray-900', style: { backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,.05) 10px, rgba(255,255,255,.05) 20px)' } },
+  { id: 'pattern5', class: 'bg-gradient-to-br from-purple-900 to-black', style: { backgroundImage: 'repeating-radial-gradient(circle at 0 0, transparent 0, #000 10px), repeating-linear-gradient(#55555555, transparent)' } },
+  { id: 'dots1', class: 'bg-black', style: { backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px)', backgroundSize: '20px 20px' } },
+  { id: 'waves1', class: 'bg-gradient-to-br from-blue-900 to-purple-900', style: { backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(255,255,255,.05) 35px, rgba(255,255,255,.05) 70px)' } },
+  { id: 'geometric1', class: 'bg-black', style: { backgroundImage: 'linear-gradient(30deg, #111 12%, transparent 12.5%, transparent 87%, #111 87.5%, #111), linear-gradient(150deg, #111 12%, transparent 12.5%, transparent 87%, #111 87.5%, #111)', backgroundSize: '40px 70px' } },
+  { id: 'noise1', class: 'bg-gradient-to-br from-gray-900 to-black', style: { backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noiseFilter\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' /%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noiseFilter)\' opacity=\'0.1\'/%3E%3C/svg%3E")' } },
+  { id: 'abstract1', class: 'bg-gradient-to-br from-purple-900 via-pink-900 to-orange-900' },
 ];
 
 export default function SocialSharing() {
@@ -150,6 +166,20 @@ export default function SocialSharing() {
         <div className="w-9"></div>
       </div>
 
+      {/* Background Selector */}
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="font-semibold">Card Background</h3>
+        <Button
+          onClick={() => setShowBgPicker(!showBgPicker)}
+          size="sm"
+          variant="outline"
+          className="flex items-center space-x-2"
+        >
+          <Palette className="w-4 h-4" />
+          <span>Change Background</span>
+        </Button>
+      </div>
+
       {/* Share Card Preview */}
       <div className="relative">
         <motion.div
@@ -157,6 +187,7 @@ export default function SocialSharing() {
           animate={{ scale: 1, opacity: 1 }}
           transition={{ delay: 0.2 }}
           className={`${selectedBg.class} rounded-xl p-6 text-white space-y-4 relative overflow-hidden`}
+          style={selectedBg.style}
         >
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-bold text-white">ProdScale</h2>
@@ -276,16 +307,6 @@ export default function SocialSharing() {
           <p className="text-xs opacity-60">Made with ProdScale</p>
         </div>
         </motion.div>
-        
-        {/* Background Picker Button */}
-        <Button
-          onClick={() => setShowBgPicker(!showBgPicker)}
-          size="sm"
-          variant="outline"
-          className="absolute top-2 right-2 bg-white/90 hover:bg-white text-black border-0"
-        >
-          <Palette className="w-4 h-4" />
-        </Button>
       </div>
 
       {/* Export Options */}
@@ -391,6 +412,7 @@ export default function SocialSharing() {
                       ? 'border-blue-500 shadow-lg scale-105' 
                       : 'border-transparent hover:border-gray-300'
                   }`}
+                  style={bg.style}
                 />
               ))}
             </div>
