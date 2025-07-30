@@ -1,16 +1,37 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
-import { ArrowLeft, Instagram, Twitter, Facebook, Copy } from "lucide-react";
+import { ArrowLeft, Instagram, Twitter, Facebook, Copy, Palette } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getDailyQuote } from "@/lib/quotes";
 import { calculateProductivityScore } from "@/lib/scoring";
 import { useToast } from "@/hooks/use-toast";
 import type { DailyEntry, Activity, ActivityCompletion } from "@shared/schema";
 
+const backgrounds = [
+  { id: 'black', class: 'bg-black' },
+  { id: 'gradient1', class: 'bg-gradient-to-br from-purple-900 to-pink-700' },
+  { id: 'gradient2', class: 'bg-gradient-to-br from-blue-900 to-cyan-700' },
+  { id: 'gradient3', class: 'bg-gradient-to-br from-emerald-900 to-teal-700' },
+  { id: 'gradient4', class: 'bg-gradient-to-br from-orange-900 to-red-700' },
+  { id: 'gradient5', class: 'bg-gradient-to-br from-indigo-900 to-purple-700' },
+  { id: 'gradient6', class: 'bg-gradient-to-br from-gray-900 to-gray-700' },
+  { id: 'gradient7', class: 'bg-gradient-to-br from-pink-900 to-rose-700' },
+  { id: 'gradient8', class: 'bg-gradient-to-tr from-yellow-900 to-amber-700' },
+  { id: 'gradient9', class: 'bg-gradient-to-tr from-slate-900 to-zinc-700' },
+  { id: 'gradient10', class: 'bg-gradient-to-tl from-violet-900 to-fuchsia-700' },
+  { id: 'gradient11', class: 'bg-gradient-to-tl from-sky-900 to-blue-700' },
+  { id: 'gradient12', class: 'bg-gradient-to-bl from-green-900 to-lime-700' },
+  { id: 'pattern1', class: 'bg-gradient-to-br from-black via-gray-900 to-black' },
+  { id: 'pattern2', class: 'bg-gradient-to-r from-black via-purple-900 to-black' },
+];
+
 export default function SocialSharing() {
   const { toast } = useToast();
   const today = new Date().toISOString().split('T')[0];
+  const [selectedBg, setSelectedBg] = useState(backgrounds[0]);
+  const [showBgPicker, setShowBgPicker] = useState(false);
 
   // Fetch today's data
   const { data: dailyEntry } = useQuery<DailyEntry>({
@@ -130,12 +151,13 @@ export default function SocialSharing() {
       </div>
 
       {/* Share Card Preview */}
-      <motion.div
-        initial={{ scale: 0.9, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ delay: 0.2 }}
-        className="bg-black rounded-xl p-6 text-white space-y-4"
-      >
+      <div className="relative">
+        <motion.div
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className={`${selectedBg.class} rounded-xl p-6 text-white space-y-4 relative overflow-hidden`}
+        >
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-bold text-white">ProdScale</h2>
           <div className="text-2xl font-bold">
@@ -253,7 +275,18 @@ export default function SocialSharing() {
         <div className="text-center">
           <p className="text-xs opacity-60">Made with ProdScale</p>
         </div>
-      </motion.div>
+        </motion.div>
+        
+        {/* Background Picker Button */}
+        <Button
+          onClick={() => setShowBgPicker(!showBgPicker)}
+          size="sm"
+          variant="outline"
+          className="absolute top-2 right-2 bg-white/90 hover:bg-white text-black border-0"
+        >
+          <Palette className="w-4 h-4" />
+        </Button>
+      </div>
 
       {/* Export Options */}
       <div className="space-y-3">
@@ -331,6 +364,46 @@ export default function SocialSharing() {
       >
         Save to Camera Roll
       </Button>
+
+      {/* Background Picker Modal */}
+      {showBgPicker && (
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+          onClick={() => setShowBgPicker(false)}
+        >
+          <div 
+            className="bg-white dark:bg-gray-900 rounded-lg p-4 max-w-sm w-full shadow-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="font-semibold mb-4 text-gray-900 dark:text-white">Choose Background</h3>
+            <div className="grid grid-cols-3 gap-2 max-h-64 overflow-y-auto">
+              {backgrounds.map((bg) => (
+                <button
+                  key={bg.id}
+                  onClick={() => {
+                    setSelectedBg(bg);
+                    setShowBgPicker(false);
+                  }}
+                  className={`${bg.class} h-20 rounded-lg border-2 transition-all ${
+                    selectedBg.id === bg.id 
+                      ? 'border-blue-500 shadow-lg scale-105' 
+                      : 'border-transparent hover:border-gray-300'
+                  }`}
+                />
+              ))}
+            </div>
+            <Button 
+              onClick={() => setShowBgPicker(false)}
+              variant="outline"
+              className="w-full mt-4"
+            >
+              Close
+            </Button>
+          </div>
+        </motion.div>
+      )}
     </motion.div>
   );
 }
