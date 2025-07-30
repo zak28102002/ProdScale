@@ -177,8 +177,8 @@ export default function ActivityItem({ activity, dailyEntryId, completion }: Act
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 1 }}
+      animate={{ opacity: 1 }}
       className="flex items-center justify-between p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-black"
     >
       <div className="flex items-center space-x-3">
@@ -193,11 +193,8 @@ export default function ActivityItem({ activity, dailyEntryId, completion }: Act
             ? "bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200"
             : "border-2 border-gray-300 dark:border-gray-600 bg-transparent text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-800"
         }`}
-        whileTap={{ scale: 0.9 }}
-        animate={{
-          scale: toggleCompletionMutation.isPending ? 0.95 : 1,
-          opacity: toggleCompletionMutation.isPending ? 0.7 : 1
-        }}
+        whileTap={{ scale: 0.95 }}
+        transition={{ duration: 0.1 }}
       >
         {isCompleted && "✓"}
       </motion.button>

@@ -25,8 +25,6 @@ export function calculateProductivityScore({
   const completionRatio = completedActivities.length / totalActivities;
   let score = completionRatio * 10;
   
-
-  
   // Bonus points for streak (but only if not already at 10):
   if (score < 10 && currentStreak >= 3) {
     // +1 point for streak (3+ days)

@@ -47,9 +47,10 @@ export default function Stickman({ score, size = "normal", inverted = false }: S
     <div className="flex flex-col items-center">
       <motion.div
         className={`${sizeClass} overflow-hidden rounded-lg`}
-        initial={{ scale: 0.8, opacity: 0 }}
+        initial={{ scale: 0.95, opacity: 0.8 }}
         animate={{ scale: 1, opacity: 1 }}
-        transition={{ duration: 0.5, type: "spring" }}
+        transition={{ duration: 0.3, type: "spring", stiffness: 300 }}
+        style={{ willChange: 'transform, opacity' }}
       >
         <motion.img
           src={mascotSrc}

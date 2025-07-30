@@ -370,7 +370,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         message: "Day auto-finalized successfully" 
       });
     } catch (error) {
-      console.error("Error auto-finalizing day:", error);
       res.status(500).json({ message: "Failed to auto-finalize day" });
     }
   });

@@ -43,7 +43,7 @@ export default function ProgressCircle({ score }: ProgressCircleProps) {
           strokeDashoffset={circumference}
           strokeLinecap="round"
           animate={{ strokeDashoffset }}
-          transition={{ duration: 1, ease: "easeOut" }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
         />
       </svg>
     </div>

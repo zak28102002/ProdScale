@@ -111,7 +111,7 @@ export default function Home() {
             queryKey: ["/api/streak"]
           });
         } catch (error) {
-          console.error("Auto-finalize error:", error);
+          // Silently handle auto-finalize errors
         }
       } else {
         // Set timer for auto-finalization at midnight
@@ -125,7 +125,7 @@ export default function Home() {
               queryKey: ["/api/streak"]
             });
           } catch (error) {
-            console.error("Auto-finalize error:", error);
+            // Silently handle auto-finalize errors
           }
         }, timeUntilMidnight);
         
@@ -178,8 +178,9 @@ export default function Home() {
     <>
       <ThemeToggle />
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
         className="p-6 space-y-4 bg-white dark:bg-black text-black dark:text-white min-h-screen"
       >
       {/* Header */}
