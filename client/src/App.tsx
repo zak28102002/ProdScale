@@ -16,11 +16,11 @@ import NotFound from "@/pages/not-found";
 
 function Router() {
   const [location] = useLocation();
-  const hideFloatingButtons = location === "/share";
+  const showFloatingButtons = location === "/";
 
   return (
     <>
-      {!hideFloatingButtons && (
+      {showFloatingButtons && (
         <>
           <ThemeToggle />
           <Link href="/pro">
