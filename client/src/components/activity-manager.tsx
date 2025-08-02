@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
+import { Link } from "wouter";
 import { 
   Plus, Trash2, Dumbbell, BookOpen, Brain, Code, 
   Coffee, Music, Palette, Camera, Heart, Utensils,
@@ -9,12 +10,14 @@ import {
   Laptop, Headphones, Mic, Film, Scissors, Paintbrush, 
   Pen, Users, User, Baby, Dog, Trees, Sun, Mountain, 
   Waves, Flower, Settings, MessageCircle, Phone, Play,
-  Radio, ShoppingCart, TrendingUp, Calculator, Bookmark
+  Radio, ShoppingCart, TrendingUp, Calculator, Bookmark,
+  Crown
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 import type { Activity } from "@shared/schema";
 
 interface ActivityManagerProps {
@@ -95,9 +98,15 @@ const iconOptions = [
 
 export default function ActivityManager({ activities }: ActivityManagerProps) {
   const queryClient = useQueryClient();
+  const { toast } = useToast();
   const [showAddForm, setShowAddForm] = useState(false);
   const [newActivityName, setNewActivityName] = useState("");
   const [newActivityIcon, setNewActivityIcon] = useState("plus");
+  
+  // Check user Pro status
+  const { data: user } = useQuery({
+    queryKey: ["/api/user"],
+  });
 
   const createActivityMutation = useMutation({
     mutationFn: async (data: { name: string; icon: string }) => {
@@ -108,6 +117,13 @@ export default function ActivityManager({ activities }: ActivityManagerProps) {
       setNewActivityName("");
       setNewActivityIcon("plus");
       setShowAddForm(false);
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Cannot add more activities",
+        description: error.message || "Free users can only have up to 3 activities. Upgrade to Pro for unlimited activities!",
+        variant: "destructive",
+      });
     },
   });
 
@@ -133,18 +149,32 @@ export default function ActivityManager({ activities }: ActivityManagerProps) {
     deleteActivityMutation.mutate(id);
   };
 
+  const canAddMore = user?.isPro || activities.length < 3;
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold text-black dark:text-white ml-[3px] mr-[3px]">Activities</h3>
-        <Button
-          onClick={() => setShowAddForm(!showAddForm)}
-          className="bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200"
-          size="sm"
-        >
-          <Plus className="w-4 h-4 mr-1" />
-          Add
-        </Button>
+        {canAddMore ? (
+          <Button
+            onClick={() => setShowAddForm(!showAddForm)}
+            className="bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200"
+            size="sm"
+          >
+            <Plus className="w-4 h-4 mr-1" />
+            Add
+          </Button>
+        ) : (
+          <Link href="/pro">
+            <Button
+              className="bg-gradient-to-r from-yellow-500 to-yellow-600 text-black hover:from-yellow-600 hover:to-yellow-700"
+              size="sm"
+            >
+              <Crown className="w-4 h-4 mr-1" />
+              Upgrade
+            </Button>
+          </Link>
+        )}
       </div>
       {showAddForm && (
         <motion.div

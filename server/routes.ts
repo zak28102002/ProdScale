@@ -13,7 +13,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/daily-entry/:date", async (req, res) => {
     try {
       const { date } = req.params;
-      const userId = "demo-user"; // For demo purposes - replace with actual auth
+      
+      // Get demo user by username
+      let user = await storage.getUserByUsername("demo");
+      if (!user) {
+        // Create demo user if doesn't exist
+        const newUser = await storage.createUser({ 
+          username: "demo", 
+          password: "demo",
+          isPro: false 
+        });
+        user = newUser;
+      }
+      
+      const userId = user.id;
       
       const entry = await storage.getDailyEntry(userId, date);
       if (!entry) {
@@ -51,16 +64,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get user activities
   app.get("/api/activities", async (req, res) => {
     try {
-      const userId = "demo-user"; // Replace with actual auth
+      // Get demo user by username
+      let user = await storage.getUserByUsername("demo");
+      if (!user) {
+        // Create demo user if doesn't exist
+        user = await storage.createUser({ 
+          username: "demo", 
+          password: "demo",
+          isPro: false 
+        });
+      }
+      
+      const userId = user.id;
       let activities = await storage.getUserActivities(userId);
       
-      // If user has no activities, create default ones
+      // If user has no activities, create default ones (max 3 for free users)
       if (activities.length === 0) {
         const defaultActivities = [
           { userId, name: "Gym Workout", icon: "dumbbell", isDefault: true },
           { userId, name: "Reading", icon: "book-open", isDefault: true },
-          { userId, name: "Meditation", icon: "brain", isDefault: true },
-          { userId, name: "Learning", icon: "code", isDefault: true },
+          { userId, name: "Learning", icon: "brain", isDefault: true },
         ];
         
         for (const activity of defaultActivities) {
@@ -132,7 +155,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/monthly/:year/:month", async (req, res) => {
     try {
       const { year, month } = req.params;
-      const userId = "demo-user"; // Replace with actual auth
+      
+      // Get demo user by username
+      const user = await storage.getUserByUsername("demo");
+      if (!user) {
+        res.status(401).json({ message: "User not found" });
+        return;
+      }
+      
+      const userId = user.id;
       
       const startDate = `${year}-${month.padStart(2, '0')}-01`;
       const lastDay = new Date(parseInt(year), parseInt(month), 0).getDate(); // Get actual last day of the month
@@ -158,7 +189,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get user streak
   app.get("/api/streak", async (req, res) => {
     try {
-      const userId = "demo-user"; // Replace with actual auth
+      // Get demo user by username
+      const user = await storage.getUserByUsername("demo");
+      if (!user) {
+        res.status(401).json({ message: "User not found" });
+        return;
+      }
+      
+      const userId = user.id;
       const streak = await storage.getUserStreak(userId);
       res.json(streak || { currentStreak: 0, longestStreak: 0 });
     } catch (error) {
@@ -167,10 +205,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get user info (for Pro status check)
+  app.get("/api/user", async (req, res) => {
+    try {
+      const username = "demo"; // Use username for demo user
+      let user = await storage.getUserByUsername(username);
+      
+      // Create demo user if doesn't exist
+      if (!user) {
+        user = await storage.createUser({ 
+          username: "demo", 
+          password: "demo",
+          isPro: false 
+        });
+      }
+      
+      res.json({ id: user.id, username: user.username, isPro: user.isPro });
+    } catch (error) {
+      console.error("Error fetching user:", error);
+      res.status(500).json({ message: "Failed to fetch user" });
+    }
+  });
+
   // Create activity
   app.post("/api/activities", async (req, res) => {
     try {
-      const userId = "demo-user"; // Replace with actual auth
+      // Get demo user by username
+      const user = await storage.getUserByUsername("demo");
+      if (!user) {
+        res.status(401).json({ message: "User not found" });
+        return;
+      }
+      
+      const userId = user.id;
+      
+      // Check if user is Pro or has less than 3 activities
+      const activities = await storage.getUserActivities(userId);
+      
+      if (!user.isPro && activities.length >= 3) {
+        res.status(403).json({ 
+          message: "Free users can only have up to 3 activities. Upgrade to Pro for unlimited activities!" 
+        });
+        return;
+      }
+      
       const activityData = insertActivitySchema.parse({ ...req.body, userId });
       const activity = await storage.createActivity(activityData);
       res.json(activity);
