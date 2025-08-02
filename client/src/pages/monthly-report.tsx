@@ -126,7 +126,7 @@ export default function MonthlyReport() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.2 }}
-      className="p-6 space-y-6"
+      className="p-6 space-y-6 pb-24"
     >
       {/* Header */}
       <div className="flex items-center justify-between pt-8">

@@ -181,7 +181,7 @@ export default function Home() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.2 }}
-      className="p-6 space-y-4 bg-white dark:bg-black text-black dark:text-white min-h-screen"
+      className="p-6 space-y-4 bg-white dark:bg-black text-black dark:text-white min-h-screen pb-24"
     >
       {/* Header */}
       <div className="text-center pt-8">
@@ -278,16 +278,6 @@ export default function Home() {
             </Button>
           </div>
         )}
-        <Link href="/monthly">
-          <Button variant="outline" className="w-full border-2 border-black dark:border-white hover:bg-black dark:hover:bg-white hover:text-white dark:hover:text-black mt-[5px] mb-[5px]">
-            View Monthly Report
-          </Button>
-        </Link>
-        <Link href="/share">
-          <Button className="w-full bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200">
-            Share Day
-          </Button>
-        </Link>
       </div>
     </motion.div>
   );

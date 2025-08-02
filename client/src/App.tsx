@@ -8,15 +8,21 @@ import ThemeToggle from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { Crown } from "lucide-react";
 import { Link } from "wouter";
+import BottomNav from "@/components/bottom-nav";
 import Home from "@/pages/home";
 import MonthlyReport from "@/pages/monthly-report";
 import SocialSharing from "@/pages/social-sharing";
 import ProUpgrade from "@/pages/pro-upgrade";
+import Reports from "@/pages/reports";
+import Settings from "@/pages/settings";
+import Privacy from "@/pages/privacy";
+import Contact from "@/pages/contact";
 import NotFound from "@/pages/not-found";
 
 function Router() {
   const [location] = useLocation();
   const showFloatingButtons = location === "/";
+  const showBottomNav = !["/share", "/pro"].includes(location);
 
   return (
     <>
@@ -39,8 +45,13 @@ function Router() {
         <Route path="/monthly" component={MonthlyReport} />
         <Route path="/share" component={SocialSharing} />
         <Route path="/pro" component={ProUpgrade} />
+        <Route path="/reports" component={Reports} />
+        <Route path="/settings" component={Settings} />
+        <Route path="/privacy" component={Privacy} />
+        <Route path="/contact" component={Contact} />
         <Route component={NotFound} />
       </Switch>
+      {showBottomNav && <BottomNav />}
     </>
   );
 }
