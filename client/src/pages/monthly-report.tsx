@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { ArrowLeft, X, Calendar } from "lucide-react";
@@ -13,6 +13,7 @@ import Stickman from "@/components/stickman";
 import type { DailyEntry } from "@shared/schema";
 
 export default function MonthlyReport() {
+  const queryClient = useQueryClient();
   const currentDate = new Date();
   const [year, setYear] = useState(currentDate.getFullYear());
   const [month, setMonth] = useState(currentDate.getMonth() + 1);
@@ -94,13 +95,27 @@ export default function MonthlyReport() {
 
   if (isLoading) {
     return (
-      <div className="p-6 space-y-6">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="p-6 space-y-6"
+      >
+        {/* Header skeleton */}
         <div className="flex items-center justify-between pt-8">
-          <div className="w-9 h-9 bg-gray-200 rounded"></div>
-          <div className="h-6 bg-gray-200 rounded w-32"></div>
-          <div className="w-9"></div>
+          <div className="w-9 h-9 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse"></div>
+          <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-40 mx-auto animate-pulse"></div>
+          <div className="w-9 h-9 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse"></div>
         </div>
-      </div>
+        
+        {/* Calendar skeleton */}
+        <div className="mt-8">
+          <div className="grid grid-cols-7 gap-1">
+            {[...Array(35)].map((_, i) => (
+              <div key={i} className="aspect-square bg-gray-100 dark:bg-gray-800 rounded animate-pulse"></div>
+            ))}
+          </div>
+        </div>
+      </motion.div>
     );
   }
 
@@ -108,9 +123,9 @@ export default function MonthlyReport() {
 
   return (
     <motion.div
-      initial={{ opacity: 0, x: 10 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.3 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.2 }}
       className="p-6 space-y-6"
     >
       {/* Header */}
@@ -208,6 +223,13 @@ export default function MonthlyReport() {
           setYear(newYear);
         }}
         onDayClick={(date) => setSelectedDate(date)}
+        onDayHover={(date) => {
+          // Prefetch the data when hovering
+          queryClient.prefetchQuery({
+            queryKey: ["/api/daily-entry-details", date],
+            staleTime: 5 * 60 * 1000, // Cache for 5 minutes
+          });
+        }}
       />
 
       {/* Monthly Stickman Badge */}

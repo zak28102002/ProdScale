@@ -9,6 +9,7 @@ interface ModernCalendarProps {
   month: number;
   onMonthChange: (newMonth: number, newYear: number) => void;
   onDayClick?: (date: string) => void;
+  onDayHover?: (date: string) => void;
 }
 
 export default function ModernCalendar({ 
@@ -16,7 +17,8 @@ export default function ModernCalendar({
   year, 
   month, 
   onMonthChange,
-  onDayClick 
+  onDayClick,
+  onDayHover 
 }: ModernCalendarProps) {
   // Create score map
   const scoreMap = new Map();
@@ -160,30 +162,32 @@ export default function ModernCalendar({
         {/* Calendar grid */}
         <div className="grid grid-cols-7 gap-2">
           {calendarDays.map((dayData, index) => (
-            <motion.button
+            <button
               key={index}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: index * 0.005 }}
               onClick={() => {
                 if (dayData.isCurrentMonth && dayData.score > 0 && onDayClick) {
                   onDayClick(dayData.dateStr);
+                }
+              }}
+              onMouseEnter={() => {
+                if (dayData.isCurrentMonth && dayData.score > 0 && onDayHover) {
+                  onDayHover(dayData.dateStr);
                 }
               }}
               disabled={!dayData.isCurrentMonth}
               className={`
                 relative h-10 rounded-lg flex flex-col items-center justify-center
                 ${!dayData.isCurrentMonth ? 'text-gray-600' : 'text-white'}
-                ${dayData.isCurrentMonth && dayData.score > 0 ? 'cursor-pointer' : ''}
+                ${dayData.isCurrentMonth && dayData.score > 0 ? 'cursor-pointer hover:bg-gray-800' : ''}
                 ${isToday(dayData.dateStr) ? 'ring-2 ring-white' : ''}
-                transition-all
+                transition-colors
               `}
             >
               <span className="text-sm">{dayData.day}</span>
               {dayData.isCurrentMonth && dayData.score > 0 && (
                 <div className={`w-2 h-2 rounded-full mt-0.5 ${getDotColor(dayData.score)}`} />
               )}
-            </motion.button>
+            </button>
           ))}
         </div>
       </div>

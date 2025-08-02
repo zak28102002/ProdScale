@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
@@ -136,12 +136,14 @@ export default function Home() {
     checkAutoFinalize();
   }, [dailyEntry, today]);
 
-  // Calculate score whenever completions change
-  const score = calculateProductivityScore({
-    completions,
-    activities,
-    currentStreak: streak?.currentStreak || 0,
-  });
+  // Calculate score whenever completions change - memoized for performance
+  const score = useMemo(() => {
+    return calculateProductivityScore({
+      completions,
+      activities,
+      currentStreak: streak?.currentStreak || 0,
+    });
+  }, [completions, activities, streak?.currentStreak]);
 
   // Update reflection on change
   useEffect(() => {
@@ -150,13 +152,13 @@ export default function Home() {
     }
   }, [dailyEntry?.reflection]);
 
-  // Debounced reflection update
+  // Debounced reflection update - reduced delay for faster feedback
   useEffect(() => {
     const timer = setTimeout(() => {
       if (reflection !== dailyEntry?.reflection) {
         updateReflectionMutation.mutate(reflection);
       }
-    }, 500);
+    }, 300);
 
     return () => clearTimeout(timer);
   }, [reflection]);
@@ -176,9 +178,9 @@ export default function Home() {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.2 }}
       className="p-6 space-y-4 bg-white dark:bg-black text-black dark:text-white min-h-screen"
     >
       {/* Header */}
