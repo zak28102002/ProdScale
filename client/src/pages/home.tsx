@@ -252,11 +252,11 @@ export default function Home() {
             <Button 
               onClick={() => finalizeDayMutation.mutate()}
               disabled={finalizeDayMutation.isPending}
-              className="w-full h-14 bg-gradient-to-r from-green-600 to-emerald-600 dark:from-green-500 dark:to-emerald-500 text-white hover:from-green-700 hover:to-emerald-700 dark:hover:from-green-600 dark:hover:to-emerald-600 font-semibold text-lg shadow-lg transform transition-all hover:scale-[1.02] active:scale-[0.98]"
+              className="w-full h-14 bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200 font-semibold text-lg shadow-lg transform transition-all hover:scale-[1.02] active:scale-[0.98]"
             >
               {finalizeDayMutation.isPending ? (
                 <div className="flex items-center space-x-2">
-                  <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
+                  <div className="animate-spin rounded-full h-5 w-5 border-2 border-white dark:border-black border-t-transparent"></div>
                   <span>Finalizing Day...</span>
                 </div>
               ) : (
