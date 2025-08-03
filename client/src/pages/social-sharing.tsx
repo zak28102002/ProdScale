@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { getDailyQuote } from "@/lib/quotes";
 import { calculateProductivityScore } from "@/lib/scoring";
 import { useToast } from "@/hooks/use-toast";
+import * as htmlToImage from "html-to-image";
 import type { DailyEntry, Activity, ActivityCompletion } from "@shared/schema";
 
 interface Background {
@@ -48,6 +49,7 @@ export default function SocialSharing() {
   const today = new Date().toISOString().split('T')[0];
   const [selectedBg, setSelectedBg] = useState(backgrounds[0]);
   const [showBgPicker, setShowBgPicker] = useState(false);
+  const shareCardRef = useRef<HTMLDivElement>(null);
 
   // Fetch today's data
   const { data: dailyEntry } = useQuery<DailyEntry>({
@@ -141,12 +143,33 @@ export default function SocialSharing() {
     window.open(url, '_blank', 'width=600,height=400');
   };
 
-  const handleSaveImage = () => {
-    // In a real app, this would generate and save an image
-    toast({
-      title: "Feature coming soon!",
-      description: "Image saving will be available in the next update.",
-    });
+  const handleSaveImage = async () => {
+    if (!shareCardRef.current) return;
+    
+    try {
+      const dataUrl = await htmlToImage.toPng(shareCardRef.current, {
+        quality: 1.0,
+        pixelRatio: 2,
+        backgroundColor: '#000000',
+      });
+      
+      // Create a link and trigger download
+      const link = document.createElement('a');
+      link.download = `prodscale-${today}-score-${score.toFixed(1)}.png`;
+      link.href = dataUrl;
+      link.click();
+      
+      toast({
+        title: "Image saved!",
+        description: "Your productivity card has been downloaded.",
+      });
+    } catch (error) {
+      console.error('Failed to save image:', error);
+      toast({
+        title: "Failed to save image",
+        description: "Please try again.",
+      });
+    }
   };
 
   return (
@@ -183,6 +206,7 @@ export default function SocialSharing() {
       {/* Share Card Preview */}
       <div className="relative">
         <motion.div
+          ref={shareCardRef}
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ delay: 0.2 }}
