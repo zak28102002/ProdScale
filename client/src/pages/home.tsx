@@ -281,11 +281,11 @@ export default function Home() {
             }}
             className="w-full"
           >
-            <div className="p-6 bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 dark:from-green-950 dark:via-emerald-950 dark:to-teal-950 border-2 border-green-300 dark:border-green-700 rounded-2xl shadow-lg relative overflow-hidden">
+            <div className="p-6 bg-gray-50 dark:bg-gray-900 border-2 border-gray-300 dark:border-gray-700 rounded-2xl shadow-lg relative overflow-hidden">
               {/* Background Pattern */}
-              <div className="absolute inset-0 opacity-10">
-                <div className="absolute top-0 left-0 w-40 h-40 bg-green-400 rounded-full blur-3xl"></div>
-                <div className="absolute bottom-0 right-0 w-40 h-40 bg-emerald-400 rounded-full blur-3xl"></div>
+              <div className="absolute inset-0 opacity-5 dark:opacity-10">
+                <div className="absolute top-0 left-0 w-40 h-40 bg-black dark:bg-white rounded-full blur-3xl"></div>
+                <div className="absolute bottom-0 right-0 w-40 h-40 bg-black dark:bg-white rounded-full blur-3xl"></div>
               </div>
               
               <div className="relative z-10">
@@ -298,18 +298,18 @@ export default function Home() {
                       type: "spring",
                       stiffness: 200
                     }}
-                    className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 dark:from-green-600 dark:to-emerald-700 rounded-full mb-3 shadow-lg"
+                    className="inline-flex items-center justify-center w-16 h-16 bg-black dark:bg-white rounded-full mb-3 shadow-lg"
                   >
-                    <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-8 h-8 text-white dark:text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                     </svg>
                   </motion.div>
                   
                   <div className="space-y-2">
-                    <h3 className="text-2xl font-bold text-green-800 dark:text-green-200">
+                    <h3 className="text-2xl font-bold text-black dark:text-white">
                       Day Complete! 🎉
                     </h3>
-                    <div className="flex items-center justify-center space-x-4 text-green-700 dark:text-green-300">
+                    <div className="flex items-center justify-center space-x-4 text-black dark:text-white">
                       <div className="flex items-center space-x-1">
                         <Trophy className="w-5 h-5" />
                         <span className="font-semibold text-lg">Score: {dailyEntry.score || 0}/10</span>
@@ -323,7 +323,7 @@ export default function Home() {
                     </div>
                     
                     {/* Achievement Message */}
-                    <p className="text-sm text-green-600 dark:text-green-400 mt-2">
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
                       {(dailyEntry.score || 0) >= 9 ? "Legendary performance! You crushed it today!" :
                        (dailyEntry.score || 0) >= 7 ? "Great job! You had a productive day!" :
                        (dailyEntry.score || 0) >= 5 ? "Good work! Every step counts!" :
@@ -337,7 +337,7 @@ export default function Home() {
                   disabled={undoFinalizeMutation.isPending}
                   variant="outline"
                   size="sm"
-                  className="w-full mt-4 border-green-600 text-green-700 hover:bg-green-100 dark:border-green-400 dark:text-green-300 dark:hover:bg-green-900/50 transition-all font-medium"
+                  className="w-full mt-4 border-gray-400 text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800 transition-all font-medium"
                 >
                   {undoFinalizeMutation.isPending ? "Undoing..." : "Undo Finalization"}
                 </Button>
