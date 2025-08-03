@@ -47,7 +47,8 @@ export default function Reports() {
     }
   });
 
-  const daysTracked = monthlyData?.entries?.length || 0;
+  // Only count days that have been actually tracked (finalized or have score > 0)
+  const daysTracked = monthlyData?.entries?.filter(entry => entry.isFinalized || entry.score > 0).length || 0;
   const monthlyAverage = monthlyData?.average || 0;
   const todayScore = todayEntry?.score || 0;
   const currentStreak = streakData?.currentStreak || 0;
@@ -259,7 +260,7 @@ export default function Reports() {
           )}
           {daysTracked > 0 && (
             <p className="text-xs text-gray-600 dark:text-gray-400">
-              • You've tracked {((daysTracked / new Date().getDate()) * 100).toFixed(0)}% of days this month
+              • You've tracked {daysTracked} {daysTracked === 1 ? 'day' : 'days'} this month ({((daysTracked / new Date().getDate()) * 100).toFixed(0)}%)
             </p>
           )}
         </div>
