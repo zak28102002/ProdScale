@@ -51,13 +51,6 @@ export default function BottomNav() {
                   >
                     {item.label}
                   </span>
-                  {isActive && (
-                    <motion.div
-                      layoutId="activeTab"
-                      className="absolute top-0 left-1/2 -translate-x-1/2 w-1 h-1 bg-black dark:bg-white rounded-full"
-                      transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                    />
-                  )}
                 </button>
               </Link>
             );
