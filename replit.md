@@ -55,6 +55,11 @@ The productivity score (0-10) is calculated based on:
 - Daily reflection added (+2 points)
 - Streak maintenance (+2 points for 3+ day streaks)
 
+Streak System:
+- Streaks count consecutive days with scores of 6.0 or above
+- Scores below 6.0 reset the current streak to 0
+- Longest streak is tracked separately
+
 ## Data Flow
 
 1. **User Authentication**: Demo user system (ready for full auth implementation)

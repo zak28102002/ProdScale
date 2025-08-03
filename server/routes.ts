@@ -324,7 +324,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       // Update streak
-      const isProductiveDay = finalScore >= 5; // Consider score >= 5 as productive day
+      const isProductiveDay = finalScore >= 6; // Consider score >= 6 as productive day
       const existingStreak = await storage.getUserStreak(userId);
       
       if (isProductiveDay) {
@@ -426,7 +426,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       // Update streak
-      const isProductiveDay = finalScore >= 5;
+      const isProductiveDay = finalScore >= 6;
       const existingStreak = await storage.getUserStreak(userId);
       
       if (isProductiveDay) {
