@@ -110,37 +110,73 @@ export default function SocialSharing() {
   
   const shareText = getShareText();
 
-  const handleShare = (platform: string) => {
-    let url = '';
-    const encodedText = encodeURIComponent(shareText);
-    
-    switch (platform) {
-      case 'twitter':
-        url = `https://twitter.com/intent/tweet?text=${encodedText}`;
-        break;
-      case 'facebook':
-        url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.origin)}&quote=${encodedText}`;
-        break;
-      case 'instagram':
-        // Instagram doesn't support direct sharing via URL, so we'll copy to clipboard
-        navigator.clipboard.writeText(shareText);
-        toast({
-          title: "Copied to clipboard!",
-          description: "Share text copied. Paste it in your Instagram post.",
+  const handleShare = async (platform: string) => {
+    // First, save the image
+    if (shareCardRef.current) {
+      try {
+        const dataUrl = await htmlToImage.toPng(shareCardRef.current, {
+          quality: 1.0,
+          pixelRatio: 2,
+          backgroundColor: 'transparent',
+          style: {
+            borderRadius: '0.75rem',
+            overflow: 'hidden'
+          }
         });
-        return;
-      case 'copy':
-        navigator.clipboard.writeText(shareText);
+        
+        // Create and trigger download
+        const link = document.createElement('a');
+        link.download = `prodscale-${today}-score-${score.toFixed(1)}.png`;
+        link.href = dataUrl;
+        link.click();
+        
+        // Show platform-specific instructions
+        setTimeout(() => {
+          let url = '';
+          const encodedText = encodeURIComponent(shareText);
+          
+          switch (platform) {
+            case 'twitter':
+              url = `https://twitter.com/intent/tweet?text=${encodedText}`;
+              toast({
+                title: "Image saved! 📸",
+                description: "Now attach the downloaded image to your tweet.",
+              });
+              window.open(url, '_blank', 'width=600,height=400');
+              break;
+            case 'facebook':
+              url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.origin)}&quote=${encodedText}`;
+              toast({
+                title: "Image saved! 📸",
+                description: "Upload the downloaded image to your Facebook post.",
+              });
+              window.open(url, '_blank', 'width=600,height=400');
+              break;
+            case 'instagram':
+              navigator.clipboard.writeText(shareText);
+              toast({
+                title: "Image saved & text copied! 📸",
+                description: "Open Instagram and post the downloaded image with the copied caption.",
+              });
+              break;
+            case 'copy':
+              navigator.clipboard.writeText(shareText);
+              toast({
+                title: "Text copied!",
+                description: "Share text copied successfully.",
+              });
+              break;
+          }
+        }, 500); // Small delay to ensure download starts first
+        
+      } catch (error) {
+        console.error('Failed to save image:', error);
         toast({
-          title: "Copied to clipboard!",
-          description: "Share text copied successfully.",
+          title: "Error",
+          description: "Failed to save image. Please try again.",
         });
-        return;
-      default:
-        return;
+      }
     }
-    
-    window.open(url, '_blank', 'width=600,height=400');
   };
 
   const handleSaveImage = async () => {
@@ -379,7 +415,7 @@ export default function SocialSharing() {
             className="flex items-center justify-center space-x-2 p-3 hover:bg-gray-50"
           >
             <Copy className="w-5 h-5" />
-            <span>Copy Link</span>
+            <span>Copy Text</span>
           </Button>
         </div>
       </div>
