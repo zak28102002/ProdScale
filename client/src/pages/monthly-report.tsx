@@ -245,7 +245,7 @@ export default function MonthlyReport() {
 
       {/* Daily Details Modal */}
       <Dialog open={!!selectedDate} onOpenChange={() => setSelectedDate(null)}>
-        <DialogContent className="max-w-md rounded-2xl border-gray-200 dark:border-gray-800 backdrop-blur-xl bg-white/95 dark:bg-gray-900/95">
+        <DialogContent className="max-w-sm mx-4 rounded-2xl border-gray-200 dark:border-gray-800 backdrop-blur-xl bg-white/95 dark:bg-gray-900/95">
           <DialogHeader>
             <DialogTitle>
               {selectedDate ? new Date(selectedDate).toLocaleDateString('en-US', {
