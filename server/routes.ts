@@ -37,9 +37,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
           reflection: "",
           score: 0,
         });
-        res.json(newEntry);
+        res.json({
+          ...newEntry,
+          score: newEntry.score / 10 // Convert to decimal for display
+        });
       } else {
-        res.json(entry);
+        res.json({
+          ...entry,
+          score: entry.score / 10 // Convert to decimal for display
+        });
       }
     } catch (error) {
       console.error("Error fetching daily entry:", error);
@@ -171,12 +177,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const entries = await storage.getUserDailyEntries(userId, startDate, endDate);
       
-      // Calculate monthly average
-      const totalScore = entries.reduce((sum, entry) => sum + (entry.score || 0), 0);
-      const average = entries.length > 0 ? totalScore / entries.length : 0;
+      // Convert scores to decimals and calculate monthly average
+      const entriesWithDecimalScores = entries.map(entry => ({
+        ...entry,
+        score: entry.score / 10 // Convert to decimal for display
+      }));
+      
+      const totalScore = entriesWithDecimalScores.reduce((sum, entry) => sum + (entry.score || 0), 0);
+      const average = entriesWithDecimalScores.length > 0 ? totalScore / entriesWithDecimalScores.length : 0;
       
       res.json({
-        entries,
+        entries: entriesWithDecimalScores,
         average: parseFloat(average.toFixed(1)),
         isUnproductive: average < 6
       });
@@ -307,7 +318,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Update daily entry with final score and finalization
       await storage.updateDailyEntry(dailyEntry.id, {
-        score: Math.round(finalScore * 10) / 10, // Round to 1 decimal
+        score: Math.round(finalScore * 10), // Store as integer (67 for 6.7)
         isFinalized: true,
         finalizedAt: new Date(),
       });
@@ -408,7 +419,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Update daily entry with final score and auto-finalization
       await storage.updateDailyEntry(dailyEntry.id, {
-        score: Math.round(finalScore * 10) / 10,
+        score: Math.round(finalScore * 10), // Store as integer (67 for 6.7)
         isFinalized: true,
         autoFinalized: true,
         finalizedAt: new Date(),
@@ -553,6 +564,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       res.json({
         ...entry,
+        score: entry.score / 10, // Convert to decimal for display
         completions: completionsWithNames,
         completedCount: completions.filter(c => c.completed).length,
         totalActivities: activities.length

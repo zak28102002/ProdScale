@@ -8,6 +8,7 @@ import {
   jsonb,
   boolean,
   date,
+  numeric,
 } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
