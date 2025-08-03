@@ -48,7 +48,7 @@ export default function Reports() {
   });
 
   // Only count days that have been actually tracked (finalized or have score > 0)
-  const daysTracked = monthlyData?.entries?.filter(entry => entry.isFinalized || entry.score > 0).length || 0;
+  const daysTracked = monthlyData?.entries?.filter(entry => entry.isFinalized || (entry.score !== null && entry.score > 0)).length || 0;
   const monthlyAverage = monthlyData?.average || 0;
   const todayScore = todayEntry?.score || 0;
   const currentStreak = streakData?.currentStreak || 0;
@@ -172,27 +172,24 @@ export default function Reports() {
           {last7Days.map((date, index) => {
             const entry = weeklyEntries?.find(e => e.date === date);
             const score = entry?.score || 0;
-            const height = score ? (score / 10) * 100 : 0; // No height when score is 0
+            const height = score > 0 ? (score / 10) * 100 : 2; // Minimal height for 0 scores
             const isToday = date === today.toISOString().split('T')[0];
             
             return (
               <div key={date} className="flex-1 flex flex-col items-center">
                 <div className="w-full flex items-end justify-center h-16">
-                  {score > 0 ? (
-                    <motion.div
-                      initial={{ height: 0 }}
-                      animate={{ height: `${height}%` }}
-                      transition={{ delay: 0.5 + index * 0.05 }}
-                      className={`w-full rounded-t ${
-                        score >= 8 ? 'bg-green-500 dark:bg-green-600' :
-                        score >= 6 ? 'bg-blue-500 dark:bg-blue-600' :
-                        score >= 4 ? 'bg-yellow-500 dark:bg-yellow-600' :
-                        'bg-red-500 dark:bg-red-600'
-                      }`}
-                    />
-                  ) : (
-                    <div className="w-full h-0" /> // Empty space when score is 0
-                  )}
+                  <motion.div
+                    initial={{ height: 0 }}
+                    animate={{ height: `${height}%` }}
+                    transition={{ delay: 0.5 + index * 0.05 }}
+                    className={`w-full rounded-t ${
+                      score >= 8 ? 'bg-green-500 dark:bg-green-600' :
+                      score >= 6 ? 'bg-blue-500 dark:bg-blue-600' :
+                      score >= 4 ? 'bg-yellow-500 dark:bg-yellow-600' :
+                      score > 0 ? 'bg-red-500 dark:bg-red-600' :
+                      'bg-gray-300 dark:bg-gray-700' // Gray base for 0 scores
+                    }`}
+                  />
                 </div>
                 <div className={`text-xs mt-1 ${isToday ? 'font-bold text-black dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>
                   {new Date(date).toLocaleDateString('en-US', { weekday: 'short' })[0]}
