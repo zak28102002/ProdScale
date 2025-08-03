@@ -132,14 +132,8 @@ export default function ModernCalendar({
     <div className="space-y-6 bg-black text-white p-4 rounded-lg">
       {/* Streak Display */}
       <div className="flex items-center justify-center py-3">
-        <div className="flex items-center space-x-3">
-          <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
-            <span className="text-sm">🔥</span>
-          </div>
-          <div className="text-center">
-            <span className="text-2xl font-bold">{currentStreak}</span>
-            <span className="text-sm text-gray-400 ml-2">day streak</span>
-          </div>
+        <div className="text-center">
+          <span className="text-2xl font-bold">{currentStreak}</span>
         </div>
       </div>
 
