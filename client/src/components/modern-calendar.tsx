@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, Edit2, Settings } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { DailyEntry } from "@shared/schema";
 
@@ -131,20 +131,15 @@ export default function ModernCalendar({
   return (
     <div className="space-y-6 bg-black text-white p-4 rounded-lg">
       {/* Streak Display */}
-      <div className="flex items-center justify-between py-3">
-        <div className="flex items-center space-x-2">
-          <div className="w-6 h-6 bg-orange-500 rounded flex items-center justify-center">
-            <span className="text-xs">🔥</span>
+      <div className="flex items-center justify-center py-3">
+        <div className="flex items-center space-x-3">
+          <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
+            <span className="text-sm">🔥</span>
           </div>
-        </div>
-        <div className="flex items-center space-x-4">
-          <Button variant="ghost" size="icon" className="text-white hover:bg-gray-800 h-8 w-8">
-            <Edit2 className="w-4 h-4" />
-          </Button>
-          <span className="text-2xl">{currentStreak}</span>
-          <Button variant="ghost" size="icon" className="text-white hover:bg-gray-800 h-8 w-8">
-            <Settings className="w-4 h-4" />
-          </Button>
+          <div className="text-center">
+            <span className="text-2xl font-bold">{currentStreak}</span>
+            <span className="text-sm text-gray-400 ml-2">day streak</span>
+          </div>
         </div>
       </div>
 
