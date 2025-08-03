@@ -274,7 +274,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/finalize-day/:date", async (req, res) => {
     try {
       const { date } = req.params;
-      const userId = "demo-user"; // Replace with actual auth
+      
+      // Get demo user by username
+      const user = await storage.getUserByUsername("demo");
+      if (!user) {
+        res.status(401).json({ message: "User not found" });
+        return;
+      }
+      
+      const userId = user.id;
       
       // Get daily entry and completions
       const dailyEntry = await storage.getDailyEntry(userId, date);
@@ -367,7 +375,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/auto-finalize/:date", async (req, res) => {
     try {
       const { date } = req.params;
-      const userId = "demo-user"; // Replace with actual auth
+      
+      // Get demo user by username
+      const user = await storage.getUserByUsername("demo");
+      if (!user) {
+        res.status(401).json({ message: "User not found" });
+        return;
+      }
+      
+      const userId = user.id;
       
       // Get daily entry and completions
       const dailyEntry = await storage.getDailyEntry(userId, date);
@@ -456,7 +472,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/undo-finalize/:date", async (req, res) => {
     try {
       const { date } = req.params;
-      const userId = "demo-user"; // Replace with actual auth
+      
+      // Get demo user by username
+      const user = await storage.getUserByUsername("demo");
+      if (!user) {
+        res.status(401).json({ message: "User not found" });
+        return;
+      }
+      
+      const userId = user.id;
       
       const dailyEntry = await storage.getDailyEntry(userId, date);
       if (!dailyEntry) {
@@ -499,7 +523,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/daily-entry-details/:date", async (req, res) => {
     try {
       const { date } = req.params;
-      const userId = "demo-user"; // Replace with actual auth
+      
+      // Get demo user by username
+      const user = await storage.getUserByUsername("demo");
+      if (!user) {
+        res.status(401).json({ message: "User not found" });
+        return;
+      }
+      
+      const userId = user.id;
       
       const entry = await storage.getDailyEntry(userId, date);
       if (!entry) {

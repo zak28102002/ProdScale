@@ -13,6 +13,7 @@ import ActivityManager from "@/components/activity-manager";
 import { calculateProductivityScore } from "@/lib/scoring";
 import { getDailyQuote } from "@/lib/quotes";
 import type { DailyEntry, Activity, ActivityCompletion } from "@shared/schema";
+import { Trophy, Clock } from "lucide-react";
 
 export default function Home() {
   const queryClient = useQueryClient();
@@ -243,40 +244,106 @@ export default function Home() {
       {/* Bottom Buttons */}
       <div className="space-y-3 pt-4">
         {!dailyEntry?.isFinalized && (
-          <Button 
-            onClick={() => finalizeDayMutation.mutate()}
-            disabled={finalizeDayMutation.isPending}
-            className="w-full bg-green-600 dark:bg-green-500 text-white hover:bg-green-700 dark:hover:bg-green-600"
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
           >
-            {finalizeDayMutation.isPending ? "Finalizing..." : "Finalize Day"}
-          </Button>
+            <Button 
+              onClick={() => finalizeDayMutation.mutate()}
+              disabled={finalizeDayMutation.isPending}
+              className="w-full h-14 bg-gradient-to-r from-green-600 to-emerald-600 dark:from-green-500 dark:to-emerald-500 text-white hover:from-green-700 hover:to-emerald-700 dark:hover:from-green-600 dark:hover:to-emerald-600 font-semibold text-lg shadow-lg transform transition-all hover:scale-[1.02] active:scale-[0.98]"
+            >
+              {finalizeDayMutation.isPending ? (
+                <div className="flex items-center space-x-2">
+                  <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
+                  <span>Finalizing Day...</span>
+                </div>
+              ) : (
+                <div className="flex items-center justify-center space-x-2">
+                  <span>Finalize Day</span>
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+              )}
+            </Button>
+          </motion.div>
         )}
         {dailyEntry?.isFinalized && (
-          <div className="w-full p-4 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950 dark:to-emerald-950 border border-green-200 dark:border-green-800 rounded-xl shadow-sm">
-            <div className="text-center mb-3">
-              <div className="inline-flex items-center justify-center w-8 h-8 bg-green-500 dark:bg-green-600 rounded-full mb-2">
-                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ 
+              type: "spring",
+              stiffness: 200,
+              damping: 20
+            }}
+            className="w-full"
+          >
+            <div className="p-6 bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 dark:from-green-950 dark:via-emerald-950 dark:to-teal-950 border-2 border-green-300 dark:border-green-700 rounded-2xl shadow-lg relative overflow-hidden">
+              {/* Background Pattern */}
+              <div className="absolute inset-0 opacity-10">
+                <div className="absolute top-0 left-0 w-40 h-40 bg-green-400 rounded-full blur-3xl"></div>
+                <div className="absolute bottom-0 right-0 w-40 h-40 bg-emerald-400 rounded-full blur-3xl"></div>
               </div>
-              <div className="text-green-800 dark:text-green-200">
-                <div className="font-semibold text-lg">Day Finalized</div>
-                <div className="text-sm opacity-90">
-                  Final Score: {dailyEntry.score}/10
-                  {dailyEntry.autoFinalized && " • Auto-finalized"}
+              
+              <div className="relative z-10">
+                <div className="text-center mb-4">
+                  <motion.div 
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ 
+                      delay: 0.2,
+                      type: "spring",
+                      stiffness: 200
+                    }}
+                    className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 dark:from-green-600 dark:to-emerald-700 rounded-full mb-3 shadow-lg"
+                  >
+                    <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </motion.div>
+                  
+                  <div className="space-y-2">
+                    <h3 className="text-2xl font-bold text-green-800 dark:text-green-200">
+                      Day Complete! 🎉
+                    </h3>
+                    <div className="flex items-center justify-center space-x-4 text-green-700 dark:text-green-300">
+                      <div className="flex items-center space-x-1">
+                        <Trophy className="w-5 h-5" />
+                        <span className="font-semibold text-lg">Score: {dailyEntry.score || 0}/10</span>
+                      </div>
+                      {dailyEntry.autoFinalized && (
+                        <div className="text-sm opacity-80 flex items-center space-x-1">
+                          <Clock className="w-4 h-4" />
+                          <span>Auto-finalized</span>
+                        </div>
+                      )}
+                    </div>
+                    
+                    {/* Achievement Message */}
+                    <p className="text-sm text-green-600 dark:text-green-400 mt-2">
+                      {(dailyEntry.score || 0) >= 9 ? "Legendary performance! You crushed it today!" :
+                       (dailyEntry.score || 0) >= 7 ? "Great job! You had a productive day!" :
+                       (dailyEntry.score || 0) >= 5 ? "Good work! Every step counts!" :
+                       "Progress made! Tomorrow is a new opportunity!"}
+                    </p>
+                  </div>
                 </div>
+                
+                <Button 
+                  onClick={() => undoFinalizeMutation.mutate()}
+                  disabled={undoFinalizeMutation.isPending}
+                  variant="outline"
+                  size="sm"
+                  className="w-full mt-4 border-green-600 text-green-700 hover:bg-green-100 dark:border-green-400 dark:text-green-300 dark:hover:bg-green-900/50 transition-all font-medium"
+                >
+                  {undoFinalizeMutation.isPending ? "Undoing..." : "Undo Finalization"}
+                </Button>
               </div>
             </div>
-            <Button 
-              onClick={() => undoFinalizeMutation.mutate()}
-              disabled={undoFinalizeMutation.isPending}
-              variant="outline"
-              size="sm"
-              className="w-full border-green-600 text-green-700 hover:bg-green-100 dark:border-green-400 dark:text-green-300 dark:hover:bg-green-900 transition-colors"
-            >
-              {undoFinalizeMutation.isPending ? "Undoing..." : "Undo Finalization"}
-            </Button>
-          </div>
+          </motion.div>
         )}
       </div>
     </motion.div>
