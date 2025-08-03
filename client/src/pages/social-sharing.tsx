@@ -147,10 +147,19 @@ export default function SocialSharing() {
     if (!shareCardRef.current) return;
     
     try {
+      // Create a wrapper with padding to preserve rounded corners
+      const wrapper = document.createElement('div');
+      wrapper.style.padding = '20px';
+      wrapper.style.backgroundColor = 'transparent';
+      
       const dataUrl = await htmlToImage.toPng(shareCardRef.current, {
         quality: 1.0,
         pixelRatio: 2,
-        backgroundColor: '#000000',
+        backgroundColor: 'transparent',
+        style: {
+          borderRadius: '0.75rem', // Force rounded corners
+          overflow: 'hidden'
+        }
       });
       
       // Create a link and trigger download
@@ -211,7 +220,10 @@ export default function SocialSharing() {
           animate={{ scale: 1, opacity: 1 }}
           transition={{ delay: 0.2 }}
           className={`${selectedBg.class} rounded-xl p-6 text-white space-y-4 relative overflow-hidden`}
-          style={selectedBg.style}
+          style={{
+            ...selectedBg.style,
+            borderRadius: '0.75rem' // Ensure rounded corners are explicitly set
+          }}
         >
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-bold text-white">ProdScale</h2>
