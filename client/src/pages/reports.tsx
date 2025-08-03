@@ -1,9 +1,9 @@
 import { Link } from "wouter";
 import { motion } from "framer-motion";
-import { Calendar, Share2, ChevronRight, TrendingUp, Trophy, Star } from "lucide-react";
+import { Calendar, Share2, ChevronRight, TrendingUp, Trophy, Star, Flame, Target, Activity } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
-import type { DailyEntry } from "@shared/schema";
+import type { DailyEntry, Streak } from "@shared/schema";
 
 export default function Reports() {
   const today = new Date();
@@ -24,9 +24,33 @@ export default function Reports() {
     queryKey: ["/api/daily-entry", today.toISOString().split('T')[0]],
   });
 
+  // Fetch streak data
+  const { data: streakData } = useQuery<Streak>({
+    queryKey: ["/api/streak"],
+  });
+
+  // Fetch last 7 days for weekly chart
+  const last7Days = Array.from({ length: 7 }, (_, i) => {
+    const date = new Date();
+    date.setDate(date.getDate() - (6 - i));
+    return date.toISOString().split('T')[0];
+  });
+
+  const { data: weeklyEntries } = useQuery<DailyEntry[]>({
+    queryKey: ["/api/weekly-entries", last7Days[0], last7Days[6]],
+    queryFn: async () => {
+      const promises = last7Days.map(date => 
+        fetch(`/api/daily-entry/${date}`).then(res => res.ok ? res.json() : null)
+      );
+      const results = await Promise.all(promises);
+      return results.filter(Boolean);
+    }
+  });
+
   const daysTracked = monthlyData?.entries?.length || 0;
   const monthlyAverage = monthlyData?.average || 0;
   const todayScore = todayEntry?.score || 0;
+  const currentStreak = streakData?.currentStreak || 0;
 
   return (
     <motion.div
@@ -132,12 +156,121 @@ export default function Reports() {
         </Link>
       </div>
 
+      {/* Weekly Progress Chart */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.4 }}
+        className="mt-6 p-4 bg-white dark:bg-black border border-gray-200 dark:border-gray-800 rounded-xl"
+      >
+        <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 flex items-center">
+          <Activity className="w-4 h-4 mr-2" />
+          Last 7 Days
+        </h3>
+        <div className="flex items-end justify-between h-20 space-x-1">
+          {last7Days.map((date, index) => {
+            const entry = weeklyEntries?.find(e => e.date === date);
+            const score = entry?.score || 0;
+            const height = score ? (score / 10) * 100 : 5;
+            const isToday = date === today.toISOString().split('T')[0];
+            
+            return (
+              <div key={date} className="flex-1 flex flex-col items-center">
+                <div className="w-full flex items-end justify-center h-16">
+                  <motion.div
+                    initial={{ height: 0 }}
+                    animate={{ height: `${height}%` }}
+                    transition={{ delay: 0.5 + index * 0.05 }}
+                    className={`w-full rounded-t ${
+                      score >= 8 ? 'bg-green-500 dark:bg-green-600' :
+                      score >= 6 ? 'bg-blue-500 dark:bg-blue-600' :
+                      score >= 4 ? 'bg-yellow-500 dark:bg-yellow-600' :
+                      score > 0 ? 'bg-red-500 dark:bg-red-600' :
+                      'bg-gray-300 dark:bg-gray-700'
+                    }`}
+                  />
+                </div>
+                <div className={`text-xs mt-1 ${isToday ? 'font-bold text-black dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>
+                  {new Date(date).toLocaleDateString('en-US', { weekday: 'short' })[0]}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </motion.div>
+
+      {/* Streak & Achievements */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.5 }}
+        className="mt-4 grid grid-cols-2 gap-3"
+      >
+        {/* Current Streak */}
+        <div className="p-4 bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 rounded-xl">
+          <div className="flex items-center justify-between mb-2">
+            <Flame className="w-6 h-6 text-orange-600 dark:text-orange-400" />
+            <span className="text-2xl font-bold text-orange-800 dark:text-orange-200">{currentStreak}</span>
+          </div>
+          <p className="text-xs text-orange-600 dark:text-orange-400">Current Streak</p>
+          {currentStreak >= 7 && (
+            <p className="text-xs text-orange-500 dark:text-orange-500 mt-1">🔥 On fire!</p>
+          )}
+        </div>
+
+        {/* Personal Best */}
+        <div className="p-4 bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 rounded-xl">
+          <div className="flex items-center justify-between mb-2">
+            <Target className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+            <span className="text-2xl font-bold text-purple-800 dark:text-purple-200">
+              {streakData?.longestStreak || 0}
+            </span>
+          </div>
+          <p className="text-xs text-purple-600 dark:text-purple-400">Best Streak</p>
+          {(streakData?.longestStreak || 0) >= 30 && (
+            <p className="text-xs text-purple-500 dark:text-purple-500 mt-1">👑 Legend!</p>
+          )}
+        </div>
+      </motion.div>
+
+      {/* Insights Section */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.6 }}
+        className="mt-4 p-4 bg-gray-50 dark:bg-gray-900 rounded-xl"
+      >
+        <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Quick Insights</h3>
+        <div className="space-y-2">
+          {monthlyAverage > 0 && monthlyData?.entries && monthlyData.entries.length > 0 && (
+            <p className="text-xs text-gray-600 dark:text-gray-400">
+              • Your best day this month was {
+                monthlyData.entries.reduce((best, entry) => 
+                  (entry.score || 0) > (best.score || 0) ? entry : best, 
+                  monthlyData.entries[0]
+                )?.score?.toFixed(1) || "0.0"
+              }/10
+            </p>
+          )}
+          {currentStreak >= 3 && (
+            <p className="text-xs text-gray-600 dark:text-gray-400">
+              • You've been consistent for {currentStreak} days straight!
+            </p>
+          )}
+          {daysTracked > 0 && (
+            <p className="text-xs text-gray-600 dark:text-gray-400">
+              • You've tracked {((daysTracked / new Date().getDate()) * 100).toFixed(0)}% of days this month
+            </p>
+          )}
+        </div>
+      </motion.div>
+
       {/* Motivational Message */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.5 }}
-        className="mt-8 p-4 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 rounded-xl text-center"
+        transition={{ delay: 0.7 }}
+        className="mt-4 p-4 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 rounded-xl text-center"
       >
         <p className="text-sm text-gray-600 dark:text-gray-400">
           {monthlyAverage >= 8 ? "🌟 Outstanding month! Keep up the amazing work!" :
