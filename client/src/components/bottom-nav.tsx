@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { Home, TrendingUp, User } from "lucide-react";
+import { Home, BarChart3, Settings } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function BottomNav() {
@@ -13,12 +13,12 @@ export default function BottomNav() {
     },
     {
       path: "/reports",
-      icon: TrendingUp,
+      icon: BarChart3,
       label: "Reports",
     },
     {
       path: "/settings",
-      icon: User,
+      icon: Settings,
       label: "Settings",
     },
   ];
@@ -36,12 +36,11 @@ export default function BottomNav() {
               <Link key={item.path} href={item.path}>
                 <button className="relative flex flex-col items-center justify-center w-20 h-full">
                   <item.icon 
-                    className={`w-6 h-6 mb-1 transition-colors stroke-2 ${
+                    className={`w-6 h-6 mb-1 transition-colors ${
                       isActive 
-                        ? "text-black dark:text-white fill-none" 
-                        : "text-gray-400 dark:text-gray-600 fill-none"
+                        ? "text-black dark:text-white" 
+                        : "text-gray-400 dark:text-gray-600"
                     }`}
-                    strokeWidth={2}
                   />
                   <span 
                     className={`text-xs transition-colors ${
