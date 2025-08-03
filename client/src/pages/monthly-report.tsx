@@ -4,7 +4,7 @@ import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { ArrowLeft, X, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import CalendarHeatmap from "@/components/calendar-heatmap";
@@ -245,7 +245,7 @@ export default function MonthlyReport() {
 
       {/* Daily Details Modal */}
       <Dialog open={!!selectedDate} onOpenChange={() => setSelectedDate(null)}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md rounded-2xl border-gray-200 dark:border-gray-800 backdrop-blur-xl bg-white/95 dark:bg-gray-900/95">
           <DialogHeader>
             <DialogTitle>
               {selectedDate ? new Date(selectedDate).toLocaleDateString('en-US', {
@@ -255,6 +255,9 @@ export default function MonthlyReport() {
                 day: 'numeric'
               }) : "Day Details"}
             </DialogTitle>
+            <DialogDescription className="sr-only">
+              View daily activity details and reflection
+            </DialogDescription>
           </DialogHeader>
           
           {dayDetails && (
