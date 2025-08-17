@@ -209,7 +209,7 @@ export default function MonthlyReport() {
         <div className="text-3xl font-bold mb-1 text-black dark:text-white">{average}</div>
         <p className="text-sm text-gray-600 dark:text-gray-400">Monthly Average</p>
         {isUnproductive && (
-          <p className="text-sm text-red-600 dark:text-red-400 mt-2">Unproductive Month 😞</p>
+          <p className="text-sm text-red-600 dark:text-red-400 mt-2">Unproductive Month</p>
         )}
       </div>
 
