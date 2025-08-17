@@ -87,23 +87,23 @@ export default function SocialSharing() {
     let emoji = "";
     
     if (score >= 9) {
-      achievementText = "🏆 LEGENDARY productivity day!";
-      emoji = "🔥";
+      achievementText = "⚔️ LEGENDARY productivity day!";
+      emoji = "⚔️";
     } else if (score >= 7) {
-      achievementText = "🌟 Champion level performance!";
-      emoji = "💪";
+      achievementText = "🛡️ Champion level performance!";
+      emoji = "🛡️";
     } else if (score >= 5) {
-      achievementText = "⚡ Warrior mode activated!";
-      emoji = "🎯";
+      achievementText = "⚔️ Warrior mode activated!";
+      emoji = "⚔️";
     } else if (score >= 3) {
-      achievementText = "🌱 Rising to the challenge!";
-      emoji = "📈";
+      achievementText = "🗡️ Rising to the challenge!";
+      emoji = "🗡️";
     } else {
-      achievementText = "🎯 Starting my journey!";
-      emoji = "🚀";
+      achievementText = "🛡️ Resting and recharging!";
+      emoji = "🛡️";
     }
     
-    const streakText = (streak?.currentStreak || 0) > 0 ? `\n🔥 ${streak?.currentStreak} day streak!` : "";
+    const streakText = (streak?.currentStreak || 0) > 0 ? `\n⚔️ ${streak?.currentStreak} day streak!` : "";
     
     return `${achievementText}\n\n${emoji} Scored ${score.toFixed(1)}/10 on ProdScale${streakText}\n✅ Completed ${completedActivities.length} activities\n\n💭 "${dailyQuote}"\n\n#ProdScale #ProductivityGoals #DailyWins`;
   };
@@ -300,28 +300,28 @@ export default function SocialSharing() {
           {/* Achievement Badge */}
           <div className="mb-3">
             {score >= 9 && (
-              <div className="inline-flex items-center px-3 py-1 bg-yellow-400 text-black rounded-full text-sm font-bold">
-                🏆 Legendary
+              <div className="inline-flex items-center px-3 py-1 bg-white text-black rounded-full text-sm font-bold">
+                ⚔️ Legendary
               </div>
             )}
             {score >= 7 && score < 9 && (
-              <div className="inline-flex items-center px-3 py-1 bg-green-400 text-black rounded-full text-sm font-bold">
-                🌟 Champion
+              <div className="inline-flex items-center px-3 py-1 bg-white text-black rounded-full text-sm font-bold">
+                🛡️ Champion
               </div>
             )}
             {score >= 5 && score < 7 && (
-              <div className="inline-flex items-center px-3 py-1 bg-blue-400 text-black rounded-full text-sm font-bold">
-                💪 Warrior
+              <div className="inline-flex items-center px-3 py-1 bg-white text-black rounded-full text-sm font-bold">
+                ⚔️ Warrior
               </div>
             )}
             {score >= 3 && score < 5 && (
-              <div className="inline-flex items-center px-3 py-1 bg-purple-400 text-black rounded-full text-sm font-bold">
-                🌱 Rising
+              <div className="inline-flex items-center px-3 py-1 bg-white bg-opacity-80 text-black rounded-full text-sm font-bold">
+                🗡️ Rising
               </div>
             )}
             {score < 3 && (
-              <div className="inline-flex items-center px-3 py-1 bg-gray-400 text-black rounded-full text-sm font-bold">
-                🎯 Starter
+              <div className="inline-flex items-center px-3 py-1 bg-white bg-opacity-60 text-black rounded-full text-sm font-bold">
+                🛡️ Resting
               </div>
             )}
           </div>
