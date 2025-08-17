@@ -301,27 +301,27 @@ export default function SocialSharing() {
           <div className="mb-3">
             {score >= 9 && (
               <div className="inline-flex items-center px-3 py-1 bg-white text-black rounded-full text-sm font-bold">
-                ⚔️ Legendary
+                Legendary
               </div>
             )}
             {score >= 7 && score < 9 && (
               <div className="inline-flex items-center px-3 py-1 bg-white text-black rounded-full text-sm font-bold">
-                🛡️ Champion
+                Champion
               </div>
             )}
             {score >= 5 && score < 7 && (
               <div className="inline-flex items-center px-3 py-1 bg-white text-black rounded-full text-sm font-bold">
-                ⚔️ Warrior
+                Warrior
               </div>
             )}
             {score >= 3 && score < 5 && (
               <div className="inline-flex items-center px-3 py-1 bg-white bg-opacity-80 text-black rounded-full text-sm font-bold">
-                🗡️ Rising
+                Rising
               </div>
             )}
             {score < 3 && (
               <div className="inline-flex items-center px-3 py-1 bg-white bg-opacity-60 text-black rounded-full text-sm font-bold">
-                🛡️ Resting
+                Resting
               </div>
             )}
           </div>

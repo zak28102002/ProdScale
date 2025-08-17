@@ -215,7 +215,7 @@ export default function Reports() {
           </div>
           <p className="text-xs text-gray-600 dark:text-gray-400">Current Streak</p>
           {currentStreak >= 7 && (
-            <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">⚔️ On fire!</p>
+            <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">On fire!</p>
           )}
         </div>
 
@@ -229,7 +229,7 @@ export default function Reports() {
           </div>
           <p className="text-xs text-gray-600 dark:text-gray-400">Best Streak</p>
           {(streakData?.longestStreak || 0) >= 30 && (
-            <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">👑 Legend!</p>
+            <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">Legend!</p>
           )}
         </div>
       </motion.div>
@@ -274,10 +274,10 @@ export default function Reports() {
         className="mt-4 p-4 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 rounded-xl text-center"
       >
         <p className="text-sm text-gray-600 dark:text-gray-400">
-          {monthlyAverage >= 8 ? "⚔️ Outstanding month! Keep up the amazing work!" :
-           monthlyAverage >= 6 ? "🛡️ Great progress! You're on the right track!" :
-           monthlyAverage >= 4 ? "🗡️ Good start! Every day counts!" :
-           "⚔️ Track daily to see your progress!"}
+          {monthlyAverage >= 8 ? "Outstanding month! Keep up the amazing work!" :
+           monthlyAverage >= 6 ? "Great progress! You're on the right track!" :
+           monthlyAverage >= 4 ? "Good start! Every day counts!" :
+           "Track daily to see your progress!"}
         </p>
       </motion.div>
     </motion.div>
