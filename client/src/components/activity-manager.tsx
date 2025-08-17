@@ -212,17 +212,53 @@ export default function ActivityManager({ activities }: ActivityManagerProps) {
               </SelectValue>
             </SelectTrigger>
             <SelectContent className="bg-white dark:bg-black border-gray-300 dark:border-gray-600 max-h-96 overflow-y-auto">
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ 
+                  duration: 0.2,
+                  ease: "easeOut"
+                }}
+              >
               {Object.entries(iconOptions.reduce((acc, option) => {
                 if (!acc[option.category]) acc[option.category] = [];
                 acc[option.category].push(option);
                 return acc;
-              }, {} as Record<string, typeof iconOptions>)).map(([category, options]) => (
-                <div key={category}>
-                  <div className="px-2 py-1 text-xs font-semibold text-gray-600 dark:text-gray-400 bg-gray-200 dark:bg-gray-800">
-                    {category}
-                  </div>
-                  {options.map((option) => {
-                    const IconComponent = option.icon;
+              }, {} as Record<string, typeof iconOptions>)).map(([category, options]) => {
+                // Map categories to emojis
+                const categoryEmojis = {
+                  'Fitness': '💪🏃‍♂️🤸‍♀️🏋️‍♂️⚡️🔥💯',
+                  'Learning': '📚🎓🧠💡✨🌟📖📝',
+                  'Creative': '🎨🎭🎪🎬🎵🎸🖼️✨',
+                  'Daily': '☕️🍳🏠🧹🛒🚗📱⏰',
+                  'Entertainment': '🎮🎯🎲🃏🎰🕹️🎢🎡',
+                  'Social': '👥💬👨‍👩‍👧‍👦🤝💕❤️🫶💫',
+                  'Nature': '🌳🌲🏔️🌊🌸🐕🦋🌺',
+                  'Tech': '💻📱⚙️🔧🖥️⌨️🖱️💾',
+                  'Planning': '⏰📅📆🗓️⏳⌛️🕐📋',
+                  'Goals': '🏆🌟⚡️📈🎯🥇🏅🎖️',
+                  'General': '➕✨🔮🎲🎪🎭🌈💫'
+                }[category] || '✨';
+                
+                return (
+                  <motion.div 
+                    key={category}
+                    initial={{ opacity: 0, x: -5 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ 
+                      delay: 0.05 * Object.keys(iconOptions.reduce((acc, option) => {
+                        if (!acc[option.category]) acc[option.category] = [];
+                        acc[option.category].push(option);
+                        return acc;
+                      }, {} as Record<string, typeof iconOptions>)).indexOf(category),
+                      duration: 0.2
+                    }}
+                  >
+                    <div className="px-2 py-2 text-lg text-center bg-gray-100 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
+                      {categoryEmojis}
+                    </div>
+                    {options.map((option) => {
+                      const IconComponent = option.icon;
                     return (
                       <SelectItem key={option.value} value={option.value} className="text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-800">
                         <div className="flex items-center space-x-2">
@@ -232,8 +268,10 @@ export default function ActivityManager({ activities }: ActivityManagerProps) {
                       </SelectItem>
                     );
                   })}
-                </div>
-              ))}
+                  </motion.div>
+                );
+              })}
+              </motion.div>
             </SelectContent>
           </Select>
           <div className="flex space-x-2">
