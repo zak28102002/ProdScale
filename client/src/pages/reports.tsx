@@ -1,6 +1,6 @@
 import { Link } from "wouter";
 import { motion } from "framer-motion";
-import { Calendar, Share2, ChevronRight, TrendingUp, Trophy, Star, Flame, Target, Activity } from "lucide-react";
+import { Castle, Swords, ChevronRight, Shield, Award, Crown, Flame, Target, Sword } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import type { DailyEntry, Streak } from "@shared/schema";
@@ -71,7 +71,7 @@ export default function Reports() {
           transition={{ delay: 0.1 }}
           className="bg-gray-100 dark:bg-gray-900 p-4 rounded-xl text-center border border-gray-200 dark:border-gray-800"
         >
-          <TrendingUp className="w-6 h-6 text-black dark:text-white mx-auto mb-1" />
+          <Shield className="w-6 h-6 text-black dark:text-white mx-auto mb-1" />
           <div className="text-2xl font-bold text-black dark:text-white">{monthlyAverage}</div>
           <div className="text-xs text-gray-600 dark:text-gray-400">Avg Score</div>
         </motion.div>
@@ -82,7 +82,7 @@ export default function Reports() {
           transition={{ delay: 0.2 }}
           className="bg-gray-50 dark:bg-gray-800 p-4 rounded-xl text-center border border-gray-200 dark:border-gray-700"
         >
-          <Star className="w-6 h-6 text-black dark:text-white mx-auto mb-1" />
+          <Crown className="w-6 h-6 text-black dark:text-white mx-auto mb-1" />
           <div className="text-2xl font-bold text-black dark:text-white">{daysTracked}</div>
           <div className="text-xs text-gray-600 dark:text-gray-400">Days Tracked</div>
         </motion.div>
@@ -93,7 +93,7 @@ export default function Reports() {
           transition={{ delay: 0.3 }}
           className="bg-white dark:bg-black p-4 rounded-xl text-center border border-gray-300 dark:border-gray-600"
         >
-          <Trophy className="w-6 h-6 text-black dark:text-white mx-auto mb-1" />
+          <Award className="w-6 h-6 text-black dark:text-white mx-auto mb-1" />
           <div className="text-2xl font-bold text-black dark:text-white">{todayScore.toFixed(1)}</div>
           <div className="text-xs text-gray-600 dark:text-gray-400">Today</div>
         </motion.div>
@@ -111,7 +111,7 @@ export default function Reports() {
             >
               <div className="flex items-center space-x-4">
                 <div className="w-14 h-14 bg-gray-100 dark:bg-gray-900 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <Calendar className="w-7 h-7 text-black dark:text-white" />
+                  <Castle className="w-7 h-7 text-black dark:text-white" />
                 </div>
                 <div className="text-left">
                   <h3 className="font-semibold text-black dark:text-white text-lg">Monthly Report</h3>
@@ -139,7 +139,7 @@ export default function Reports() {
             >
               <div className="flex items-center space-x-4">
                 <div className="w-14 h-14 bg-gray-50 dark:bg-gray-800 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <Share2 className="w-7 h-7 text-black dark:text-white" />
+                  <Swords className="w-7 h-7 text-black dark:text-white" />
                 </div>
                 <div className="text-left">
                   <h3 className="font-semibold text-black dark:text-white text-lg">Share Day</h3>
@@ -165,7 +165,7 @@ export default function Reports() {
         className="mt-6 p-4 bg-white dark:bg-black border border-gray-200 dark:border-gray-800 rounded-xl"
       >
         <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 flex items-center">
-          <Activity className="w-4 h-4 mr-2" />
+          <Sword className="w-4 h-4 mr-2" />
           Last 7 Days
         </h3>
         <div className="flex items-end justify-between h-20 space-x-1">
