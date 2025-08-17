@@ -2,86 +2,109 @@ import { useState } from "react";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { Link } from "wouter";
-import { Plus, Trash2, ChevronRight, Crown } from "lucide-react";
+import { 
+  Plus, Trash2, Dumbbell, BookOpen, Brain, Code, 
+  Coffee, Music, Palette, Camera, Heart, Utensils,
+  Car, Home, Clock, Calendar, Target, Trophy, Star, 
+  Zap, Briefcase, GraduationCap, Gamepad2, Smartphone, 
+  Laptop, Headphones, Mic, Film, Scissors, Paintbrush, 
+  Pen, Users, User, Baby, Dog, Trees, Sun, Mountain, 
+  Waves, Flower, Settings, MessageCircle, Phone, Play,
+  Radio, ShoppingCart, TrendingUp, Calculator, Bookmark,
+  Crown
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import type { Activity, User } from "@shared/schema";
+import type { Activity } from "@shared/schema";
 
 interface ActivityManagerProps {
   activities: Activity[];
 }
 
-const emojiCategories = {
-  'Activities': [
-    '🎯', '🎪', '🎨', '🎬', '🎤', '🎧', '🎵', '🎸',
-    '🎹', '🥁', '🎷', '🎺', '🎻', '🎭', '🩰', '🎮',
-    '🎯', '🎲', '🎰', '🎳', '🎱', '🎾', '🏀', '⚽',
-    '🏈', '⚾', '🥎', '🏐', '🏉', '🥏', '🎿', '⛷️',
-    '🏂', '🏋️', '🤸', '🤹', '🤺', '🤼', '🤽', '🏊',
-    '🚴', '🚵', '🏇', '🧘', '🏄', '🏃', '🤾', '🥊'
-  ],
-  'Sports & Fitness': [
-    '💪', '🏃‍♂️', '🏃‍♀️', '🤸‍♀️', '🤸‍♂️', '🏋️‍♂️', '🏋️‍♀️', '⚡',
-    '🔥', '💯', '🎾', '🏀', '⚽', '🏈', '⚾', '🥎',
-    '🏐', '🏉', '🥏', '🛹', '🛼', '⛸️', '🥌', '🏒',
-    '🏑', '🥍', '🏏', '🪃', '🥅', '⛳', '🪁', '🏹',
-    '🎣', '🤿', '🥊', '🥋', '🎱', '🏓', '🏸', '🏆'
-  ],
-  'Food & Beverages': [
-    '☕', '🍳', '🥘', '🍲', '🥗', '🍱', '🍙', '🍚',
-    '🍛', '🍜', '🦪', '🍣', '🍤', '🍕', '🍔', '🍟',
-    '🌭', '🥪', '🌮', '🌯', '🫔', '🥙', '🧆', '🥚',
-    '🧈', '🥞', '🧇', '🥓', '🥩', '🍗', '🍖', '🌶️',
-    '🥒', '🥬', '🥦', '🧄', '🧅', '🥕', '🌽', '🥔'
-  ],
-  'Art & Creative': [
-    '🎨', '🖼️', '🖌️', '🖍️', '✏️', '✒️', '🖋️', '🖊️',
-    '📝', '💼', '📁', '📂', '🗂️', '📅', '📆', '📇',
-    '📈', '📉', '📊', '📋', '📌', '📍', '📎', '📏',
-    '📐', '✂️', '🖇️', '🗃️', '🗄️', '🔨', '🪛', '🔧',
-    '🔩', '⚙️', '🗜️', '⚖️', '🦯', '🔗', '⛓️', '🪝'
-  ],
-  'Nature': [
-    '🌲', '🌳', '🌴', '🌵', '🌾', '🌿', '☘️', '🍀',
-    '🍁', '🍂', '🍃', '🌺', '🌻', '🌹', '🥀', '🌷',
-    '🌸', '🌼', '🌵', '🪴', '🪷', '🪸', '🪹', '🪺',
-    '🐶', '🐕', '🦮', '🐕‍🦺', '🐩', '🐈', '🐈‍⬛', '🦜',
-    '🦋', '🐛', '🦟', '🪰', '🪲', '🪳', '🦗', '🕷️'
-  ],
-  'Technology': [
-    '💻', '🖥️', '🖨️', '⌨️', '🖱️', '💾', '💿', '📀',
-    '📱', '☎️', '📞', '📟', '📠', '📺', '📻', '📹',
-    '📷', '📸', '🎥', '📽️', '🎞️', '💡', '🔦', '🕯️',
-    '🪔', '🔌', '🔋', '🪫', '📡', '⚡', '🔧', '🔨'
-  ],
-  'Travel & Places': [
-    '🌍', '🌎', '🌏', '🌐', '🗺️', '🗾', '🧭', '🏔️',
-    '⛰️', '🌋', '🗻', '🏕️', '🏖️', '🏜️', '🏝️', '🏞️',
-    '🏟️', '🏛️', '🏗️', '🧱', '🏘️', '🏚️', '🏠', '🏡',
-    '🏢', '🏣', '🏤', '🏥', '🏦', '🏨', '🏩', '🏪',
-    '🏫', '🏬', '🏭', '🏯', '🏰', '💒', '🗼', '🗽'
-  ],
-  'General': [
-    '➕', '✨', '🌟', '⭐', '💫', '🌈', '🔮', '💎',
-    '💰', '🪙', '💵', '💴', '💶', '💷', '🪪', '💳',
-    '🎁', '🎀', '🎊', '🎉', '🎈', '🪅', '🪆', '🎏',
-    '🎎', '🏮', '🪔', '✨', '🎆', '🎇', '🧨', '🎄'
-  ]
-};
+const iconOptions = [
+  // Fitness & Health
+  { value: "dumbbell", icon: Dumbbell, label: "Gym/Exercise", category: "Fitness" },
+  { value: "heart", icon: Heart, label: "Health", category: "Fitness" },
+  { value: "target", icon: Target, label: "Goals", category: "Fitness" },
+  
+  // Learning & Work
+  { value: "book-open", icon: BookOpen, label: "Reading", category: "Learning" },
+  { value: "brain", icon: Brain, label: "Meditation", category: "Learning" },
+  { value: "code", icon: Code, label: "Coding", category: "Learning" },
+  { value: "graduation-cap", icon: GraduationCap, label: "Study", category: "Learning" },
+  { value: "briefcase", icon: Briefcase, label: "Work", category: "Learning" },
+  { value: "pen", icon: Pen, label: "Writing", category: "Learning" },
+  { value: "calculator", icon: Calculator, label: "Math", category: "Learning" },
+  
+  // Creative
+  { value: "palette", icon: Palette, label: "Art", category: "Creative" },
+  { value: "camera", icon: Camera, label: "Photography", category: "Creative" },
+  { value: "music", icon: Music, label: "Music", category: "Creative" },
+  { value: "paintbrush", icon: Paintbrush, label: "Painting", category: "Creative" },
+  { value: "scissors", icon: Scissors, label: "Crafts", category: "Creative" },
+  { value: "mic", icon: Mic, label: "Recording", category: "Creative" },
+  { value: "film", icon: Film, label: "Video", category: "Creative" },
+  
+  // Daily Life
+  { value: "coffee", icon: Coffee, label: "Coffee", category: "Daily" },
+  { value: "utensils", icon: Utensils, label: "Cooking", category: "Daily" },
+  { value: "home", icon: Home, label: "Housework", category: "Daily" },
+  { value: "shopping-cart", icon: ShoppingCart, label: "Shopping", category: "Daily" },
+  { value: "car", icon: Car, label: "Driving", category: "Daily" },
+  { value: "phone", icon: Phone, label: "Calls", category: "Daily" },
+  
+  // Entertainment
+  { value: "gamepad-2", icon: Gamepad2, label: "Gaming", category: "Entertainment" },
+  { value: "headphones", icon: Headphones, label: "Podcasts", category: "Entertainment" },
+  { value: "play", icon: Play, label: "Videos", category: "Entertainment" },
+  { value: "radio", icon: Radio, label: "Radio", category: "Entertainment" },
+  
+  // Social & Family
+  { value: "users", icon: Users, label: "Social", category: "Social" },
+  { value: "user", icon: User, label: "Personal", category: "Social" },
+  { value: "baby", icon: Baby, label: "Childcare", category: "Social" },
+  { value: "message-circle", icon: MessageCircle, label: "Chat", category: "Social" },
+  
+  // Nature & Outdoors
+  { value: "trees", icon: Trees, label: "Nature", category: "Nature" },
+  { value: "mountain", icon: Mountain, label: "Hiking", category: "Nature" },
+  { value: "waves", icon: Waves, label: "Swimming", category: "Nature" },
+  { value: "sun", icon: Sun, label: "Sunshine", category: "Nature" },
+  { value: "flower", icon: Flower, label: "Gardening", category: "Nature" },
+  { value: "dog", icon: Dog, label: "Pet Care", category: "Nature" },
+  
+  // Technology
+  { value: "smartphone", icon: Smartphone, label: "Phone", category: "Tech" },
+  { value: "laptop", icon: Laptop, label: "Computer", category: "Tech" },
+  { value: "settings", icon: Settings, label: "Tech Setup", category: "Tech" },
+  
+  // Time & Planning
+  { value: "clock", icon: Clock, label: "Time", category: "Planning" },
+  { value: "calendar", icon: Calendar, label: "Schedule", category: "Planning" },
+  { value: "bookmark", icon: Bookmark, label: "Planning", category: "Planning" },
+  
+  // Achievement
+  { value: "trophy", icon: Trophy, label: "Achievement", category: "Goals" },
+  { value: "star", icon: Star, label: "Excellence", category: "Goals" },
+  { value: "zap", icon: Zap, label: "Energy", category: "Goals" },
+  { value: "trending-up", icon: TrendingUp, label: "Progress", category: "Goals" },
+  
+  // General
+  { value: "plus", icon: Plus, label: "Other", category: "General" },
+];
 
 export default function ActivityManager({ activities }: ActivityManagerProps) {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const [showAddForm, setShowAddForm] = useState(false);
   const [newActivityName, setNewActivityName] = useState("");
-  const [newActivityIcon, setNewActivityIcon] = useState("➕");
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState("Activities");
+  const [newActivityIcon, setNewActivityIcon] = useState("plus");
   
   // Check user Pro status
-  const { data: user } = useQuery<User>({
+  const { data: user } = useQuery({
     queryKey: ["/api/user"],
   });
 
@@ -117,7 +140,7 @@ export default function ActivityManager({ activities }: ActivityManagerProps) {
     if (newActivityName.trim()) {
       createActivityMutation.mutate({
         name: newActivityName.trim(),
-        icon: newActivityIcon, // Now stores the emoji directly
+        icon: newActivityIcon,
       });
     }
   };
@@ -166,76 +189,53 @@ export default function ActivityManager({ activities }: ActivityManagerProps) {
             onChange={(e) => setNewActivityName(e.target.value)}
             className="bg-white dark:bg-black border-gray-300 dark:border-gray-600 text-black dark:text-white"
           />
-          
-          {/* Custom Emoji Picker */}
-          <div className="relative">
-            <button
-              type="button"
-              onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-              className="w-full px-3 py-2 text-left bg-white dark:bg-black border border-gray-300 dark:border-gray-600 rounded-lg text-black dark:text-white flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors"
-            >
-              <span className="text-2xl">{newActivityIcon}</span>
-              <ChevronRight className={`w-4 h-4 transition-transform ${showEmojiPicker ? 'rotate-90' : ''}`} />
-            </button>
-            
-            {showEmojiPicker && (
-              <motion.div
-                initial={{ opacity: 0, y: -10, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                transition={{ duration: 0.2, ease: "easeOut" }}
-                className="absolute z-50 w-full mt-2 bg-white dark:bg-black border border-gray-300 dark:border-gray-600 rounded-lg shadow-xl overflow-hidden"
-              >
-                {/* Category Tabs */}
-                <div className="flex overflow-x-auto border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 scrollbar-hide">
-                  {Object.keys(emojiCategories).map((category) => (
-                    <button
-                      key={category}
-                      onClick={() => setSelectedCategory(category)}
-                      className={`px-3 py-2 text-xs font-medium whitespace-nowrap transition-colors ${
-                        selectedCategory === category 
-                          ? 'text-black dark:text-white bg-white dark:bg-black border-b-2 border-black dark:border-white' 
-                          : 'text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white'
-                      }`}
-                    >
-                      {category}
-                    </button>
-                  ))}
-                </div>
-                
-                {/* Emoji Grid */}
-                <motion.div 
-                  key={selectedCategory}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.15 }}
-                  className="p-3 max-h-64 overflow-y-auto"
-                >
-                  <div className="grid grid-cols-8 gap-1">
-                    {emojiCategories[selectedCategory as keyof typeof emojiCategories].map((emoji, index) => (
-                      <motion.button
-                        key={`${emoji}-${index}`}
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ 
-                          delay: index * 0.01,
-                          duration: 0.2,
-                          ease: "easeOut"
-                        }}
-                        onClick={() => {
-                          setNewActivityIcon(emoji);
-                          setShowEmojiPicker(false);
-                        }}
-                        className="p-2 text-2xl hover:bg-gray-100 dark:hover:bg-gray-900 rounded transition-colors transform hover:scale-110"
-                      >
-                        {emoji}
-                      </motion.button>
-                    ))}
+          <Select value={newActivityIcon} onValueChange={setNewActivityIcon}>
+            <SelectTrigger className="bg-white dark:bg-black border-gray-300 dark:border-gray-600 text-black dark:text-white">
+              <SelectValue>
+                {newActivityIcon && (
+                  <div className="flex items-center space-x-2">
+                    {(() => {
+                      const selectedIcon = iconOptions.find(opt => opt.value === newActivityIcon);
+                      if (selectedIcon) {
+                        const IconComponent = selectedIcon.icon;
+                        return (
+                          <>
+                            <IconComponent className="w-4 h-4" />
+                            <span>{selectedIcon.label}</span>
+                          </>
+                        );
+                      }
+                      return <span>Select icon</span>;
+                    })()}
                   </div>
-                </motion.div>
-              </motion.div>
-            )}
-          </div>
+                )}
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent className="bg-white dark:bg-black border-gray-300 dark:border-gray-600 max-h-96 overflow-y-auto">
+              {Object.entries(iconOptions.reduce((acc, option) => {
+                if (!acc[option.category]) acc[option.category] = [];
+                acc[option.category].push(option);
+                return acc;
+              }, {} as Record<string, typeof iconOptions>)).map(([category, options]) => (
+                <div key={category}>
+                  <div className="px-2 py-1 text-xs font-semibold text-gray-600 dark:text-gray-400 bg-gray-200 dark:bg-gray-800">
+                    {category}
+                  </div>
+                  {options.map((option) => {
+                    const IconComponent = option.icon;
+                    return (
+                      <SelectItem key={option.value} value={option.value} className="text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-800">
+                        <div className="flex items-center space-x-2">
+                          <IconComponent className="w-4 h-4" />
+                          <span>{option.label}</span>
+                        </div>
+                      </SelectItem>
+                    );
+                  })}
+                </div>
+              ))}
+            </SelectContent>
+          </Select>
           <div className="flex space-x-2">
             <Button
               onClick={handleAddActivity}
