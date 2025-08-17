@@ -9,6 +9,7 @@ ProdScale is a premium mobile productivity app built with a black-and-white ultr
 - Replaced export/backup features with historical day tracking in monthly reports
 - Added complete internationalization support (English, Spanish, Italian)
 - Redesigned to avoid HabitKit similarity
+- Added database table for motivational quotes with 98+ quotes served randomly via API
 
 ## User Preferences
 
@@ -45,6 +46,7 @@ Preferred communication style: Simple, everyday language.
 - **Daily Entries**: Daily productivity tracking with scores and reflections
 - **Activity Completions**: Tracking completion status and duration for each activity
 - **Streaks**: User streak tracking for motivation
+- **Quotes**: Database of motivational quotes (98+ quotes) served randomly via API
 
 ### Frontend Components
 - **Stickman Component**: Animated knight mascot that changes based on productivity score

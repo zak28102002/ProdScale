@@ -11,8 +11,7 @@ import ActivityItem from "@/components/activity-item";
 import ActivityManager from "@/components/activity-manager";
 
 import { calculateProductivityScore } from "@/lib/scoring";
-import { getDailyQuote } from "@/lib/quotes";
-import type { DailyEntry, Activity, ActivityCompletion } from "@shared/schema";
+import type { DailyEntry, Activity, ActivityCompletion, Quote } from "@shared/schema";
 import { Trophy, Clock } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -43,6 +42,12 @@ export default function Home() {
   // Fetch user streak
   const { data: streak } = useQuery<{ currentStreak: number; longestStreak: number }>({
     queryKey: ["/api/streak"],
+    enabled: true,
+  });
+
+  // Fetch daily quote
+  const { data: quote } = useQuery<Quote>({
+    queryKey: ["/api/quote"],
     enabled: true,
   });
 
@@ -166,7 +171,7 @@ export default function Home() {
     return () => clearTimeout(timer);
   }, [reflection]);
 
-  const dailyQuote = getDailyQuote();
+  const dailyQuote = quote?.text || "Dream bigger. Do bigger.";
 
   if (loadingEntry || loadingActivities) {
     return (

@@ -5,11 +5,10 @@ import { motion } from "framer-motion";
 import { ArrowLeft, Instagram, Twitter, Facebook, Copy, Palette, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { getDailyQuote } from "@/lib/quotes";
 import { calculateProductivityScore } from "@/lib/scoring";
 import { useToast } from "@/hooks/use-toast";
 import * as htmlToImage from "html-to-image";
-import type { DailyEntry, Activity, ActivityCompletion } from "@shared/schema";
+import type { DailyEntry, Activity, ActivityCompletion, Quote } from "@shared/schema";
 
 interface Background {
   id: string;
@@ -78,6 +77,12 @@ export default function SocialSharing() {
     enabled: true,
   });
 
+  // Fetch daily quote
+  const { data: quote } = useQuery<Quote>({
+    queryKey: ["/api/quote"],
+    enabled: true,
+  });
+
   const score = calculateProductivityScore({
     completions,
     activities,
@@ -85,7 +90,7 @@ export default function SocialSharing() {
   });
 
   const completedActivities = completions.filter(c => c.completed);
-  const dailyQuote = getDailyQuote();
+  const dailyQuote = quote?.text || "Dream bigger. Do bigger.";
 
   // Create engaging share text based on achievement level
   const getShareText = () => {

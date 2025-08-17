@@ -61,6 +61,14 @@ export const streaks = pgTable("streaks", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+export const quotes = pgTable("quotes", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  text: text("text").notNull(),
+  author: text("author"),
+  category: varchar("category", { length: 50 }).default("motivation"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,
@@ -87,6 +95,11 @@ export const insertStreakSchema = createInsertSchema(streaks).omit({
   updatedAt: true,
 });
 
+export const insertQuoteSchema = createInsertSchema(quotes).omit({
+  id: true,
+  createdAt: true,
+});
+
 // Types
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -102,3 +115,6 @@ export type InsertActivityCompletion = z.infer<typeof insertActivityCompletionSc
 
 export type Streak = typeof streaks.$inferSelect;
 export type InsertStreak = z.infer<typeof insertStreakSchema>;
+
+export type Quote = typeof quotes.$inferSelect;
+export type InsertQuote = z.infer<typeof insertQuoteSchema>;

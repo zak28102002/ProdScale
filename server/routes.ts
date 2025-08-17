@@ -575,6 +575,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get random quote
+  app.get("/api/quote", async (_req, res) => {
+    try {
+      const quote = await storage.getRandomQuote();
+      if (!quote) {
+        // Fallback quote if database is empty
+        res.json({
+          text: "Dream bigger. Do bigger.",
+          author: null
+        });
+      } else {
+        res.json(quote);
+      }
+    } catch (error) {
+      console.error("Error fetching quote:", error);
+      // Return a fallback quote on error
+      res.json({
+        text: "Dream bigger. Do bigger.",
+        author: null
+      });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

@@ -4,6 +4,7 @@ import {
   dailyEntries,
   activityCompletions,
   streaks,
+  quotes,
   type User,
   type InsertUser,
   type Activity,
@@ -14,6 +15,7 @@ import {
   type InsertActivityCompletion,
   type Streak,
   type InsertStreak,
+  type Quote,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, desc, sql } from "drizzle-orm";
@@ -44,6 +46,9 @@ export interface IStorage {
   // Streak operations
   getUserStreak(userId: string): Promise<Streak | null>;
   updateStreak(userId: string, streak: Partial<Streak>): Promise<Streak>;
+  
+  // Quote operations
+  getRandomQuote(): Promise<Quote | null>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -176,6 +181,15 @@ export class DatabaseStorage implements IStorage {
         .returning();
       return newStreak;
     }
+  }
+
+  // Quote operations
+  async getRandomQuote(): Promise<Quote | null> {
+    const allQuotes = await db.select().from(quotes);
+    if (allQuotes.length === 0) return null;
+    
+    const randomIndex = Math.floor(Math.random() * allQuotes.length);
+    return allQuotes[randomIndex];
   }
 }
 
