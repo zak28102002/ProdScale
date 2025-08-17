@@ -1,9 +1,10 @@
 import { useState, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { motion } from "framer-motion";
-import { ArrowLeft, Instagram, Twitter, Facebook, Copy, Palette } from "lucide-react";
+import { ArrowLeft, Instagram, Twitter, Facebook, Copy, Palette, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { getDailyQuote } from "@/lib/quotes";
 import { calculateProductivityScore } from "@/lib/scoring";
 import { useToast } from "@/hooks/use-toast";
@@ -46,10 +47,15 @@ const backgrounds: Background[] = [
 
 export default function SocialSharing() {
   const { toast } = useToast();
+  const [, setLocation] = useLocation();
   const today = new Date().toISOString().split('T')[0];
   const [selectedBg, setSelectedBg] = useState(backgrounds[0]);
   const [showBgPicker, setShowBgPicker] = useState(false);
+  const [showProModal, setShowProModal] = useState(false);
   const shareCardRef = useRef<HTMLDivElement>(null);
+  
+  // Mock Pro subscription status - in production this would come from user data
+  const isPro = false;
 
   // Fetch today's data
   const { data: dailyEntry } = useQuery<DailyEntry>({
@@ -238,12 +244,19 @@ export default function SocialSharing() {
       <div className="flex items-center justify-between mb-4">
         <h3 className="font-semibold">Card Background</h3>
         <Button
-          onClick={() => setShowBgPicker(!showBgPicker)}
+          onClick={() => {
+            if (!isPro) {
+              setShowProModal(true);
+            } else {
+              setShowBgPicker(!showBgPicker);
+            }
+          }}
           size="sm"
           variant="outline"
           className="flex items-center space-x-2"
         >
-          <Palette className="w-4 h-4" />
+          {!isPro && <Lock className="w-4 h-4" />}
+          {isPro && <Palette className="w-4 h-4" />}
           <span>Change Background</span>
         </Button>
       </div>
@@ -498,6 +511,62 @@ export default function SocialSharing() {
           </div>
         </motion.div>
       )}
+
+      {/* Pro Upgrade Modal */}
+      <Dialog open={showProModal} onOpenChange={setShowProModal}>
+        <DialogContent className="max-w-sm rounded-2xl border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
+          <DialogHeader>
+            <DialogTitle className="flex items-center space-x-2">
+              <Lock className="w-5 h-5 text-yellow-500" />
+              <span>Upgrade to Pro</span>
+            </DialogTitle>
+            <DialogDescription className="pt-3 space-y-4">
+              <p>Customize your social shares with ProdScale Pro!</p>
+              
+              <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 space-y-3">
+                <h4 className="font-semibold text-sm">Custom Backgrounds include:</h4>
+                <ul className="text-sm space-y-2 text-gray-600 dark:text-gray-400">
+                  <li className="flex items-start">
+                    <span className="mr-2">•</span>
+                    <span>25+ beautiful gradient backgrounds</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="mr-2">•</span>
+                    <span>Unique pattern and texture options</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="mr-2">•</span>
+                    <span>Stand out on social media</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="mr-2">•</span>
+                    <span>Make your progress posts more engaging</span>
+                  </li>
+                </ul>
+              </div>
+              
+              <div className="flex flex-col space-y-2 pt-2">
+                <Button 
+                  onClick={() => {
+                    setShowProModal(false);
+                    setLocation('/pro');
+                  }}
+                  className="w-full bg-yellow-500 hover:bg-yellow-600 text-black"
+                >
+                  Upgrade to Pro
+                </Button>
+                <Button 
+                  variant="ghost"
+                  onClick={() => setShowProModal(false)}
+                  className="w-full"
+                >
+                  Maybe Later
+                </Button>
+              </div>
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
     </motion.div>
   );
 }

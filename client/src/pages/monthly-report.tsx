@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { motion } from "framer-motion";
-import { ArrowLeft, X, Calendar } from "lucide-react";
+import { ArrowLeft, X, Calendar, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -14,11 +14,16 @@ import type { DailyEntry } from "@shared/schema";
 
 export default function MonthlyReport() {
   const queryClient = useQueryClient();
+  const [, setLocation] = useLocation();
   const currentDate = new Date();
   const [year, setYear] = useState(currentDate.getFullYear());
   const [month, setMonth] = useState(currentDate.getMonth() + 1);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [isMonthPickerOpen, setIsMonthPickerOpen] = useState(false);
+  const [showProModal, setShowProModal] = useState(false);
+  
+  // Mock Pro subscription status - in production this would come from user data
+  const isPro = false;
 
   const { data: monthlyData, isLoading } = useQuery<{
     entries: DailyEntry[];
@@ -226,7 +231,17 @@ export default function MonthlyReport() {
           setMonth(newMonth);
           setYear(newYear);
         }}
-        onDayClick={(date) => setSelectedDate(date)}
+        onDayClick={(date) => {
+          // Check if it's today's date
+          const today = new Date().toISOString().split('T')[0];
+          if (date === today) {
+            setSelectedDate(date);
+          } else if (!isPro) {
+            setShowProModal(true);
+          } else {
+            setSelectedDate(date);
+          }
+        }}
         onDayHover={(date) => {
           // Prefetch the data when hovering
           queryClient.prefetchQuery({
@@ -321,6 +336,62 @@ export default function MonthlyReport() {
               No data available for this day
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Pro Upgrade Modal */}
+      <Dialog open={showProModal} onOpenChange={setShowProModal}>
+        <DialogContent className="max-w-sm rounded-2xl border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
+          <DialogHeader>
+            <DialogTitle className="flex items-center space-x-2">
+              <Lock className="w-5 h-5 text-yellow-500" />
+              <span>Upgrade to Pro</span>
+            </DialogTitle>
+            <DialogDescription className="pt-3 space-y-4">
+              <p>View your complete productivity history with ProdScale Pro!</p>
+              
+              <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 space-y-3">
+                <h4 className="font-semibold text-sm">Historical Day Tracking includes:</h4>
+                <ul className="text-sm space-y-2 text-gray-600 dark:text-gray-400">
+                  <li className="flex items-start">
+                    <span className="mr-2">•</span>
+                    <span>View any past day's activities and scores</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="mr-2">•</span>
+                    <span>Read your daily reflections from any date</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="mr-2">•</span>
+                    <span>Track your productivity patterns over time</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="mr-2">•</span>
+                    <span>Analyze your progress month by month</span>
+                  </li>
+                </ul>
+              </div>
+              
+              <div className="flex flex-col space-y-2 pt-2">
+                <Button 
+                  onClick={() => {
+                    setShowProModal(false);
+                    setLocation('/pro');
+                  }}
+                  className="w-full bg-yellow-500 hover:bg-yellow-600 text-black"
+                >
+                  Upgrade to Pro
+                </Button>
+                <Button 
+                  variant="ghost"
+                  onClick={() => setShowProModal(false)}
+                  className="w-full"
+                >
+                  Maybe Later
+                </Button>
+              </div>
+            </DialogDescription>
+          </DialogHeader>
         </DialogContent>
       </Dialog>
     </motion.div>
