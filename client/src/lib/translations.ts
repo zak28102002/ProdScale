@@ -73,6 +73,10 @@ export const translations = {
     unlimitedCustomActivities: "Unlimited custom activities",
     advancedAnalytics: "Advanced analytics",
     exportData: "Export data",
+    customBackgrounds: "Custom Backgrounds",
+    customizeBackgroundColors: "Customize background colors for social sharing",
+    historicalDayTracking: "Historical Day Tracking",
+    viewPastDays: "View and track all your past days in monthly reports",
     prioritySupport: "Priority support",
     
     // Months
@@ -163,6 +167,10 @@ export const translations = {
     unlimitedCustomActivities: "Attività personalizzate illimitate",
     advancedAnalytics: "Analisi avanzate",
     exportData: "Esporta dati",
+    customBackgrounds: "Sfondi Personalizzati",
+    customizeBackgroundColors: "Personalizza i colori di sfondo per la condivisione sociale",
+    historicalDayTracking: "Tracciamento Giorni Storici",
+    viewPastDays: "Visualizza e traccia tutti i tuoi giorni passati nei rapporti mensili",
     prioritySupport: "Supporto prioritario",
     
     // Months
@@ -253,6 +261,10 @@ export const translations = {
     unlimitedCustomActivities: "Actividades personalizadas ilimitadas",
     advancedAnalytics: "Análisis avanzados",
     exportData: "Exportar datos",
+    customBackgrounds: "Fondos Personalizados",
+    customizeBackgroundColors: "Personaliza los colores de fondo para compartir en redes",
+    historicalDayTracking: "Seguimiento de Días Históricos",
+    viewPastDays: "Ver y rastrear todos tus días pasados en informes mensuales",
     prioritySupport: "Soporte prioritario",
     
     // Months

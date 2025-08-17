@@ -4,6 +4,12 @@
 
 ProdScale is a premium mobile productivity app built with a black-and-white ultra-minimal interface. The app helps users track daily activities, calculate productivity scores, and maintain motivation through an AI-powered scoring system and animated knight mascot. The application follows modern full-stack architecture with TypeScript, React, Express, and PostgreSQL.
 
+**Recent Major Changes (August 17, 2025):**
+- Replaced knight themes with background color customization for social sharing
+- Replaced export/backup features with historical day tracking in monthly reports
+- Added complete internationalization support (English, Spanish, Italian)
+- Redesigned to avoid HabitKit similarity
+
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
@@ -44,9 +50,11 @@ Preferred communication style: Simple, everyday language.
 - **Stickman Component**: Animated knight mascot that changes based on productivity score
 - **Progress Circle**: Circular progress indicator for daily scores
 - **Activity Item**: Interactive activity tracking with duration input
-- **Modern Calendar**: Clean monthly view with streak tracking
-- **Social Sharing**: Export functionality for social media platforms
+- **Modern Calendar**: Clean monthly view with streak tracking and historical day viewing
+- **Social Sharing**: Export functionality with customizable background colors
 - **Pro Upgrade**: Premium features page with pricing tiers
+- **Language Selector**: Multi-language support with real-time switching
+- **Historical Day Viewer**: View and track past days in monthly reports
 
 ### Scoring Algorithm
 The productivity score (0-10) is calculated based on:

@@ -130,14 +130,17 @@ export default function MonthlyReport() {
     >
       {/* Header */}
       <div className="flex items-center justify-between pt-8">
-        <Link href="/">
+        <Link href="/reports">
           <Button variant="ghost" size="icon" className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
             <ArrowLeft className="w-5 h-5" />
           </Button>
         </Link>
         
-        {/* Centered Month Display */}
-        <h1 className="text-xl font-bold text-black dark:text-white flex-1 text-center">{monthName}</h1>
+        {/* Centered Month Display with Historical Tracking */}
+        <div className="flex-1 text-center">
+          <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Historical Day Tracking</p>
+          <h1 className="text-xl font-bold text-black dark:text-white">{monthName}</h1>
+        </div>
         
         {/* Month Picker */}
         <Popover open={isMonthPickerOpen} onOpenChange={setIsMonthPickerOpen}>
@@ -204,10 +207,11 @@ export default function MonthlyReport() {
       </div>
 
       {/* Month Header */}
-      <div className="text-center">
+      <div className="text-center bg-gray-50 dark:bg-gray-900 rounded-xl p-4">
         <h2 className="text-lg font-semibold mb-2 text-black dark:text-white">Monthly Report</h2>
         <div className="text-3xl font-bold mb-1 text-black dark:text-white">{average}</div>
         <p className="text-sm text-gray-600 dark:text-gray-400">Monthly Average</p>
+        <p className="text-xs text-gray-500 dark:text-gray-500 mt-2">Tap any day to view details</p>
         {isUnproductive && (
           <p className="text-sm text-red-600 dark:text-red-400 mt-2">Unproductive Month</p>
         )}

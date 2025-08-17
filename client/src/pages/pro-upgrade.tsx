@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Link } from "wouter";
-import { X, Hash, BarChart3, Home, LayoutDashboard } from "lucide-react";
+import { X, Hash, BarChart3, Palette, History } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
@@ -158,21 +158,21 @@ export default function ProUpgrade() {
 
           <div className="flex items-start space-x-3">
             <div className="w-10 h-10 bg-blue-900/50 rounded-lg flex items-center justify-center flex-shrink-0">
-              <Home className="w-5 h-5 text-blue-400" />
+              <Palette className="w-5 h-5 text-blue-400" />
             </div>
             <div>
-              <h3 className="font-semibold text-blue-400">Custom Knight Themes</h3>
-              <p className="text-sm text-gray-400">Unlock special knight characters and animations</p>
+              <h3 className="font-semibold text-blue-400">Custom Backgrounds</h3>
+              <p className="text-sm text-gray-400">Customize background colors for social sharing</p>
             </div>
           </div>
 
           <div className="flex items-start space-x-3">
             <div className="w-10 h-10 bg-purple-900/50 rounded-lg flex items-center justify-center flex-shrink-0">
-              <LayoutDashboard className="w-5 h-5 text-purple-400" />
+              <History className="w-5 h-5 text-purple-400" />
             </div>
             <div>
-              <h3 className="font-semibold text-purple-400">Export & Backup</h3>
-              <p className="text-sm text-gray-400">Export your data as CSV and automatic cloud backups</p>
+              <h3 className="font-semibold text-purple-400">Historical Day Tracking</h3>
+              <p className="text-sm text-gray-400">View and track all your past days in monthly reports</p>
             </div>
           </div>
         </div>
