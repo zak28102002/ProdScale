@@ -14,8 +14,10 @@ import { calculateProductivityScore } from "@/lib/scoring";
 import { getDailyQuote } from "@/lib/quotes";
 import type { DailyEntry, Activity, ActivityCompletion } from "@shared/schema";
 import { Trophy, Clock } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Home() {
+  const { t } = useLanguage();
   const queryClient = useQueryClient();
   const today = new Date().toISOString().split('T')[0];
   const [reflection, setReflection] = useState("");
@@ -217,7 +219,7 @@ export default function Home() {
         
         {/* Today's Activities Check-in */}
         <div className="space-y-4">
-          <h2 className="text-lg font-semibold text-black dark:text-white ml-[3px] mr-[3px]">Today's Check-in</h2>
+          <h2 className="text-lg font-semibold text-black dark:text-white ml-[3px] mr-[3px]">{t('dailyActivities')}</h2>
           <div className="space-y-3">
             {activities.map((activity: Activity) => (
               <ActivityItem
@@ -232,13 +234,13 @@ export default function Home() {
       </div>
       {/* Reflection Box */}
       <div className="space-y-3">
-        <h2 className="text-lg font-semibold ml-[3px] mr-[3px] text-black dark:text-white">Daily Reflection</h2>
+        <h2 className="text-lg font-semibold ml-[3px] mr-[3px] text-black dark:text-white">{t('reflection')}</h2>
         <Textarea
           value={reflection}
           onChange={(e) => setReflection(e.target.value)}
           className="resize-none focus:border-black dark:focus:border-white transition-colors bg-white dark:bg-black text-black dark:text-white border-gray-300 dark:border-gray-600"
           rows={3}
-          placeholder="How did today go? What did you learn?"
+          placeholder={t('whatWentWell')}
         />
       </div>
       {/* Bottom Buttons */}

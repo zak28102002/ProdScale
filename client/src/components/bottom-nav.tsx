@@ -1,25 +1,27 @@
 import { Link, useLocation } from "wouter";
 import { Home, BarChart3, Settings } from "lucide-react";
 import { motion } from "framer-motion";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function BottomNav() {
   const [location] = useLocation();
+  const { t } = useLanguage();
 
   const navItems = [
     {
       path: "/",
       icon: Home,
-      label: "Home",
+      label: t('home'),
     },
     {
       path: "/reports",
       icon: BarChart3,
-      label: "Reports",
+      label: t('reports'),
     },
     {
       path: "/settings",
       icon: Settings,
-      label: "Settings",
+      label: t('settings'),
     },
   ];
 

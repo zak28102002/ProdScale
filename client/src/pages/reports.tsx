@@ -3,9 +3,11 @@ import { motion } from "framer-motion";
 import { Castle, Swords, ChevronRight, Shield, Award, Crown, Flame, Target, Sword } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
+import { useLanguage } from "@/contexts/LanguageContext";
 import type { DailyEntry, Streak } from "@shared/schema";
 
 export default function Reports() {
+  const { t } = useLanguage();
   const today = new Date();
   const currentMonth = today.getMonth() + 1;
   const currentYear = today.getFullYear();
@@ -73,7 +75,7 @@ export default function Reports() {
         >
           <Shield className="w-6 h-6 text-black dark:text-white mx-auto mb-1" />
           <div className="text-2xl font-bold text-black dark:text-white">{monthlyAverage}</div>
-          <div className="text-xs text-gray-600 dark:text-gray-400">Avg Score</div>
+          <div className="text-xs text-gray-600 dark:text-gray-400">{t('avgScore')}</div>
         </motion.div>
 
         <motion.div 
@@ -84,7 +86,7 @@ export default function Reports() {
         >
           <Crown className="w-6 h-6 text-black dark:text-white mx-auto mb-1" />
           <div className="text-2xl font-bold text-black dark:text-white">{daysTracked}</div>
-          <div className="text-xs text-gray-600 dark:text-gray-400">Days Tracked</div>
+          <div className="text-xs text-gray-600 dark:text-gray-400">{t('daysTracked')}</div>
         </motion.div>
 
         <motion.div 
@@ -95,7 +97,7 @@ export default function Reports() {
         >
           <Award className="w-6 h-6 text-black dark:text-white mx-auto mb-1" />
           <div className="text-2xl font-bold text-black dark:text-white">{todayScore.toFixed(1)}</div>
-          <div className="text-xs text-gray-600 dark:text-gray-400">Today</div>
+          <div className="text-xs text-gray-600 dark:text-gray-400">{t('today')}</div>
         </motion.div>
       </div>
       
@@ -114,8 +116,8 @@ export default function Reports() {
                   <Castle className="w-7 h-7 text-black dark:text-white" />
                 </div>
                 <div className="text-left">
-                  <h3 className="font-semibold text-black dark:text-white text-lg">Monthly Report</h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">View calendar and trends</p>
+                  <h3 className="font-semibold text-black dark:text-white text-lg">{t('monthlyReport')}</h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">{t('viewCalendarAndTrends')}</p>
                   {monthlyAverage > 0 && (
                     <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
                       {new Date().toLocaleDateString('en-US', { month: 'long' })} average: {monthlyAverage}
@@ -142,8 +144,8 @@ export default function Reports() {
                   <Swords className="w-7 h-7 text-black dark:text-white" />
                 </div>
                 <div className="text-left">
-                  <h3 className="font-semibold text-black dark:text-white text-lg">Share Day</h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Create beautiful cards</p>
+                  <h3 className="font-semibold text-black dark:text-white text-lg">{t('shareDay')}</h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">{t('createBeautifulCards')}</p>
                   {todayScore > 0 && (
                     <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
                       Today's score: {todayScore.toFixed(1)}/10
@@ -166,7 +168,7 @@ export default function Reports() {
       >
         <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 flex items-center">
           <Sword className="w-4 h-4 mr-2" />
-          Last 7 Days
+          {t('last7Days')}
         </h3>
         <div className="flex items-end justify-between h-20 space-x-1">
           {last7Days.map((date, index) => {
@@ -213,9 +215,9 @@ export default function Reports() {
             <Flame className="w-6 h-6 text-black dark:text-white" />
             <span className="text-2xl font-bold text-black dark:text-white">{currentStreak}</span>
           </div>
-          <p className="text-xs text-gray-600 dark:text-gray-400">Current Streak</p>
+          <p className="text-xs text-gray-600 dark:text-gray-400">{t('currentStreak')}</p>
           {currentStreak >= 7 && (
-            <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">On fire!</p>
+            <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">{t('onFire')}</p>
           )}
         </div>
 
@@ -227,9 +229,9 @@ export default function Reports() {
               {streakData?.longestStreak || 0}
             </span>
           </div>
-          <p className="text-xs text-gray-600 dark:text-gray-400">Best Streak</p>
+          <p className="text-xs text-gray-600 dark:text-gray-400">{t('bestStreak')}</p>
           {(streakData?.longestStreak || 0) >= 30 && (
-            <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">Legend!</p>
+            <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">{t('legend')}</p>
           )}
         </div>
       </motion.div>
@@ -274,10 +276,10 @@ export default function Reports() {
         className="mt-4 p-4 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 rounded-xl text-center"
       >
         <p className="text-sm text-gray-600 dark:text-gray-400">
-          {monthlyAverage >= 8 ? "Outstanding month! Keep up the amazing work!" :
-           monthlyAverage >= 6 ? "Great progress! You're on the right track!" :
-           monthlyAverage >= 4 ? "Good start! Every day counts!" :
-           "Track daily to see your progress!"}
+          {monthlyAverage >= 8 ? t('outstandingMonth') :
+           monthlyAverage >= 6 ? t('greatProgress') :
+           monthlyAverage >= 4 ? t('goodStart') :
+           t('trackDaily')}
         </p>
       </motion.div>
     </motion.div>

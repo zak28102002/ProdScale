@@ -3,18 +3,14 @@ import { motion } from "framer-motion";
 import { Shield, MessageCircle, ChevronRight, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
+import type { Language } from "@/lib/translations";
 
 export default function Settings() {
-  const [language, setLanguage] = useState(() => {
-    return localStorage.getItem('app-language') || 'en';
-  });
+  const { language, setLanguage, t } = useLanguage();
 
   const handleLanguageChange = (value: string) => {
-    setLanguage(value);
-    localStorage.setItem('app-language', value);
-    // In a real app, this would trigger a language change
-    // For now, we'll just store the preference
+    setLanguage(value as Language);
   };
 
   return (
@@ -24,7 +20,7 @@ export default function Settings() {
       transition={{ duration: 0.3 }}
       className="p-6 max-w-sm mx-auto pb-24"
     >
-      <h1 className="text-2xl font-bold text-black dark:text-white mb-6">Settings</h1>
+      <h1 className="text-2xl font-bold text-black dark:text-white mb-6">{t('settings')}</h1>
       
       <div className="space-y-4">
         {/* Language Section */}
@@ -34,8 +30,8 @@ export default function Settings() {
               <Globe className="w-6 h-6 text-gray-600 dark:text-gray-400" />
             </div>
             <div className="flex-1">
-              <h3 className="font-semibold text-black dark:text-white">Language</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Choose your preferred language</p>
+              <h3 className="font-semibold text-black dark:text-white">{t('language')}</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">{t('choosePreferredLanguage')}</p>
             </div>
           </div>
           
@@ -69,8 +65,8 @@ export default function Settings() {
                 <Shield className="w-6 h-6 text-gray-600 dark:text-gray-400" />
               </div>
               <div className="text-left">
-                <h3 className="font-semibold text-black dark:text-white">Privacy Policy</h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">How we protect your data</p>
+                <h3 className="font-semibold text-black dark:text-white">{t('privacyPolicy')}</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">{t('howWeProtectData')}</p>
               </div>
             </div>
             <ChevronRight className="w-5 h-5 text-gray-400" />
@@ -87,8 +83,8 @@ export default function Settings() {
                 <MessageCircle className="w-6 h-6 text-gray-600 dark:text-gray-400" />
               </div>
               <div className="text-left">
-                <h3 className="font-semibold text-black dark:text-white">Contact Us</h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Get help or send feedback</p>
+                <h3 className="font-semibold text-black dark:text-white">{t('contactUs')}</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">{t('getHelpOrFeedback')}</p>
               </div>
             </div>
             <ChevronRight className="w-5 h-5 text-gray-400" />
