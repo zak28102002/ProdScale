@@ -525,48 +525,50 @@ export default function SocialSharing() {
               <Lock className="w-5 h-5 text-yellow-500" />
               <span>Upgrade to Pro</span>
             </DialogTitle>
-            <DialogDescription className="pt-3 space-y-4">
-              <p>Customize your social shares with ProdScale Pro!</p>
-              
-              <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 space-y-3">
-                <h4 className="font-semibold text-sm">Custom Backgrounds include:</h4>
-                <ul className="text-sm space-y-2 text-gray-600 dark:text-gray-400">
-                  <li className="flex items-start">
-                    <span className="mr-2">•</span>
-                    <span>25+ beautiful gradient backgrounds</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="mr-2">•</span>
-                    <span>Unique pattern and texture options</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="mr-2">•</span>
-                    <span>Stand out on social media</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="mr-2">•</span>
-                    <span>Make your progress posts more engaging</span>
-                  </li>
-                </ul>
-              </div>
-              
-              <div className="flex flex-col space-y-2 pt-2">
-                <Button 
-                  onClick={() => {
-                    setShowProModal(false);
-                    setLocation('/pro');
-                  }}
-                  className="w-full bg-yellow-500 hover:bg-yellow-600 text-black"
-                >
-                  Upgrade to Pro
-                </Button>
-                <Button 
-                  variant="ghost"
-                  onClick={() => setShowProModal(false)}
-                  className="w-full"
-                >
-                  Maybe Later
-                </Button>
+            <DialogDescription asChild>
+              <div className="pt-3 space-y-4">
+                <p>Customize your social shares with ProdScale Pro!</p>
+                
+                <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 space-y-3">
+                  <h4 className="font-semibold text-sm">Custom Backgrounds include:</h4>
+                  <ul className="text-sm space-y-2 text-gray-600 dark:text-gray-400">
+                    <li className="flex items-start">
+                      <span className="mr-2">•</span>
+                      <span>25+ beautiful gradient backgrounds</span>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="mr-2">•</span>
+                      <span>Unique pattern and texture options</span>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="mr-2">•</span>
+                      <span>Stand out on social media</span>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="mr-2">•</span>
+                      <span>Make your progress posts more engaging</span>
+                    </li>
+                  </ul>
+                </div>
+                
+                <div className="flex flex-col space-y-2 pt-2">
+                  <Button 
+                    onClick={() => {
+                      setShowProModal(false);
+                      setLocation('/pro');
+                    }}
+                    className="w-full bg-yellow-500 hover:bg-yellow-600 text-black"
+                  >
+                    Upgrade to Pro
+                  </Button>
+                  <Button 
+                    variant="ghost"
+                    onClick={() => setShowProModal(false)}
+                    className="w-full"
+                  >
+                    Maybe Later
+                  </Button>
+                </div>
               </div>
             </DialogDescription>
           </DialogHeader>

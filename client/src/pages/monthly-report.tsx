@@ -347,48 +347,50 @@ export default function MonthlyReport() {
               <Lock className="w-5 h-5 text-yellow-500" />
               <span>Upgrade to Pro</span>
             </DialogTitle>
-            <DialogDescription className="pt-3 space-y-4">
-              <p>View your complete productivity history with ProdScale Pro!</p>
-              
-              <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 space-y-3">
-                <h4 className="font-semibold text-sm">Historical Day Tracking includes:</h4>
-                <ul className="text-sm space-y-2 text-gray-600 dark:text-gray-400">
-                  <li className="flex items-start">
-                    <span className="mr-2">•</span>
-                    <span>View any past day's activities and scores</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="mr-2">•</span>
-                    <span>Read your daily reflections from any date</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="mr-2">•</span>
-                    <span>Track your productivity patterns over time</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="mr-2">•</span>
-                    <span>Analyze your progress month by month</span>
-                  </li>
-                </ul>
-              </div>
-              
-              <div className="flex flex-col space-y-2 pt-2">
-                <Button 
-                  onClick={() => {
-                    setShowProModal(false);
-                    setLocation('/pro');
-                  }}
-                  className="w-full bg-yellow-500 hover:bg-yellow-600 text-black"
-                >
-                  Upgrade to Pro
-                </Button>
-                <Button 
-                  variant="ghost"
-                  onClick={() => setShowProModal(false)}
-                  className="w-full"
-                >
-                  Maybe Later
-                </Button>
+            <DialogDescription asChild>
+              <div className="pt-3 space-y-4">
+                <p>View your complete productivity history with ProdScale Pro!</p>
+                
+                <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 space-y-3">
+                  <h4 className="font-semibold text-sm">Historical Day Tracking includes:</h4>
+                  <ul className="text-sm space-y-2 text-gray-600 dark:text-gray-400">
+                    <li className="flex items-start">
+                      <span className="mr-2">•</span>
+                      <span>View any past day's activities and scores</span>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="mr-2">•</span>
+                      <span>Read your daily reflections from any date</span>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="mr-2">•</span>
+                      <span>Track your productivity patterns over time</span>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="mr-2">•</span>
+                      <span>Analyze your progress month by month</span>
+                    </li>
+                  </ul>
+                </div>
+                
+                <div className="flex flex-col space-y-2 pt-2">
+                  <Button 
+                    onClick={() => {
+                      setShowProModal(false);
+                      setLocation('/pro');
+                    }}
+                    className="w-full bg-yellow-500 hover:bg-yellow-600 text-black"
+                  >
+                    Upgrade to Pro
+                  </Button>
+                  <Button 
+                    variant="ghost"
+                    onClick={() => setShowProModal(false)}
+                    className="w-full"
+                  >
+                    Maybe Later
+                  </Button>
+                </div>
               </div>
             </DialogDescription>
           </DialogHeader>

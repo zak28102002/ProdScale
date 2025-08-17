@@ -39,12 +39,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
         res.json({
           ...newEntry,
-          score: newEntry.score / 10 // Convert to decimal for display
+          score: (newEntry.score ?? 0) / 10 // Convert to decimal for display
         });
       } else {
         res.json({
           ...entry,
-          score: entry.score / 10 // Convert to decimal for display
+          score: (entry.score ?? 0) / 10 // Convert to decimal for display
         });
       }
     } catch (error) {
@@ -180,7 +180,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Convert scores to decimals and calculate monthly average
       const entriesWithDecimalScores = entries.map(entry => ({
         ...entry,
-        score: entry.score / 10 // Convert to decimal for display
+        score: (entry.score ?? 0) / 10 // Convert to decimal for display
       }));
       
       const totalScore = entriesWithDecimalScores.reduce((sum, entry) => sum + (entry.score || 0), 0);
@@ -564,7 +564,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       res.json({
         ...entry,
-        score: entry.score / 10, // Convert to decimal for display
+        score: (entry.score ?? 0) / 10, // Convert to decimal for display
         completions: completionsWithNames,
         completedCount: completions.filter(c => c.completed).length,
         totalActivities: activities.length
