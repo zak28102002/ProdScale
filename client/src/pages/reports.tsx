@@ -69,33 +69,33 @@ export default function Reports() {
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ delay: 0.1 }}
-          className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 p-4 rounded-xl text-center"
+          className="bg-gray-100 dark:bg-gray-900 p-4 rounded-xl text-center border border-gray-200 dark:border-gray-800"
         >
-          <TrendingUp className="w-6 h-6 text-purple-600 dark:text-purple-400 mx-auto mb-1" />
-          <div className="text-2xl font-bold text-purple-800 dark:text-purple-200">{monthlyAverage}</div>
-          <div className="text-xs text-purple-600 dark:text-purple-400">Avg Score</div>
+          <TrendingUp className="w-6 h-6 text-black dark:text-white mx-auto mb-1" />
+          <div className="text-2xl font-bold text-black dark:text-white">{monthlyAverage}</div>
+          <div className="text-xs text-gray-600 dark:text-gray-400">Avg Score</div>
         </motion.div>
 
         <motion.div 
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 p-4 rounded-xl text-center"
+          className="bg-gray-50 dark:bg-gray-800 p-4 rounded-xl text-center border border-gray-200 dark:border-gray-700"
         >
-          <Star className="w-6 h-6 text-green-600 dark:text-green-400 mx-auto mb-1" />
-          <div className="text-2xl font-bold text-green-800 dark:text-green-200">{daysTracked}</div>
-          <div className="text-xs text-green-600 dark:text-green-400">Days Tracked</div>
+          <Star className="w-6 h-6 text-black dark:text-white mx-auto mb-1" />
+          <div className="text-2xl font-bold text-black dark:text-white">{daysTracked}</div>
+          <div className="text-xs text-gray-600 dark:text-gray-400">Days Tracked</div>
         </motion.div>
 
         <motion.div 
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ delay: 0.3 }}
-          className="bg-gradient-to-br from-yellow-50 to-yellow-100 dark:from-yellow-900/20 dark:to-yellow-800/20 p-4 rounded-xl text-center"
+          className="bg-white dark:bg-black p-4 rounded-xl text-center border border-gray-300 dark:border-gray-600"
         >
-          <Trophy className="w-6 h-6 text-yellow-600 dark:text-yellow-400 mx-auto mb-1" />
-          <div className="text-2xl font-bold text-yellow-800 dark:text-yellow-200">{todayScore.toFixed(1)}</div>
-          <div className="text-xs text-yellow-600 dark:text-yellow-400">Today</div>
+          <Trophy className="w-6 h-6 text-black dark:text-white mx-auto mb-1" />
+          <div className="text-2xl font-bold text-black dark:text-white">{todayScore.toFixed(1)}</div>
+          <div className="text-xs text-gray-600 dark:text-gray-400">Today</div>
         </motion.div>
       </div>
       
@@ -110,14 +110,14 @@ export default function Reports() {
               className="w-full justify-between h-24 px-6 bg-white dark:bg-black border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-900 group"
             >
               <div className="flex items-center space-x-4">
-                <div className="w-14 h-14 bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900 dark:to-blue-800 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <Calendar className="w-7 h-7 text-blue-600 dark:text-blue-300" />
+                <div className="w-14 h-14 bg-gray-100 dark:bg-gray-900 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <Calendar className="w-7 h-7 text-black dark:text-white" />
                 </div>
                 <div className="text-left">
                   <h3 className="font-semibold text-black dark:text-white text-lg">Monthly Report</h3>
                   <p className="text-sm text-gray-500 dark:text-gray-400">View calendar and trends</p>
                   {monthlyAverage > 0 && (
-                    <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
+                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
                       {new Date().toLocaleDateString('en-US', { month: 'long' })} average: {monthlyAverage}
                     </p>
                   )}
@@ -138,14 +138,14 @@ export default function Reports() {
               className="w-full justify-between h-24 px-6 bg-white dark:bg-black border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-900 group"
             >
               <div className="flex items-center space-x-4">
-                <div className="w-14 h-14 bg-gradient-to-br from-green-100 to-green-200 dark:from-green-900 dark:to-green-800 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <Share2 className="w-7 h-7 text-green-600 dark:text-green-300" />
+                <div className="w-14 h-14 bg-gray-50 dark:bg-gray-800 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <Share2 className="w-7 h-7 text-black dark:text-white" />
                 </div>
                 <div className="text-left">
                   <h3 className="font-semibold text-black dark:text-white text-lg">Share Day</h3>
                   <p className="text-sm text-gray-500 dark:text-gray-400">Create beautiful cards</p>
                   {todayScore > 0 && (
-                    <p className="text-xs text-green-600 dark:text-green-400 mt-1">
+                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
                       Today's score: {todayScore.toFixed(1)}/10
                     </p>
                   )}
@@ -183,11 +183,11 @@ export default function Reports() {
                     animate={{ height: `${height}%` }}
                     transition={{ delay: 0.5 + index * 0.05 }}
                     className={`w-full rounded-t ${
-                      score >= 8 ? 'bg-green-500 dark:bg-green-600' :
-                      score >= 6 ? 'bg-blue-500 dark:bg-blue-600' :
-                      score >= 4 ? 'bg-yellow-500 dark:bg-yellow-600' :
-                      score > 0 ? 'bg-red-500 dark:bg-red-600' :
-                      'bg-gray-300 dark:bg-gray-700' // Gray base for 0 scores
+                      score >= 8 ? 'bg-black dark:bg-white' :
+                      score >= 6 ? 'bg-gray-800 dark:bg-gray-200' :
+                      score >= 4 ? 'bg-gray-600 dark:bg-gray-400' :
+                      score > 0 ? 'bg-gray-400 dark:bg-gray-600' :
+                      'bg-gray-200 dark:bg-gray-800' // Gray base for 0 scores
                     }`}
                   />
                 </div>
@@ -208,28 +208,28 @@ export default function Reports() {
         className="mt-4 grid grid-cols-2 gap-3"
       >
         {/* Current Streak */}
-        <div className="p-4 bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 rounded-xl">
+        <div className="p-4 bg-white dark:bg-black border border-gray-200 dark:border-gray-800 rounded-xl">
           <div className="flex items-center justify-between mb-2">
-            <Flame className="w-6 h-6 text-orange-600 dark:text-orange-400" />
-            <span className="text-2xl font-bold text-orange-800 dark:text-orange-200">{currentStreak}</span>
+            <Flame className="w-6 h-6 text-black dark:text-white" />
+            <span className="text-2xl font-bold text-black dark:text-white">{currentStreak}</span>
           </div>
-          <p className="text-xs text-orange-600 dark:text-orange-400">Current Streak</p>
+          <p className="text-xs text-gray-600 dark:text-gray-400">Current Streak</p>
           {currentStreak >= 7 && (
-            <p className="text-xs text-orange-500 dark:text-orange-500 mt-1">🔥 On fire!</p>
+            <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">⚔️ On fire!</p>
           )}
         </div>
 
         {/* Personal Best */}
-        <div className="p-4 bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 rounded-xl">
+        <div className="p-4 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl">
           <div className="flex items-center justify-between mb-2">
-            <Target className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-            <span className="text-2xl font-bold text-purple-800 dark:text-purple-200">
+            <Target className="w-6 h-6 text-black dark:text-white" />
+            <span className="text-2xl font-bold text-black dark:text-white">
               {streakData?.longestStreak || 0}
             </span>
           </div>
-          <p className="text-xs text-purple-600 dark:text-purple-400">Best Streak</p>
+          <p className="text-xs text-gray-600 dark:text-gray-400">Best Streak</p>
           {(streakData?.longestStreak || 0) >= 30 && (
-            <p className="text-xs text-purple-500 dark:text-purple-500 mt-1">👑 Legend!</p>
+            <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">👑 Legend!</p>
           )}
         </div>
       </motion.div>
@@ -274,10 +274,10 @@ export default function Reports() {
         className="mt-4 p-4 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 rounded-xl text-center"
       >
         <p className="text-sm text-gray-600 dark:text-gray-400">
-          {monthlyAverage >= 8 ? "🌟 Outstanding month! Keep up the amazing work!" :
-           monthlyAverage >= 6 ? "💪 Great progress! You're on the right track!" :
-           monthlyAverage >= 4 ? "🌱 Good start! Every day counts!" :
-           "🎯 Track daily to see your progress!"}
+          {monthlyAverage >= 8 ? "⚔️ Outstanding month! Keep up the amazing work!" :
+           monthlyAverage >= 6 ? "🛡️ Great progress! You're on the right track!" :
+           monthlyAverage >= 4 ? "🗡️ Good start! Every day counts!" :
+           "⚔️ Track daily to see your progress!"}
         </p>
       </motion.div>
     </motion.div>
