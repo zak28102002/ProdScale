@@ -3,31 +3,25 @@ import { createServer, type Server } from "http";
 import express from "express";
 import path from "path";
 import { storage } from "./storage";
-import { insertDailyEntrySchema, insertActivityCompletionSchema, insertActivitySchema } from "@shared/schema";
+import {
+  insertDailyEntrySchema,
+  insertActivityCompletionSchema,
+  insertActivitySchema,
+} from "@shared/schema";
 import { calculateProductivityScore } from "../client/src/lib/scoring";
+import { authMiddleware } from "./middleware/auth";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Serve attached assets
-  app.use('/attached_assets', express.static(path.join(process.cwd(), 'attached_assets')));
+  app.use(
+    "/attached_assets",
+    express.static(path.join(process.cwd(), "attached_assets")),
+  );
   // Get today's daily entry
-  app.get("/api/daily-entry/:date", async (req, res) => {
+  app.get("/api/daily-entry/:date", authMiddleware, async (req, res) => {
     try {
       const { date } = req.params;
-      
-      // Get demo user by username
-      let user = await storage.getUserByUsername("demo");
-      if (!user) {
-        // Create demo user if doesn't exist
-        const newUser = await storage.createUser({ 
-          username: "demo", 
-          password: "demo",
-          isPro: false 
-        });
-        user = newUser;
-      }
-      
-      const userId = user.id;
-      
+      const userId = (req as any).userId as string;
       const entry = await storage.getDailyEntry(userId, date);
       if (!entry) {
         // Create new entry for today
@@ -39,12 +33,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
         res.json({
           ...newEntry,
-          score: (newEntry.score ?? 0) / 10 // Convert to decimal for display
+          score: (newEntry.score ?? 0) / 10, // Convert to decimal for display
         });
       } else {
         res.json({
           ...entry,
-          score: (entry.score ?? 0) / 10 // Convert to decimal for display
+          score: (entry.score ?? 0) / 10, // Convert to decimal for display
         });
       }
     } catch (error) {
@@ -58,7 +52,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { id } = req.params;
       const updateData = insertDailyEntrySchema.partial().parse(req.body);
-      
+
       const updatedEntry = await storage.updateDailyEntry(id, updateData);
       res.json(updatedEntry);
     } catch (error) {
@@ -68,22 +62,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Get user activities
-  app.get("/api/activities", async (req, res) => {
+  app.get("/api/activities", authMiddleware, async (req, res) => {
     try {
-      // Get demo user by username
-      let user = await storage.getUserByUsername("demo");
-      if (!user) {
-        // Create demo user if doesn't exist
-        user = await storage.createUser({ 
-          username: "demo", 
-          password: "demo",
-          isPro: false 
-        });
-      }
-      
-      const userId = user.id;
+      const userId = (req as any).userId as string;
       let activities = await storage.getUserActivities(userId);
-      
+
       // If user has no activities, create default ones (max 3 for free users)
       if (activities.length === 0) {
         const defaultActivities = [
@@ -91,14 +74,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
           { userId, name: "Reading", icon: "book-open", isDefault: true },
           { userId, name: "Learning", icon: "brain", isDefault: true },
         ];
-        
+
         for (const activity of defaultActivities) {
           await storage.createActivity(activity);
         }
-        
+
         activities = await storage.getUserActivities(userId);
       }
-      
+
       res.json(activities);
     } catch (error) {
       console.error("Error fetching activities:", error);
@@ -123,10 +106,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       // Convert completedAt string to Date if it exists
       const requestData = { ...req.body };
-      if (requestData.completedAt && typeof requestData.completedAt === 'string') {
+      if (
+        requestData.completedAt &&
+        typeof requestData.completedAt === "string"
+      ) {
         requestData.completedAt = new Date(requestData.completedAt);
       }
-      
+
       const completionData = insertActivityCompletionSchema.parse(requestData);
       const completion = await storage.createActivityCompletion(completionData);
       res.json(completion);
@@ -140,15 +126,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.patch("/api/activity-completion/:id", async (req, res) => {
     try {
       const { id } = req.params;
-      
+
       // Convert completedAt string to Date if it exists
       const requestData = { ...req.body };
-      if (requestData.completedAt && typeof requestData.completedAt === 'string') {
+      if (
+        requestData.completedAt &&
+        typeof requestData.completedAt === "string"
+      ) {
         requestData.completedAt = new Date(requestData.completedAt);
       }
-      
-      const updateData = insertActivityCompletionSchema.partial().parse(requestData);
-      
+
+      const updateData = insertActivityCompletionSchema
+        .partial()
+        .parse(requestData);
+
       const completion = await storage.updateActivityCompletion(id, updateData);
       res.json(completion);
     } catch (error) {
@@ -158,38 +149,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Get monthly data
-  app.get("/api/monthly/:year/:month", async (req, res) => {
+  app.get("/api/monthly/:year/:month", authMiddleware, async (req, res) => {
     try {
       const { year, month } = req.params;
-      
+
       // Get demo user by username
       const user = await storage.getUserByUsername("demo");
       if (!user) {
         res.status(401).json({ message: "User not found" });
         return;
       }
-      
+
       const userId = user.id;
-      
-      const startDate = `${year}-${month.padStart(2, '0')}-01`;
+
+      const startDate = `${year}-${month.padStart(2, "0")}-01`;
       const lastDay = new Date(parseInt(year), parseInt(month), 0).getDate(); // Get actual last day of the month
-      const endDate = `${year}-${month.padStart(2, '0')}-${lastDay.toString().padStart(2, '0')}`;
-      
-      const entries = await storage.getUserDailyEntries(userId, startDate, endDate);
-      
+      const endDate = `${year}-${month.padStart(2, "0")}-${lastDay.toString().padStart(2, "0")}`;
+
+      const entries = await storage.getUserDailyEntries(
+        userId,
+        startDate,
+        endDate,
+      );
+
       // Convert scores to decimals and calculate monthly average
-      const entriesWithDecimalScores = entries.map(entry => ({
+      const entriesWithDecimalScores = entries.map((entry) => ({
         ...entry,
-        score: (entry.score ?? 0) / 10 // Convert to decimal for display
+        score: (entry.score ?? 0) / 10, // Convert to decimal for display
       }));
-      
-      const totalScore = entriesWithDecimalScores.reduce((sum, entry) => sum + (entry.score || 0), 0);
-      const average = entriesWithDecimalScores.length > 0 ? totalScore / entriesWithDecimalScores.length : 0;
-      
+
+      const totalScore = entriesWithDecimalScores.reduce(
+        (sum, entry) => sum + (entry.score || 0),
+        0,
+      );
+      const average =
+        entriesWithDecimalScores.length > 0
+          ? totalScore / entriesWithDecimalScores.length
+          : 0;
+
       res.json({
         entries: entriesWithDecimalScores,
         average: parseFloat(average.toFixed(1)),
-        isUnproductive: average < 6
+        isUnproductive: average < 6,
       });
     } catch (error) {
       console.error("Error fetching monthly data:", error);
@@ -198,7 +199,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Get user streak
-  app.get("/api/streak", async (req, res) => {
+  app.get("/api/streak", authMiddleware, async (req, res) => {
     try {
       // Get demo user by username
       const user = await storage.getUserByUsername("demo");
@@ -206,7 +207,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         res.status(401).json({ message: "User not found" });
         return;
       }
-      
+
       const userId = user.id;
       const streak = await storage.getUserStreak(userId);
       res.json(streak || { currentStreak: 0, longestStreak: 0 });
@@ -216,30 +217,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get user info (for Pro status check)
-  app.get("/api/user", async (req, res) => {
-    try {
-      const username = "demo"; // Use username for demo user
-      let user = await storage.getUserByUsername(username);
-      
-      // Create demo user if doesn't exist
-      if (!user) {
-        user = await storage.createUser({ 
-          username: "demo", 
-          password: "demo",
-          isPro: false 
-        });
-      }
-      
-      res.json({ id: user.id, username: user.username, isPro: user.isPro });
-    } catch (error) {
-      console.error("Error fetching user:", error);
-      res.status(500).json({ message: "Failed to fetch user" });
-    }
-  });
+  //   // Get user info (for Pro status check)
+  //   app.get("/api/user", async (req, res) => {
+  //     try {
+  //       const username = "demo"; // Use username for demo user
+  //       let user = await storage.getUserByUsername(username);
+
+  //       // Create demo user if doesn't exist
+  //       if (!user) {
+  //         user = await storage.createUser({
+  //           username: "demo",
+  //           password: "demo",
+  //           isPro: false
+  //         });
+  //       }
+
+  //       res.json({ id: user.id, username: user.username, isPro: user.isPro });
+  //     } catch (error) {
+  //       console.error("Error fetching user:", error);
+  //       res.status(500).json({ message: "Failed to fetch user" });
+  //     }
+  //   });
 
   // Create activity
-  app.post("/api/activities", async (req, res) => {
+  app.post("/api/activities", authMiddleware, async (req, res) => {
     try {
       // Get demo user by username
       const user = await storage.getUserByUsername("demo");
@@ -247,19 +248,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
         res.status(401).json({ message: "User not found" });
         return;
       }
-      
+
       const userId = user.id;
-      
+
       // Check if user is Pro or has less than 3 activities
       const activities = await storage.getUserActivities(userId);
-      
+
       if (!user.isPro && activities.length >= 3) {
-        res.status(403).json({ 
-          message: "Free users can only have up to 3 activities. Upgrade to Pro for unlimited activities!" 
+        res.status(403).json({
+          message:
+            "Free users can only have up to 3 activities. Upgrade to Pro for unlimited activities!",
         });
         return;
       }
-      
+
       const activityData = insertActivitySchema.parse({ ...req.body, userId });
       const activity = await storage.createActivity(activityData);
       res.json(activity);
@@ -282,19 +284,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Finalize day - save progress and reset for next day
-  app.post("/api/finalize-day/:date", async (req, res) => {
+  app.post("/api/finalize-day/:date", authMiddleware, async (req, res) => {
     try {
       const { date } = req.params;
-      
+
       // Get demo user by username
       const user = await storage.getUserByUsername("demo");
       if (!user) {
         res.status(401).json({ message: "User not found" });
         return;
       }
-      
+
       const userId = user.id;
-      
+
       // Get daily entry and completions
       const dailyEntry = await storage.getDailyEntry(userId, date);
       if (!dailyEntry) {
@@ -308,7 +310,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const completions = await storage.getActivityCompletions(dailyEntry.id);
       const activities = await storage.getUserActivities(userId);
-      
+
       // Calculate final score
       const finalScore = calculateProductivityScore({
         completions,
@@ -326,10 +328,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Update streak
       const isProductiveDay = finalScore >= 6; // Consider score >= 6 as productive day
       const existingStreak = await storage.getUserStreak(userId);
-      
+
       if (isProductiveDay) {
         const newCurrentStreak = (existingStreak?.currentStreak || 0) + 1;
-        const newLongestStreak = Math.max(newCurrentStreak, existingStreak?.longestStreak || 0);
+        const newLongestStreak = Math.max(
+          newCurrentStreak,
+          existingStreak?.longestStreak || 0,
+        );
         await storage.updateStreak(userId, {
           currentStreak: newCurrentStreak,
           longestStreak: newLongestStreak,
@@ -347,10 +352,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Create next day's entry with fresh activity completions
       const nextDate = new Date(date);
       nextDate.setDate(nextDate.getDate() + 1);
-      const nextDateStr = nextDate.toISOString().split('T')[0];
-      
+      const nextDateStr = nextDate.toISOString().split("T")[0];
+
       // Check if next day entry already exists
-      const existingNextEntry = await storage.getDailyEntry(userId, nextDateStr);
+      const existingNextEntry = await storage.getDailyEntry(
+        userId,
+        nextDateStr,
+      );
       if (!existingNextEntry) {
         const nextEntry = await storage.createDailyEntry({
           userId,
@@ -371,10 +379,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
 
-      res.json({ 
-        success: true, 
+      res.json({
+        success: true,
         finalScore: Math.round(finalScore * 10) / 10,
-        message: "Day finalized successfully" 
+        message: "Day finalized successfully",
       });
     } catch (error) {
       console.error("Error finalizing day:", error);
@@ -383,19 +391,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Auto-finalize day endpoint
-  app.post("/api/auto-finalize/:date", async (req, res) => {
+  app.post("/api/auto-finalize/:date", authMiddleware, async (req, res) => {
     try {
       const { date } = req.params;
-      
+
       // Get demo user by username
       const user = await storage.getUserByUsername("demo");
       if (!user) {
         res.status(401).json({ message: "User not found" });
         return;
       }
-      
+
       const userId = user.id;
-      
+
       // Get daily entry and completions
       const dailyEntry = await storage.getDailyEntry(userId, date);
       if (!dailyEntry) {
@@ -409,7 +417,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const completions = await storage.getActivityCompletions(dailyEntry.id);
       const activities = await storage.getUserActivities(userId);
-      
+
       // Calculate final score
       const finalScore = calculateProductivityScore({
         completions,
@@ -428,10 +436,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Update streak
       const isProductiveDay = finalScore >= 6;
       const existingStreak = await storage.getUserStreak(userId);
-      
+
       if (isProductiveDay) {
         const newCurrentStreak = (existingStreak?.currentStreak || 0) + 1;
-        const newLongestStreak = Math.max(newCurrentStreak, existingStreak?.longestStreak || 0);
+        const newLongestStreak = Math.max(
+          newCurrentStreak,
+          existingStreak?.longestStreak || 0,
+        );
         await storage.updateStreak(userId, {
           currentStreak: newCurrentStreak,
           longestStreak: newLongestStreak,
@@ -448,8 +459,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Create next day's entry
       const nextDayDate = new Date(date);
       nextDayDate.setDate(nextDayDate.getDate() + 1);
-      const nextDay = nextDayDate.toISOString().split('T')[0];
-      
+      const nextDay = nextDayDate.toISOString().split("T")[0];
+
       const existingNextDay = await storage.getDailyEntry(userId, nextDay);
       if (!existingNextDay) {
         const newEntry = await storage.createDailyEntry({
@@ -469,10 +480,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
 
-      res.json({ 
-        success: true, 
+      res.json({
+        success: true,
         finalScore: Math.round(finalScore * 10) / 10,
-        message: "Day auto-finalized successfully" 
+        message: "Day auto-finalized successfully",
       });
     } catch (error) {
       res.status(500).json({ message: "Failed to auto-finalize day" });
@@ -480,19 +491,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Undo finalization endpoint
-  app.post("/api/undo-finalize/:date", async (req, res) => {
+  app.post("/api/undo-finalize/:date", authMiddleware, async (req, res) => {
     try {
       const { date } = req.params;
-      
+
       // Get demo user by username
       const user = await storage.getUserByUsername("demo");
       if (!user) {
         res.status(401).json({ message: "User not found" });
         return;
       }
-      
+
       const userId = user.id;
-      
+
       const dailyEntry = await storage.getDailyEntry(userId, date);
       if (!dailyEntry) {
         return res.status(404).json({ message: "Daily entry not found" });
@@ -520,9 +531,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      res.json({ 
+      res.json({
         success: true,
-        message: "Day finalization undone successfully" 
+        message: "Day finalization undone successfully",
       });
     } catch (error) {
       console.error("Error undoing finalization:", error);
@@ -531,49 +542,57 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Get specific daily entry with details (for monthly report clicks)
-  app.get("/api/daily-entry-details/:date", async (req, res) => {
-    try {
-      const { date } = req.params;
-      
-      // Get demo user by username
-      const user = await storage.getUserByUsername("demo");
-      if (!user) {
-        res.status(401).json({ message: "User not found" });
-        return;
-      }
-      
-      const userId = user.id;
-      
-      const entry = await storage.getDailyEntry(userId, date);
-      if (!entry) {
-        return res.status(404).json({ message: "Daily entry not found" });
-      }
+  app.get(
+    "/api/daily-entry-details/:date",
+    authMiddleware,
+    async (req, res) => {
+      try {
+        const { date } = req.params;
 
-      const completions = await storage.getActivityCompletions(entry.id);
-      const activities = await storage.getUserActivities(userId);
-      
-      // Add activity names to completions
-      const completionsWithNames = completions.map(completion => {
-        const activity = activities.find(a => a.id === completion.activityId);
-        return {
-          ...completion,
-          activityName: activity?.name || "Unknown Activity",
-          activityIcon: activity?.icon || "help-circle"
-        };
-      });
+        // Get demo user by username
+        const user = await storage.getUserByUsername("demo");
+        if (!user) {
+          res.status(401).json({ message: "User not found" });
+          return;
+        }
 
-      res.json({
-        ...entry,
-        score: (entry.score ?? 0) / 10, // Convert to decimal for display
-        completions: completionsWithNames,
-        completedCount: completions.filter(c => c.completed).length,
-        totalActivities: activities.length
-      });
-    } catch (error) {
-      console.error("Error fetching daily entry details:", error);
-      res.status(500).json({ message: "Failed to fetch daily entry details" });
-    }
-  });
+        const userId = user.id;
+
+        const entry = await storage.getDailyEntry(userId, date);
+        if (!entry) {
+          return res.status(404).json({ message: "Daily entry not found" });
+        }
+
+        const completions = await storage.getActivityCompletions(entry.id);
+        const activities = await storage.getUserActivities(userId);
+
+        // Add activity names to completions
+        const completionsWithNames = completions.map((completion) => {
+          const activity = activities.find(
+            (a) => a.id === completion.activityId,
+          );
+          return {
+            ...completion,
+            activityName: activity?.name || "Unknown Activity",
+            activityIcon: activity?.icon || "help-circle",
+          };
+        });
+
+        res.json({
+          ...entry,
+          score: (entry.score ?? 0) / 10, // Convert to decimal for display
+          completions: completionsWithNames,
+          completedCount: completions.filter((c) => c.completed).length,
+          totalActivities: activities.length,
+        });
+      } catch (error) {
+        console.error("Error fetching daily entry details:", error);
+        res
+          .status(500)
+          .json({ message: "Failed to fetch daily entry details" });
+      }
+    },
+  );
 
   // Get random quote
   app.get("/api/quote", async (_req, res) => {
@@ -583,7 +602,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Fallback quote if database is empty
         res.json({
           text: "Dream bigger. Do bigger.",
-          author: null
+          author: null,
         });
       } else {
         res.json(quote);
@@ -593,7 +612,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Return a fallback quote on error
       res.json({
         text: "Dream bigger. Do bigger.",
-        author: null
+        author: null,
       });
     }
   });

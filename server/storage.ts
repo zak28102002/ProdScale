@@ -1,3 +1,4 @@
+// server/storage.ts
 import {
   users,
   activities,
@@ -5,6 +6,8 @@ import {
   activityCompletions,
   streaks,
   quotes,
+  refreshTokens,
+  passwordResetTokens,
   type User,
   type InsertUser,
   type Activity,
@@ -16,50 +19,125 @@ import {
   type Streak,
   type InsertStreak,
   type Quote,
+  type RefreshTokenRow,
+  type PasswordResetRow,
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, and, desc, sql } from "drizzle-orm";
+import { eq, and, desc, sql, isNull } from "drizzle-orm";
+
+const DEFAULT_ACTIVITIES = [
+  { name: "Gym Workout", icon: "dumbbell" },
+  { name: "Learning", icon: "brain" },
+  { name: "Reading", icon: "book-open" },
+];
 
 export interface IStorage {
-  // User operations
+  // User
   getUser(id: string): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
+  getUserByEmail(email: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  updateUserPasswordHash(userId: string, passwordHash: string): Promise<void>;
 
-  // Activity operations
+  // Refresh tokens
+  insertRefreshToken(input: {
+    userId: string;
+    tokenHash: string;
+    familyId: string;
+    deviceId?: string | null;
+    expiresAt: Date; // or number if you switched to integer column
+  }): Promise<RefreshTokenRow>;
+  findRefreshTokenByHash(
+    tokenHash: string,
+  ): Promise<RefreshTokenRow | undefined>;
+  revokeRefreshToken(id: string, replacedBy?: string): Promise<void>;
+  revokeRefreshTokensByFamily(familyId: string): Promise<void>;
+  revokeAllRefreshTokensForUser(userId: string): Promise<void>;
+
+  // Password reset
+  insertPasswordResetToken(input: {
+    userId: string;
+    tokenHash: string;
+    expiresAt: Date;
+  }): Promise<PasswordResetRow>;
+  findPasswordResetTokenByHash(
+    tokenHash: string,
+  ): Promise<PasswordResetRow | undefined>;
+  markPasswordResetTokenUsed(id: string): Promise<void>;
+
+  // Activity
+  createDefaultActivitiesForUser(userId: string): Promise<Activity[]>;
   getUserActivities(userId: string): Promise<Activity[]>;
   createActivity(activity: InsertActivity): Promise<Activity>;
   deleteActivity(id: string): Promise<void>;
   getDefaultActivities(): Promise<Activity[]>;
 
-  // Daily entry operations
+  // Daily entry
   getDailyEntry(userId: string, date: string): Promise<DailyEntry | null>;
   createDailyEntry(entry: InsertDailyEntry): Promise<DailyEntry>;
   updateDailyEntry(id: string, entry: Partial<DailyEntry>): Promise<DailyEntry>;
-  getUserDailyEntries(userId: string, startDate?: string, endDate?: string): Promise<DailyEntry[]>;
+  getUserDailyEntries(
+    userId: string,
+    startDate?: string,
+    endDate?: string,
+  ): Promise<DailyEntry[]>;
 
-  // Activity completion operations
+  // Activity completion
   getActivityCompletions(dailyEntryId: string): Promise<ActivityCompletion[]>;
-  createActivityCompletion(completion: InsertActivityCompletion): Promise<ActivityCompletion>;
-  updateActivityCompletion(id: string, completion: Partial<ActivityCompletion>): Promise<ActivityCompletion>;
+  createActivityCompletion(
+    completion: InsertActivityCompletion,
+  ): Promise<ActivityCompletion>;
+  updateActivityCompletion(
+    id: string,
+    completion: Partial<ActivityCompletion>,
+  ): Promise<ActivityCompletion>;
 
-  // Streak operations
+  // Streak
   getUserStreak(userId: string): Promise<Streak | null>;
   updateStreak(userId: string, streak: Partial<Streak>): Promise<Streak>;
-  
-  // Quote operations
+
+  // Quote
   getRandomQuote(): Promise<Quote | null>;
 }
 
 export class DatabaseStorage implements IStorage {
-  // User operations
+  // ===== User =====
   async getUser(id: string): Promise<User | undefined> {
     const [user] = await db.select().from(users).where(eq(users.id, id));
     return user || undefined;
   }
 
+  async createDefaultActivitiesForUser(userId: string) {
+    // Multi-row insert; if already present, ignore due to unique index
+    await db
+      .insert(activities)
+      .values(
+        DEFAULT_ACTIVITIES.map((a) => ({
+          userId,
+          name: a.name,
+          icon: a.icon,
+          isDefault: true,
+        })),
+      )
+      .onConflictDoNothing({
+        // target must match the unique index columns
+        target: [activities.userId, activities.name],
+      });
+
+    // Return all activities for this user (so caller has the latest set)
+    return this.getUserActivities(userId);
+  }
+
   async getUserByUsername(username: string): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.username, username));
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(eq(users.email, username));
+    return user || undefined;
+  }
+
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.email, email));
     return user || undefined;
   }
 
@@ -68,7 +146,129 @@ export class DatabaseStorage implements IStorage {
     return user;
   }
 
-  // Activity operations
+  async updateUserPasswordHash(
+    userId: string,
+    passwordHash: string,
+  ): Promise<void> {
+    await db.update(users).set({ passwordHash }).where(eq(users.id, userId));
+  }
+
+  // ===== Refresh tokens =====
+  async insertRefreshToken(input: {
+    userId: string;
+    tokenHash: string;
+    familyId: string;
+    deviceId?: string | null;
+    expiresAt: Date;
+  }): Promise<RefreshTokenRow> {
+    const [row] = await db
+      .insert(refreshTokens)
+      .values({
+        userId: input.userId,
+        tokenHash: input.tokenHash,
+        familyId: input.familyId,
+        deviceId: input.deviceId ?? null,
+        expiresAt: input.expiresAt, // timestamp expects Date
+      })
+      .returning();
+    return row;
+  }
+
+  async findRefreshTokenByHash(
+    tokenHash: string,
+  ): Promise<RefreshTokenRow | undefined> {
+    const [row] = await db
+      .select()
+      .from(refreshTokens)
+      .where(eq(refreshTokens.tokenHash, tokenHash))
+      .limit(1);
+    return row || undefined;
+  }
+
+  async revokeRefreshToken(id: string, replacedBy?: string): Promise<void> {
+    await db
+      .update(refreshTokens)
+      .set({ revokedAt: new Date(), replacedBy })
+      .where(eq(refreshTokens.id, id));
+  }
+
+  async revokeRefreshTokensByFamily(familyId: string): Promise<void> {
+    await db
+      .update(refreshTokens)
+      .set({ revokedAt: new Date() })
+      .where(eq(refreshTokens.familyId, familyId));
+  }
+
+  async revokeAllRefreshTokensForUser(userId: string): Promise<void> {
+    await db
+      .update(refreshTokens)
+      .set({ revokedAt: new Date() })
+      .where(
+        and(eq(refreshTokens.userId, userId), isNull(refreshTokens.revokedAt)),
+      );
+  }
+
+  // Delete all existing reset tokens for a user (before issuing a new one)
+  async deletePasswordResetTokensForUser(userId: string): Promise<void> {
+    await db
+      .delete(passwordResetTokens)
+      .where(eq(passwordResetTokens.userId, userId));
+  }
+
+  // Count how many reset requests in the last hour (rate limit)
+  async countPasswordResetTokensSince(
+    userId: string,
+    since: Date,
+  ): Promise<number> {
+    const rows = await db
+      .select({ c: sql<number>`count(*)` })
+      .from(passwordResetTokens)
+      .where(
+        and(
+          eq(passwordResetTokens.userId, userId),
+          sql`${passwordResetTokens.createdAt} >= ${since}`,
+        ),
+      );
+    // drizzle returns numeric in driver-specific type; coerce
+    return Number((rows?.[0] as any)?.c ?? 0);
+  }
+
+  // ===== Password reset =====
+  async insertPasswordResetToken(input: {
+    userId: string;
+    tokenHash: string;
+    expiresAt: Date;
+  }): Promise<PasswordResetRow> {
+    const [row] = await db
+      .insert(passwordResetTokens)
+      .values({
+        userId: input.userId,
+        tokenHash: input.tokenHash,
+        expiresAt: input.expiresAt,
+      })
+      .returning();
+    return row;
+  }
+
+  async findPasswordResetTokenByHash(
+    tokenHash: string,
+  ): Promise<PasswordResetRow | undefined> {
+    const [row] = await db
+      .select()
+      .from(passwordResetTokens)
+      .where(eq(passwordResetTokens.tokenHash, tokenHash))
+      .limit(1);
+    return row || undefined;
+  }
+
+  async markPasswordResetTokenUsed(id: string): Promise<void> {
+    await db
+      .update(passwordResetTokens)
+      .set({ used: true })
+      .where(eq(passwordResetTokens.id, id));
+  }
+
+  // ===== Activities =====
   async getUserActivities(userId: string): Promise<Activity[]> {
     return await db
       .select()
@@ -78,7 +278,10 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createActivity(activity: InsertActivity): Promise<Activity> {
-    const [newActivity] = await db.insert(activities).values(activity).returning();
+    const [newActivity] = await db
+      .insert(activities)
+      .values(activity)
+      .returning();
     return newActivity;
   }
 
@@ -93,8 +296,11 @@ export class DatabaseStorage implements IStorage {
       .where(eq(activities.isDefault, true));
   }
 
-  // Daily entry operations
-  async getDailyEntry(userId: string, date: string): Promise<DailyEntry | null> {
+  // ===== Daily entries =====
+  async getDailyEntry(
+    userId: string,
+    date: string,
+  ): Promise<DailyEntry | null> {
     const [entry] = await db
       .select()
       .from(dailyEntries)
@@ -107,7 +313,10 @@ export class DatabaseStorage implements IStorage {
     return newEntry;
   }
 
-  async updateDailyEntry(id: string, entry: Partial<DailyEntry>): Promise<DailyEntry> {
+  async updateDailyEntry(
+    id: string,
+    entry: Partial<DailyEntry>,
+  ): Promise<DailyEntry> {
     const [updatedEntry] = await db
       .update(dailyEntries)
       .set({ ...entry, updatedAt: new Date() })
@@ -116,37 +325,47 @@ export class DatabaseStorage implements IStorage {
     return updatedEntry;
   }
 
-  async getUserDailyEntries(userId: string, startDate?: string, endDate?: string): Promise<DailyEntry[]> {
-    let whereConditions = [eq(dailyEntries.userId, userId)];
-    
+  async getUserDailyEntries(
+    userId: string,
+    startDate?: string,
+    endDate?: string,
+  ): Promise<DailyEntry[]> {
+    const where = [eq(dailyEntries.userId, userId)];
     if (startDate && endDate) {
-      whereConditions.push(
-        sql`${dailyEntries.date} >= ${startDate}`,
-        sql`${dailyEntries.date} <= ${endDate}`
-      );
+      where.push(sql`${dailyEntries.date} >= ${startDate}`);
+      where.push(sql`${dailyEntries.date} <= ${endDate}`);
     }
-    
     return await db
       .select()
       .from(dailyEntries)
-      .where(and(...whereConditions))
+      .where(and(...where))
       .orderBy(desc(dailyEntries.date));
   }
 
-  // Activity completion operations
-  async getActivityCompletions(dailyEntryId: string): Promise<ActivityCompletion[]> {
+  // ===== Completions =====
+  async getActivityCompletions(
+    dailyEntryId: string,
+  ): Promise<ActivityCompletion[]> {
     return await db
       .select()
       .from(activityCompletions)
       .where(eq(activityCompletions.dailyEntryId, dailyEntryId));
   }
 
-  async createActivityCompletion(completion: InsertActivityCompletion): Promise<ActivityCompletion> {
-    const [newCompletion] = await db.insert(activityCompletions).values(completion).returning();
+  async createActivityCompletion(
+    completion: InsertActivityCompletion,
+  ): Promise<ActivityCompletion> {
+    const [newCompletion] = await db
+      .insert(activityCompletions)
+      .values(completion)
+      .returning();
     return newCompletion;
   }
 
-  async updateActivityCompletion(id: string, completion: Partial<ActivityCompletion>): Promise<ActivityCompletion> {
+  async updateActivityCompletion(
+    id: string,
+    completion: Partial<ActivityCompletion>,
+  ): Promise<ActivityCompletion> {
     const [updatedCompletion] = await db
       .update(activityCompletions)
       .set(completion)
@@ -155,7 +374,7 @@ export class DatabaseStorage implements IStorage {
     return updatedCompletion;
   }
 
-  // Streak operations
+  // ===== Streaks =====
   async getUserStreak(userId: string): Promise<Streak | null> {
     const [streak] = await db
       .select()
@@ -165,31 +384,28 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateStreak(userId: string, streak: Partial<Streak>): Promise<Streak> {
-    const existingStreak = await this.getUserStreak(userId);
-    
-    if (existingStreak) {
-      const [updatedStreak] = await db
+    const existing = await this.getUserStreak(userId);
+    if (existing) {
+      const [updated] = await db
         .update(streaks)
         .set({ ...streak, updatedAt: new Date() })
         .where(eq(streaks.userId, userId))
         .returning();
-      return updatedStreak;
+      return updated;
     } else {
-      const [newStreak] = await db
+      const [created] = await db
         .insert(streaks)
         .values({ userId, ...streak })
         .returning();
-      return newStreak;
+      return created;
     }
   }
 
-  // Quote operations
+  // ===== Quotes =====
   async getRandomQuote(): Promise<Quote | null> {
-    const allQuotes = await db.select().from(quotes);
-    if (allQuotes.length === 0) return null;
-    
-    const randomIndex = Math.floor(Math.random() * allQuotes.length);
-    return allQuotes[randomIndex];
+    const all = await db.select().from(quotes);
+    if (all.length === 0) return null;
+    return all[Math.floor(Math.random() * all.length)];
   }
 }
 
